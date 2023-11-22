@@ -52,7 +52,7 @@ def keypoint_data_to_csv(data_path= "/Users/adithyapalle/work/CS5100/Project/dat
                 train_flag = meta["is_train"][sid][fid]
 
                 #id_pairs.append((sid, fid, cid))
-                image_file = os.path.join(data_path, f'rgb/{sid:04d}/cam{cid}/{fid:08d}.jpg')
+                image_file = os.path.join(data_path, f'rgb/{sid:04d}/{cid}/{fid:08d}.jpg')
 
                 kp_data_file = os.path.join(data_path, f'xyz/{sid:04d}/{fid:08d}.json')
 

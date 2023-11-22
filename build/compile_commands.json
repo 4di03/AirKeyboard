@@ -1,8 +1,14 @@
 [
 {
   "directory": "/Users/adithyapalle/work/CS5100/Project/build",
-  "command": "/usr/bin/clang++ -isystem /usr/local/include/opencv4 -isystem /Users/adithyapalle/PyTorch/pytorch-install/include -isystem /Users/adithyapalle/PyTorch/pytorch-install/include/torch/csrc/api/include -g -std=gnu++17 -arch x86_64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -mmacosx-version-min=12.6 -o CMakeFiles/Open_CV_Project.dir/main.cpp.o -c /Users/adithyapalle/work/CS5100/Project/main.cpp",
+  "command": "/usr/bin/clang++ -I/Users/adithyapalle/CPP_packages/json/single_include/nlohmann -isystem /usr/local/include/opencv4 -isystem /Users/adithyapalle/CPP_packages/pytorch-install/include -isystem /Users/adithyapalle/CPP_packages/pytorch-install/include/torch/csrc/api/include -isystem /Users/adithyapalle/CPP_packages/xtensor-install/include -isystem /Users/adithyapalle/CPP_packages/xtl-install/include -isystem /Users/adithyapalle/CPP_packages/xtensor-blas-install/include -g -std=gnu++17 -arch x86_64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -mmacosx-version-min=12.6 -o CMakeFiles/Open_CV_Project.dir/main.cpp.o -c /Users/adithyapalle/work/CS5100/Project/main.cpp",
   "file": "/Users/adithyapalle/work/CS5100/Project/main.cpp",
   "output": "CMakeFiles/Open_CV_Project.dir/main.cpp.o"
+},
+{
+  "directory": "/Users/adithyapalle/work/CS5100/Project/build",
+  "command": "/usr/bin/clang++ -I/Users/adithyapalle/CPP_packages/json/single_include/nlohmann -isystem /usr/local/include/opencv4 -isystem /Users/adithyapalle/CPP_packages/pytorch-install/include -isystem /Users/adithyapalle/CPP_packages/pytorch-install/include/torch/csrc/api/include -isystem /Users/adithyapalle/CPP_packages/xtensor-install/include -isystem /Users/adithyapalle/CPP_packages/xtl-install/include -isystem /Users/adithyapalle/CPP_packages/xtensor-blas-install/include -g -std=gnu++17 -arch x86_64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk -mmacosx-version-min=12.6 -o CMakeFiles/Open_CV_Project.dir/data_work.cpp.o -c /Users/adithyapalle/work/CS5100/Project/data_work.cpp",
+  "file": "/Users/adithyapalle/work/CS5100/Project/data_work.cpp",
+  "output": "CMakeFiles/Open_CV_Project.dir/data_work.cpp.o"
 }
 ]
