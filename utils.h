@@ -1,3 +1,5 @@
+#pragma once
+
 #include <vector>
 using namespace std;
 
@@ -8,3 +10,4 @@ template <typename K>
 void printType(const K& object);
 
 int charToInt(char c);
+

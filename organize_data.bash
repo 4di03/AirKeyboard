@@ -1,0 +1,1 @@
+python data_prep/organize_dataset.py /Users/adithyapalle/work/CS5100/Project/data/hanco_all/HanCo

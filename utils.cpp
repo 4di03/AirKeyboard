@@ -19,3 +19,4 @@ void printType(const T& object) {
 int charToInt(char c){
     return c - '0';
 }
+
