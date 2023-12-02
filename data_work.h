@@ -1,3 +1,4 @@
+#include <cmath>
 #pragma once // or use include guards
 
 struct Dataset {
@@ -15,6 +16,15 @@ struct Dataset {
         torch::Tensor batchY = y.index({torch::indexing::Slice(startIndex, startIndex + batchSize)});
 
         return {batchX, batchY};
+    }
+
+    void sample(float propDataUsed){
+        // slices data by propDataUsed
+
+        int end = round(propDataUsed * x.sizes()[0]);
+
+        x = x.index({torch::indexing::Slice(0,  end)});
+        y = y.index({torch::indexing::Slice(0, end)});
     }
 };
 

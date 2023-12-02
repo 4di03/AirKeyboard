@@ -119,14 +119,11 @@ int main() {
     Dataset train = data[0];
     Dataset test = data[1];
 
-    cout << "train x shape: " << train.x.sizes() << endl;
-    cout << "train y shape: " << train.y.sizes() << endl;
-    cout << "test x shape: " << test.x.sizes() << endl;
-    cout << "test y shape: " << test.y.sizes() << endl;
 
-    trainModel(train, test, true);
+    trainModel(train, test, true,0.05);
 
-
+    cout << "running evaluation!" << endl;
+    evaluate(test, true);
     // std::cout << "Expected FPS: " << cap.get(cv::CAP_PROP_FPS) << std::endl;
     // int ct = 0;
 
