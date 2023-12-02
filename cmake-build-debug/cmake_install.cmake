@@ -1,4 +1,4 @@
-# Install script for directory: /Users/adithyapalle/work/CS5100/Project
+# Install script for directory: /Users/adithyapalle/work/CS5100/AirKeyboard
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -45,5 +45,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/Users/adithyapalle/work/CS5100/Project/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/Users/adithyapalle/work/CS5100/AirKeyboard/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

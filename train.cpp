@@ -53,8 +53,9 @@ public:
     }
 
     torch::Tensor forward(torch::Tensor x) {
-        cout << "in CONV BLOCK forward" << debug <<  endl;
         if (debug) {
+            cout << "in CONV BLOCK forward" << debug <<  endl;
+
             std::cout << "Input: " << x.sizes() << std::endl;
 
             // Store the output of each layer for debugging
@@ -285,7 +286,14 @@ void trainModel(Dataset train, Dataset test) {
 
             cout << "x shape: " << x.sizes() << endl;
             // Forward pass
+
+            //Time forward pass
+
+            auto start = std::chrono::high_resolution_clock::now();
             torch::Tensor y_pred = model.forward(x);
+            auto finish = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<double> elapsed = finish - start;
+            std::cout << "Elapsed time for forward pass: " << elapsed.count() << " s\n";
 
 
              cout << "y_pred shape: " << y_pred.sizes() << endl;
