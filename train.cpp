@@ -5,14 +5,52 @@
 
 using namespace std;
 
+
+// Function to print the device of a PyTorch tensor
+void printTensorDevice(const torch::Tensor& tensor) {
+    // Get the device of the tensor
+    torch::Device device = tensor.device();
+
+    cout << device << endl;
+    // Print the device type (CPU or CUDA)
+    if (device.is_cpu()) {
+        std::cout << "Tensor is on CPU." << std::endl;
+    } else if (device.is_cuda()) {
+        std::cout << "Tensor is on GPU." << std::endl;
+    } else {
+        std::cout << "Tensor device is unknown." << std::endl;
+    }
+}
+// Function to print the device of a PyTorch module
+void printModuleDevice(const torch::nn::Module& module) {
+    // Get the device of the module parameters
+    for (const auto& parameter : module.parameters()) {
+        torch::Device device = parameter.device();
+
+        // Print the device type (CPU or CUDA)
+        if (device.is_cpu()) {
+            std::cout << "Module is on CPU." << std::endl;
+            return;  // Only need to print once
+        } else if (device.is_cuda()) {
+            std::cout << "Module is on GPU." << std::endl;
+            return;  // Only need to print once
+        }
+    }
+
+    // If no parameters found, assume the module is on CPU
+    std::cout << "Module is on CPU." << std::endl;
+}
+
+
 class ConvBlock : public torch::nn::Module {
 private:
     torch::nn::BatchNorm2d batchNorm1 = nullptr, batchNorm2 = nullptr;
     torch::nn::Conv2d conv1 = nullptr, conv2 = nullptr;
     torch::nn::Functional relu1 = nullptr, relu2 = nullptr;
-    torch::nn::Sequential block = nullptr;
     bool debug;
 public:
+    torch::nn::Sequential block = nullptr;
+
 //    torch::nn::Sequential block;
 
 
@@ -53,7 +91,7 @@ public:
     }
 
     torch::Tensor forward(torch::Tensor x) {
-        cout << "in CONV BLOCK forward" << debug <<  endl;
+        //cout << "in CONV BLOCK forward" << debug <<  endl;
         if (debug) {
             std::cout << "Input: " << x.sizes() << std::endl;
 
@@ -117,7 +155,7 @@ public:
 
 class ResidualUNet : public torch::nn::Module {
 private:
-    ConvBlock conv1, conv2, conv3, conv4, conv5, conv6, conv7;
+    std::shared_ptr<ConvBlock> conv1, conv2, conv3, conv4, conv5, conv6, conv7;
     torch::nn::ConvTranspose2d upsample1 = nullptr;
     torch::nn::ConvTranspose2d upsample2 = nullptr;
     torch::nn::ConvTranspose2d upsample3 =  nullptr;
@@ -128,16 +166,17 @@ private:
     bool debug;
 public:
 
-    ResidualUNet(int nChannels, int initNeurons, bool debug = false) : debug(debug)
+    ResidualUNet(int nChannels, int initNeurons, bool debug = true) : debug(debug)
     {
 
-        conv1 = ConvBlock(nChannels, initNeurons);
-        conv2 = ConvBlock(initNeurons, initNeurons * 2);
-        conv3 = ConvBlock(initNeurons * 2, initNeurons * 4);
-        conv4 = ConvBlock(initNeurons * 4, initNeurons * 8);
-        conv5 = ConvBlock(initNeurons * 12, initNeurons * 4);
-        conv6 = ConvBlock(initNeurons * 6, initNeurons * 2);
-        conv7 = ConvBlock(initNeurons * 3, initNeurons);
+        conv1 = register_module<ConvBlock>("conv1", std::make_shared<ConvBlock>(nChannels, initNeurons));
+        conv2 = register_module<ConvBlock>("conv2", std::make_shared<ConvBlock>(initNeurons, initNeurons * 2));
+        conv3 = register_module<ConvBlock>("conv3", std::make_shared<ConvBlock>(initNeurons * 2, initNeurons * 4));
+        conv4 = register_module<ConvBlock>("conv4", std::make_shared<ConvBlock>(initNeurons * 4, initNeurons * 8));
+        conv5 = register_module<ConvBlock>("conv5", std::make_shared<ConvBlock>(initNeurons * 12, initNeurons * 4));
+        conv6 = register_module<ConvBlock>("conv6", std::make_shared<ConvBlock>(initNeurons * 6, initNeurons * 2));
+        conv7 = register_module<ConvBlock>("conv7", std::make_shared<ConvBlock>(initNeurons * 3, initNeurons));
+
 
 //        // Define residual connections (skip connections)
 //        upsample1 = register_module("upsample1", torch::nn::ConvTranspose2d(
@@ -156,33 +195,34 @@ public:
         if (debug) {
 
             cout << "x INPUT: " << x.sizes() << endl;
-            torch::Tensor conv1Out = conv1.forward(x);
+
+            torch::Tensor conv1Out = conv1->forward(x);
             cout << "conv1Out: " << conv1Out.sizes() << endl;
 
 
 //            torch::Tensor upsampled1 = upsample1->forward(conv1Out);
 //            cout << "upsampled1: " << upsampled1.sizes() << endl;
 
-            torch::Tensor conv2Out = conv2.forward(conv1Out);
+            torch::Tensor conv2Out = conv2->forward(conv1Out);
             cout << "conv2Out: " << conv2Out.sizes() << endl;
 //
 //            torch::Tensor upsampled2 = upsample2->forward(conv2Out);
 //            cout << "upsampled2: " << upsampled2.sizes() << endl;
 
-            torch::Tensor conv3Out = conv3.forward(conv2Out);
+            torch::Tensor conv3Out = conv3->forward(conv2Out);
             cout << "conv3Out: " << conv3Out.sizes() << endl;
 
 //            torch::Tensor upsampled3 = upsample3->forward(conv3Out);
 //            cout << "upsampled3: " << upsampled3.sizes() << endl;
 
-            torch::Tensor conv4Out = conv4.forward(conv3Out);
+            torch::Tensor conv4Out = conv4->forward(conv3Out);
             cout << "conv4Out: " << conv4Out.sizes() << endl;
 
 
             torch::Tensor skipConnected1 = torch::cat({conv3Out,conv4Out},1);  // Concat along columns axis (3rd dimensions) conv4Out + upsampled3;
             cout << "skipConnected1: " << skipConnected1.sizes() << endl;
 
-            torch::Tensor conv5Out = conv5.forward(skipConnected1);
+            torch::Tensor conv5Out = conv5->forward(skipConnected1);
 
 
             cout << "conv5Out: " << conv5Out.sizes() << endl;
@@ -191,14 +231,17 @@ public:
             cout << "skipConnected2: " << skipConnected2.sizes() << endl;
 
 
-            torch::Tensor conv6Out = conv6.forward(skipConnected2);
+            torch::Tensor conv6Out = conv6->forward(skipConnected2);
             cout << "conv6Out: " << conv6Out.sizes() << endl;
 
             torch::Tensor skipConnected3 = torch::cat({conv1Out, conv6Out },1);
             cout << "skipConnected3: " << skipConnected3.sizes() << endl;
 
-            torch::Tensor conv7Out = conv7.forward(skipConnected3);
+
+            torch::Tensor conv7Out = conv7->forward(skipConnected3);
             cout << "conv7Out: " << conv7Out.sizes() << endl;
+
+
 
             torch::Tensor finalOut = finalConv->forward(conv7Out);
             cout << "finalOut: " << finalOut.sizes() << endl;
@@ -206,27 +249,28 @@ public:
 
             return sigmoid->forward(finalOut);
         } else{
+            return x;
 
-            torch::Tensor conv1Out = conv1.forward(x);
-            torch::Tensor conv2Out = conv2.forward(conv1Out);
-            torch::Tensor conv3Out = conv3.forward(conv2Out);
-            torch::Tensor conv4Out = conv4.forward(conv3Out);
+            // torch::Tensor conv1Out = conv1.forward(x);
+            // torch::Tensor conv2Out = conv2.forward(conv1Out);
+            // torch::Tensor conv3Out = conv3.forward(conv2Out);
+            // torch::Tensor conv4Out = conv4.forward(conv3Out);
 
-            torch::Tensor skipConnected1 = torch::cat({conv3Out, conv4Out}, 1);
+            // torch::Tensor skipConnected1 = torch::cat({conv3Out, conv4Out}, 1);
 
-            torch::Tensor conv5Out = conv5.forward(skipConnected1);
+            // torch::Tensor conv5Out = conv5.forward(skipConnected1);
 
-            torch::Tensor skipConnected2 = torch::cat({conv2Out, conv5Out}, 1);
+            // torch::Tensor skipConnected2 = torch::cat({conv2Out, conv5Out}, 1);
 
-            torch::Tensor conv6Out = conv6.forward(skipConnected2);
+            // torch::Tensor conv6Out = conv6.forward(skipConnected2);
 
-            torch::Tensor skipConnected3 = torch::cat({conv1Out, conv6Out}, 1);
+            // torch::Tensor skipConnected3 = torch::cat({conv1Out, conv6Out}, 1);
 
-            torch::Tensor conv7Out = conv7.forward(skipConnected3);
+            // torch::Tensor conv7Out = conv7.forward(skipConnected3);
 
-            torch::Tensor finalOut = finalConv->forward(conv7Out);
+            // torch::Tensor finalOut = finalConv->forward(conv7Out);
 
-            return sigmoid->forward(finalOut);
+            // return sigmoid->forward(finalOut);
 
 
         }
@@ -236,41 +280,38 @@ public:
 };
 
 
-void trainModel(Dataset train, Dataset test) {
+void trainModel(Dataset train, Dataset test, bool cuda = true) {
     /**
      * @brief This function trains the model
      * @param train: Dataset
      * @param test: Dataset
+     * ASSUMES CUDA WITH GPU IS AVAILABLE.
      */
 
-//    torch::nn::Sequential model(
-//        torch::nn::Linear(2, 64),
-//        torch::nn::Functional(torch::relu),
-//        torch::nn::Linear(64, 64),
-//        torch::nn::Functional(torch::relu),
-//        torch::nn::Linear(64, 1)
-//    );
-    // initialize U-Net
-    // Architecture:
-    // Conv Block: BatchNorm2D -> Conv2D(in_channels =3 ,out_channels = N, size =3, padding = 1) -> ReLU -> BatchNorm2D -> Conv2D(in_channels = N, out_channels = N,size =3, padding = 1) -> ReLU -> MaxPool2D(size = 2, stride = 2)
 
+    
     auto sizes = train.x.sizes();
+
     int c = sizes[1];
     int nTrainSamples = sizes[0];
     int initNeurons = 16;
     int batchSize = 64;
     ResidualUNet model = ResidualUNet(c, initNeurons);
 
-//    std::vector<torch::Tensor> trainTensors = {train.x,train.y};
-//    auto train_loader = torch::data::make_data_loader(
-//            torch::data::datasets::TensorDataset(trainTensors),
-//            torch::data::DataLoaderOptions().batch_size(64).workers(2)
-//    );
+    torch::Device device0(torch::kCUDA,0);
+    if (cuda){
+
+    model.to(device0);
+    }
+
+    printModuleDevice(model);
 
     torch::optim::SGD optimizer(model.parameters(), torch::optim::SGDOptions(0.01));
 
     for (size_t epoch = 1; epoch <= 100; ++epoch) {
         // Iterate over batches
+        std::cout << "Epoch: " << epoch << std::endl;
+
         int nBatches = round(nTrainSamples / batchSize);
         for (int i = 0; i < nBatches; ++i) {
             // Get the batch
@@ -278,18 +319,26 @@ void trainModel(Dataset train, Dataset test) {
             auto x = batch.first;
             auto y = batch.second;
 
+            if (cuda){
+    
+                x = x.to(device0);
+                y = y.to(device0);
+            }
+
 
             // Zero gradients
             optimizer.zero_grad();
 
 
-            cout << "x shape: " << x.sizes() << endl;
+            //cout << "x shape: " << x.sizes() << endl;
             // Forward pass
+ 
+
             torch::Tensor y_pred = model.forward(x);
 
 
-             cout << "y_pred shape: " << y_pred.sizes() << endl;
-             cout << "y shape: " << y.sizes() << endl;
+            //cout << "y_pred shape: " << y_pred.sizes() << endl;
+             //cout << "y shape: " << y.sizes() << endl;
             // Compute Loss
             torch::Tensor loss = torch::mse_loss(y_pred, y);
             std::cout << "Batch: " << i << " | Batch Loss: " << loss.item<float>() << std::endl;
@@ -300,11 +349,12 @@ void trainModel(Dataset train, Dataset test) {
             // Update the parameters
             optimizer.step();
         }
+
+
     }
 
     model.eval();
 
     torch::Tensor y_pred = model.forward(test.x);
     torch::Tensor loss = torch::mse_loss(y_pred, test.y);
-    std::cout << "Test Loss: " << loss.item<float>() << std::endl;
 }

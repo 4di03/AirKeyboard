@@ -15,7 +15,7 @@ void saveSample(float propTrain = 0.1, float propTest = 0.1){
     /**
      * @brief This function  loads data and saves samples o a tensor file in data/data_tensors
      */
-    std::string trainData = "/Users/adithyapalle/work/CS5100/Project/data/hanco_all/HanCo/train_keypoint_data.csv";
+    std::string trainData = "/scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/train_keypoint_data.csv";
     Dataset train = prepData(trainData, propTrain);
 
     cout << "train x shape: " << train.x.sizes() << endl;
@@ -24,10 +24,10 @@ void saveSample(float propTrain = 0.1, float propTest = 0.1){
     torch::Tensor xTrain = train.x;
     torch::Tensor yTrain = train.y;
 
-    torch::save(xTrain, "/scratch/palle.a/AirKeyboard/Project/data/data_tensors/xTrain.pt");
-    torch::save(yTrain, "/scratch/palle.a/AirKeyboard/Project/data/data_tensors/yTrain.pt");
+    torch::save(xTrain, "/scratch/palle.a/AirKeyboard/data/data_tensors/xTrain.pt");
+    torch::save(yTrain, "/scratch/palle.a/AirKeyboard/data/data_tensors/yTrain.pt");
 
-    std::string testData = "/scratch/palle.a/AirKeyboard/Project/data/hanco_all/HanCo/test_keypoint_data.csv";
+    std::string testData = "/scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/test_keypoint_data.csv";
     Dataset test = prepData(testData, propTest);
 
     torch::Tensor xTest = test.x;
@@ -88,7 +88,7 @@ std::vector<Dataset> loadSamples(){
     torch::Tensor xTrain;
     torch::load(xTrain,"/scratch/palle.a/AirKeyboard/data/data_tensors/xTrain.pt");
     torch::Tensor yTrain;
-    torch::load(yTrain,"/scratch/palle.a/AirKeyboard/Project/data/data_tensors/yTrain.pt");
+    torch::load(yTrain,"/scratch/palle.a/AirKeyboard/data/data_tensors/yTrain.pt");
 
 
     xTrain = xTrain.permute({0, 3, 1, 2});// initalliy in (N,W,H,C) format, but we need (N,C,W,H)
@@ -115,19 +115,16 @@ int main() {
 
     
 
-    torchCudaTest();
-    xTensorTest();
+    auto data = loadSamples();
+    Dataset train = data[0];
+    Dataset test = data[1];
 
-    // auto data = loadSamples();
-    // Dataset train = data[0];
-    // Dataset test = data[1];
+    cout << "train x shape: " << train.x.sizes() << endl;
+    cout << "train y shape: " << train.y.sizes() << endl;
+    cout << "test x shape: " << test.x.sizes() << endl;
+    cout << "test y shape: " << test.y.sizes() << endl;
 
-    // cout << "train x shape: " << train.x.sizes() << endl;
-    // cout << "train y shape: " << train.y.sizes() << endl;
-    // cout << "test x shape: " << test.x.sizes() << endl;
-    // cout << "test y shape: " << test.y.sizes() << endl;
-
-    // trainModel(train, test);
+    trainModel(train, test, true);
 
 
     // std::cout << "Expected FPS: " << cap.get(cv::CAP_PROP_FPS) << std::endl;
