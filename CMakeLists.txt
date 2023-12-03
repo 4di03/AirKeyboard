@@ -40,6 +40,10 @@ include_directories(/home/palle.a/CPP_packages/json/single_include/nlohmann)
 add_executable( Open_CV_Project main.cpp  data_work.cpp
         train.cpp
         train.h)
+add_executable( Test test.cpp)
+target_link_libraries(Test ${CUDA_LIBRARIES} ${CUDA_CUBLAS_LIBRARIES})
+target_link_libraries(Test "${TORCH_LIBRARIES}")
+
 
 target_link_libraries(Open_CV_Project ${CUDA_LIBRARIES} ${CUDA_CUBLAS_LIBRARIES})
 target_link_libraries(Open_CV_Project "${TORCH_LIBRARIES}")

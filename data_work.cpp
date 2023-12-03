@@ -12,6 +12,7 @@
 #include <opencv2/opencv.hpp>
 #include <json.hpp>
 #include <cmath>
+#include <omp.h>
 
 using namespace std;
 
@@ -262,6 +263,19 @@ torch::Tensor getJointHeatmaps(const torch::Tensor& kp2d, const std::vector<int>
 
 }
 
+vector<torch::Tensor> removeNullVectors(vector<torch::Tensor> v){
+    vector<torch::Tensor> ret;
+
+    for (auto t : v){
+        if (t.sizes().size() > 1){
+            ret.push_back(t);
+        }
+    }
+
+    return ret;
+
+}
+
 Dataset prepData(std::string path, float prop = 1.0){
     std::ifstream file(path);
     auto data = xt::load_csv<std::string>(file);
@@ -277,12 +291,14 @@ Dataset prepData(std::string path, float prop = 1.0){
         colMap[column_names[i]] = i;
     }
 
-    vector<torch::Tensor> xData;
-    vector<torch::Tensor> yData;
-
     cout << "Processing "<< data.shape()[0] << " Images" << endl;
 
-    for (int i = 1; i < data.shape()[0]; ++i) {
+    int nDataPoints = data.shape()[0];
+    vector<torch::Tensor> xData(nDataPoints);
+    vector<torch::Tensor> yData(nDataPoints);
+
+    #pragma omp parallel for
+    for (int i = 1; i < nDataPoints; ++i) {
         auto row = xt::view(data, i, xt::all());
 
         std::string imagePath = row[colMap["image_file"]];
@@ -337,12 +353,22 @@ Dataset prepData(std::string path, float prop = 1.0){
 
         torch::Tensor imageTensor = matToTensor(shrunkImage);
 
-        xData.push_back(imageTensor);
         torch::Tensor jointHeatmaps  = getJointHeatmaps(shrunk_kp2d, {128,128}); // gets 21x128x128 tensor where each of the 2d tensors is a heatmap for each keypoint
-        yData.push_back(jointHeatmaps);
+        
+        // Inside the loop, assign to the vectors in a thread-safe manner
+        #pragma omp critical
+        {
+            xData[i - 1] = imageTensor;
+            yData[i - 1] = jointHeatmaps;
+        }
+        
+        //xData.push_back(imageTensor);
+        //yData.push_back(jointHeatmaps);
 
     }
 
+    xData = removeNullVectors(xData);
+    yData = removeNullVectors(yData);
     torch::Tensor xTensor = torch::stack(xData);
     torch::Tensor yTensor = torch::stack(yData);
 

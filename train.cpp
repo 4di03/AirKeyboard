@@ -4,8 +4,28 @@
 #include <cmath>
 #include <vector>
 #include <torch/script.h>
+#include "train.h"
 
 using namespace std;
+
+// torch::Tensor IOU_loss(torch::Tensor y_pred, torch::Tensor y){
+//     /**
+//     * y and y_pred must have same shape!
+//     */
+    
+//     float I;
+//     float U;
+
+//     float iou;
+//     float loss
+
+//     return
+
+// }
+
+
+
+
 
 
 // Function to print the device of a PyTorch tensor
@@ -320,10 +340,11 @@ torch::Device initDevice(bool cuda){
 
 
 // Load Model
-void loadModel(const std::string& model_path, torch::nn::Module model) {
+void loadModel(const std::string& model_path, torch::nn::Module& model) {
     //torch::jit::script::Module model;
 
     try {
+        //model = torch::load(model,model_path)
         torch::serialize::InputArchive input_archive;
         input_archive.load_from(model_path);
         model.load(input_archive);
@@ -334,72 +355,104 @@ void loadModel(const std::string& model_path, torch::nn::Module model) {
 
 }
 
+void saveModel(const std::string& model_path, torch::nn::Module& model){
+     try {
+        //model = torch::load(model,model_path)
+        torch::serialize::OutputArchive output_archive;
+        model.save(output_archive);
+        output_archive.save_to(model_path);
+        //model = torch::jit::load(model_path);
+    } catch (const c10::Error& e) {
+        std::cerr << "Error saving the model: " << e.what() << std::endl;
+    }
+}
+
+void printModel(torch::nn::Module model) {
+    // Get named parameters of the model, gets parameters of last layer
+    auto named_params = model.named_parameters();
+    cout << "MODEL PARAMS (last layer): " << endl;
+    // Iterate over named parameters and print their names and values
+    auto& named_param = named_params[named_params.size()-1];
+    const std::string& name = named_param.key();
+    const torch::Tensor& param = named_param.value();
+    std::cout << "Parameter Name: " << name;
+    std::cout << " Parameter Value:\n" << param;
+    std::cout << "------------------------" << std::endl;
+    
+}
 
 void evaluateTest( Dataset test, bool cuda, ResidualUNet model){
     torch::Device device = initDevice(cuda);
+    auto loss_fn = MSELoss();
+
 
     model.to(device);
 
-    test.sample(0.025);
+    //printModel(model);
+
+    //test = test.sample(0.025);
     test.y = removeExtraDim(test.y);
-
-
-    cout << test.x.sizes() << test.y.sizes() << endl;
-
-    auto test_x = test.x.to(device);
-    auto test_y = test.y.to(device);
-
-
     model.eval();
-    auto pred = model.forward(test_x);
 
-    cout << pred.sizes() << endl;
 
-    torch::Tensor loss = torch::mse_loss(pred, test_y);
+    float maxBatchSize = 128.0;
 
-    cout <<"Test Loss: " << loss.item<float>() << endl;
+    int nTrainSamples = test.y.sizes()[0];
+    int nBatches = ceil(nTrainSamples / maxBatchSize);
+
+    cout << "Breaking data into " << nBatches << " Batches" << endl;
+
+    float totalLoss = 0;
+
+    for (int i=0 ; i < nBatches ; i++){
+        // Get the batch
+        auto batch = test.getBatch(i, maxBatchSize);
+        auto x = batch.first;
+        auto y = batch.second;
+
+        x = x.to(device);
+
+
+
+        auto pred = model.forward(x);
+
+        // free up gpu space
+        x.reset();
+        
+        y = y.to(device);
+
+
+        //cout << pred.sizes() << endl;
+        torch::Tensor loss = loss_fn.forward(pred, y) * maxBatchSize;
+
+        //cout << loss.item<float>() << endl;
+        totalLoss += loss.item<float>();
+
+    }
+
+
+
+    float mse = totalLoss/nTrainSamples;
+
+    cout <<"Test Loss: " <<  mse<< endl;
 
 }
-
-void evaluate(Dataset test, bool cuda = true){
+void evaluate(Dataset test, bool cuda , std::string model_name){
+    cout << "running evaluation for " << model_name << endl;
 
     ResidualUNet model;
 
-    loadModel("/scratch/palle.a/AirKeyboard/data/models/sample_model.pt", model);
+    loadModel("/scratch/palle.a/AirKeyboard/data/models/" + model_name, model);
 
     evaluateTest(test,cuda,model);
 
-    // torch::Device device = initDevice(cuda);
 
-    // model.to(device);
-
-    // test.sample(0.025);
-    // test.y = removeExtraDim(test.y);
-
-
-    // cout << test.x.sizes() << test.y.sizes() << endl;
-
-    // auto test_x = test.x.to(device);
-    // auto test_y = test.y.to(device);
-
-
-    // model.eval();
-
-    // auto pred = model.forward(test_x);
-
-    // cout << pred.sizes() << endl;
-
-    // torch::Tensor loss = torch::mse_loss(pred, test_y);
-
-    // cout <<"Test Loss: " << loss.item<float>() << endl;
-
-
-
-
-    //cout << model << endl;
 }
-
-void trainModel(Dataset train, Dataset test, bool cuda = true, float propDataUsed = 0.3) {
+void trainModel(Dataset train, 
+                Dataset test, 
+                bool cuda , 
+                float propDataUsed,
+                std::string model_name) {
     /**
      * @brief This function trains the model
      * @param train: Dataset
@@ -407,9 +460,11 @@ void trainModel(Dataset train, Dataset test, bool cuda = true, float propDataUse
      * ASSUMES CUDA WITH GPU IS AVAILABLE.
      */
 
+    auto loss_fn = MSELoss();
 
-    train.sample(propDataUsed);
-    test.sample(propDataUsed);
+
+    train = train.sample(propDataUsed);
+    test = test.sample(propDataUsed);
 
 
     cout << "train x shape: " << train.x.sizes() << endl;
@@ -423,8 +478,8 @@ void trainModel(Dataset train, Dataset test, bool cuda = true, float propDataUse
     int c = sizes[1];
     int nTrainSamples = sizes[0];
     int initNeurons = 16;
-    int batchSize = 128;
-    int nEpochs = 40;
+    float batchSize = 128.0;
+    int nEpochs = 200;
     ResidualUNet model = ResidualUNet(c, initNeurons);
 
     torch::Device device = initDevice(cuda);
@@ -432,14 +487,15 @@ void trainModel(Dataset train, Dataset test, bool cuda = true, float propDataUse
 
     printModuleDevice(model);
 
-    torch::optim::SGD optimizer(model.parameters(), torch::optim::SGDOptions(0.01));
+    torch::optim::SGD optimizer(model.parameters(), torch::optim::SGDOptions(0.1));
+    string model_path = "/scratch/palle.a/AirKeyboard/data/models/" + model_name;
 
     for (size_t epoch = 1; epoch <= nEpochs; ++epoch) {
         // Iterate over batches
-        std::cout << "Epoch: " << epoch << std::endl;
+        //std::cout << "Epoch: " << epoch << std::endl;
 
-        int nBatches = round(nTrainSamples / batchSize);
-        std::vector<float> batchLosses;
+        int nBatches = ceil(nTrainSamples / batchSize);
+        //std::vector<float> batchLosses;
         auto start_time = std::chrono::high_resolution_clock::now();
 
         for (int i = 0; i < nBatches; ++i) {
@@ -461,7 +517,6 @@ void trainModel(Dataset train, Dataset test, bool cuda = true, float propDataUse
 
             torch::Tensor y_pred = model.forward(x);
 
-
             y = y.to(device);
             y = removeExtraDim(y); // to remove extra axis for 1 channel image
 
@@ -469,8 +524,13 @@ void trainModel(Dataset train, Dataset test, bool cuda = true, float propDataUse
             // cout << "y shape: " << y.sizes() << endl;
             // Compute Loss
 
-            torch::Tensor loss = torch::mse_loss(y_pred, y);
-            batchLosses.push_back(loss.item<float>());
+            torch::Tensor loss = loss_fn.forward(y_pred, y);
+            //batchLosses.push_back(loss.item<float>());
+
+            if (i == 0){
+                cout << "Batch Loss " << loss.item<float>() <<endl;
+
+            }
 
             // Backward pass
             loss.backward();
@@ -481,11 +541,15 @@ void trainModel(Dataset train, Dataset test, bool cuda = true, float propDataUse
 
         auto end_time = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+
+        if(epoch % 10 ==0){
+            saveModel(model_path,model); //checkpointing model 
+        }
         // Print the time taken for the forward pass
-        std::cout << "Epoch took " << duration.count() << " microseconds." << std::endl;
+        //std::cout << "Epoch took " << duration.count() << " microseconds." << std::endl;
 
 
-        cout << "Epoch Mean Loss " << getMean(batchLosses) <<endl;
+        //cout << "Epoch Mean Loss " << getMean(batchLosses) <<endl;
 
 
     }
@@ -496,10 +560,8 @@ void trainModel(Dataset train, Dataset test, bool cuda = true, float propDataUse
     evaluateTest(test, cuda, model);
 
     // SAVE MODEL
-    string model_path = "/scratch/palle.a/AirKeyboard/data/models/sample_model.pt";
-    torch::serialize::OutputArchive output_archive;
-    model.save(output_archive);
-    output_archive.save_to(model_path);
+
+    saveModel( model_path,model);
 }
 
 

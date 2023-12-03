@@ -11,7 +11,7 @@
 using namespace std;
 
 
-void saveSample(float propTrain = 0.1, float propTest = 0.1){
+void saveSample(float propTrain = 0.1, float propTest = 0.1 , std::string save_folder = "/scratch/palle.a/AirKeyboard/data/data_tensors"){
     /**
      * @brief This function  loads data and saves samples o a tensor file in data/data_tensors
      */
@@ -24,16 +24,16 @@ void saveSample(float propTrain = 0.1, float propTest = 0.1){
     torch::Tensor xTrain = train.x;
     torch::Tensor yTrain = train.y;
 
-    torch::save(xTrain, "/scratch/palle.a/AirKeyboard/data/data_tensors/xTrain.pt");
-    torch::save(yTrain, "/scratch/palle.a/AirKeyboard/data/data_tensors/yTrain.pt");
+    torch::save(xTrain, save_folder + "/xTrain.pt");
+    torch::save(yTrain, save_folder + "/yTrain.pt");
 
     std::string testData = "/scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/test_keypoint_data.csv";
     Dataset test = prepData(testData, propTest);
 
     torch::Tensor xTest = test.x;
     torch::Tensor yTest = test.y;
-    torch::save(xTest, "/scratch/palle.a/AirKeyboard/data/data_tensors/xTest.pt");
-    torch::save(yTest, "/scratch/palle.a/AirKeyboard/data/data_tensors/yTest.pt");
+    torch::save(xTest, save_folder + "/xTest.pt");
+    torch::save(yTest, save_folder + "/yTest.pt");
 }
 
 void torchCudaTest(){
@@ -80,15 +80,15 @@ void xTensorTest(){
 
 }
 
-std::vector<Dataset> loadSamples(){
+std::vector<Dataset> loadSamples(std::string save_folder = "/scratch/palle.a/AirKeyboard/data/data_tensors"){
     /**
      * @brief This function loads samples from the tensor files in data/data_tensors
      * @return std::tuple<Dataset>
      */
     torch::Tensor xTrain;
-    torch::load(xTrain,"/scratch/palle.a/AirKeyboard/data/data_tensors/xTrain.pt");
+    torch::load(xTrain,save_folder+"/xTrain.pt");
     torch::Tensor yTrain;
-    torch::load(yTrain,"/scratch/palle.a/AirKeyboard/data/data_tensors/yTrain.pt");
+    torch::load(yTrain,save_folder+"/yTrain.pt");
 
 
     xTrain = xTrain.permute({0, 3, 1, 2});// initalliy in (N,W,H,C) format, but we need (N,C,W,H)
@@ -96,9 +96,9 @@ std::vector<Dataset> loadSamples(){
     Dataset train = {xTrain, yTrain};
 
     torch::Tensor xTest;
-    torch::load(xTest,"/scratch/palle.a/AirKeyboard/data/data_tensors/xTest.pt");
+    torch::load(xTest,save_folder+"/xTest.pt");
     torch::Tensor yTest;
-    torch::load(yTest,"/scratch/palle.a/AirKeyboard/data/data_tensors/yTest.pt");
+    torch::load(yTest,save_folder+"/yTest.pt");
     xTest = xTest.permute({0, 3, 1, 2});// initalliy in (N,W,H,C) format, but we need (N,C,W,H)
     yTest = yTest.permute({0, 4, 1, 2,3});// initalliy in (N,K,W,H,C) format, but we need (N,C,K,W,H)
     Dataset test = {xTest, yTest};
@@ -106,24 +106,32 @@ std::vector<Dataset> loadSamples(){
     return {train, test};
 
 }
-
+//TODO: add flexibility with loss functions in trainModel
 int main() {
     // Open a connection to the webcam (usually 0 for the default webcam)
     //cv::VideoCapture cap(0);
     
-    //saveSample(0.01, 0.1);
+    //saveSample(0.002, 0.03,  "/scratch/palle.a/AirKeyboard/data/data_tensors/samples");
+    saveSample(0.005, 0.05,  "/scratch/palle.a/AirKeyboard/data/data_tensors/full_data");
 
     
+    torch::manual_seed(0);
+    torch::cuda::manual_seed(0);
 
-    auto data = loadSamples();
+    auto data = loadSamples("/scratch/palle.a/AirKeyboard/data/data_tensors/full_data");
     Dataset train = data[0];
     Dataset test = data[1];
 
+    // train = train.sample(0.1);
+    // test = test.sample(0.5);
 
-    trainModel(train, test, true,0.05);
+    cout << "running Training!" << endl;
 
-    cout << "running evaluation!" << endl;
-    evaluate(test, true);
+    trainModel(train, test, true,1,  "model_full_IOU.pt");
+    //trainModel(train, test, true,1, "sample_MSE.pt");
+
+    evaluate(test, true,"model_full_IOU.pt");
+    //evaluate(test, true,"sample_MSE.pt");
     // std::cout << "Expected FPS: " << cap.get(cv::CAP_PROP_FPS) << std::endl;
     // int ct = 0;
 
