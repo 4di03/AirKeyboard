@@ -95,8 +95,9 @@ struct Dataset {
 Dataset prepData(std::string path, float prop, bool excludeMerged);
 
 void printTensor(const torch::Tensor tensor);
-
 torch::Tensor getKPFromHeatmap(const torch::Tensor& heatmapStack, torch::Device device);
 void saveImageToFile(const cv::Mat& image, const std::string& filePath);
 cv::Mat tensorToMat(const torch::Tensor& tensor);
 cv::Mat drawKeypoints(cv::Mat image, const torch::Tensor kp2d, cv::Scalar color);
+
+bool isSubstringPresent(const std::string mainString, const std::string searchString);

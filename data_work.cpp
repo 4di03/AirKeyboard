@@ -415,7 +415,7 @@ double findMaxValue(const cv::Mat& matrix) {
     return maxVal;
 }
 
-bool isSubstringPresent(const std::string& mainString, const std::string& searchString) {
+bool isSubstringPresent(const std::string mainString, const std::string searchString) {
     size_t found = mainString.find(searchString);
     
     return found != std::string::npos;
@@ -455,7 +455,8 @@ Dataset prepData(std::string path, float prop = 1.0,bool excludeMerged = false )
         std::string calibPath = row[colMap["calib_file"]];
 
         
-        if (excludeMerged && isSubstringPresent(imagePath, "rgb_merged")){
+        std::string rbm= "rgb_merged";
+        if (excludeMerged && isSubstringPresent(imagePath, rbm)){
             // skip over rgb_merged data
             continue;
         }

@@ -1,0 +1,74 @@
+[ 33%] Built target Test
+[100%] Built target Open_CV_Project
+L98 ./Open_CV_Projectiou
+L102model_iou2_9k.pt
+Model Name: model_iou2_9k.pt
+USING IOU LOSS
+train x shape: [60154, 3, 128, 128]
+train y shape: [60154, 21, 128, 128]
+test x shape: [2833, 3, 128, 128]
+test y shape: [2833, 21, 128, 128]
+POST SAMPLING
+train x shape: [9625, 3, 128, 128]
+train y shape: [9625, 21, 128, 128]
+val x shape: [2406, 21, 128, 128]
+val y shape: [2406, 21, 128, 128]
+test x shape: [567, 3, 128, 128]
+test y shape: [567, 21, 128, 128]
+USING CUDA
+Module is on GPU.
+Train (single batch) Loss 0.999901
+VALIDATION LOSS: Loss: 0.999362
+Train (single batch) Loss 0.999361
+VALIDATION LOSS: Loss: 0.994113
+Train (single batch) Loss 0.994024
+VALIDATION LOSS: Loss: 0.986279
+Train (single batch) Loss 0.98628
+VALIDATION LOSS: Loss: 0.98638
+Train (single batch) Loss 0.98638
+VALIDATION LOSS: Loss: 0.985864
+Train (single batch) Loss 0.985864
+VALIDATION LOSS: Loss: 0.987404
+Train (single batch) Loss 0.987404
+VALIDATION LOSS: Loss: 0.987395
+Train (single batch) Loss 0.987395
+VALIDATION LOSS: Loss: 0.987395
+Train (single batch) Loss 0.987395
+VALIDATION LOSS: Loss: 0.987395
+Train (single batch) Loss 0.987395
+VALIDATION LOSS: Loss: 0.987395
+Train (single batch) Loss 0.987395
+VALIDATION LOSS: Loss: 0.987395
+Train (single batch) Loss 0.987395
+VALIDATION LOSS: Loss: 0.987395
+Train (single batch) Loss 0.987395
+VALIDATION LOSS: Loss: 0.987395
+Train (single batch) Loss 0.987395
+VALIDATION LOSS: Loss: 0.987395
+Train (single batch) Loss 0.987395
+VALIDATION LOSS: Loss: 0.987395
+Train (single batch) Loss 0.987395
+VALIDATION LOSS: Loss: 0.987395
+Train (single batch) Loss 0.987395
+VALIDATION LOSS: Loss: 0.987395
+Train (single batch) Loss 0.987395
+VALIDATION LOSS: Loss: 0.987395
+Train (single batch) Loss 0.987395
+VALIDATION LOSS: Loss: 0.987395
+Train (single batch) Loss 0.987395
+VALIDATION LOSS: Loss: 0.987395
+Early stopping at epoch 20
+Post-training loss:Loss: 0.987395
+Ground truth keypoints are in Red, predicted are in Green
+Saved all predictions to /scratch/palle.a/AirKeyboard/data/analytics/model_iou2_9k.pt_analytics/predictions_presave/
+Prediction per image took 10824.2 microseconds  on average
+Loading model after saving
+Ground truth keypoints are in Red, predicted are in Green
+Saved all predictions to /scratch/palle.a/AirKeyboard/data/analytics/model_iou2_9k.pt_analytics/predictions_postsave/
+Prediction per image took 5263.7 microseconds  on average
+running evaluation for model_iou2_9k.pt
+USING CUDA
+Loss: 0.987395
+Ground truth keypoints are in Red, predicted are in Green
+Saved all predictions to /scratch/palle.a/AirKeyboard/data/analytics/model_iou2_9k.pt_analytics/
+Prediction per image took 4637 microseconds  on average

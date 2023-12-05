@@ -1,11 +1,12 @@
 #include <torch/torch.h>
 #include <iostream>
-#include "train.h"
 #include "data_work.h"
 #include <any>
 #include <xtensor/xarray.hpp>
 #include <xtensor/xio.hpp>
 #include <xtensor/xrandom.hpp>  // Include xrandom header for randn function
+#include <assert.h>
+#include "train.h"
 using namespace std;
 
 // Assuming your model takes an input of shape (n, 21, 128, 128)
@@ -192,6 +193,16 @@ void testSpecificLoss(LossType loss){
 }
 
 
+void testSubString(){
+
+
+   assert(isSubstringPresent("rgb_merged/loi.cj", "rgb_merged"));
+   assert(!isSubstringPresent("rgb/loi.cj", "rgb_merged"));
+   assert(isSubstringPresent("time/rgb_merged/loi.cj", "rgb_merged"));
+    cout << "testSubstring tests passed!" << endl;
+}
+
+
 int main() {
     // Run the function to test MSE with different input sizes
     //testMSEWithDifferentInputSizes();
@@ -200,5 +211,8 @@ int main() {
     IouLoss loss_func;
     testSpecificLoss(IouLoss());
     testSpecificLoss(MSELoss());
+
+    testSubString();
     return 0;
+
 }

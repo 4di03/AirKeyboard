@@ -51,10 +51,12 @@ add_executable( Open_CV_Project
         train.cpp
         train.h
         cunet/cunet.h)
-add_executable( Test test.cpp)
+add_executable( Test test.cpp data_work.cpp)
+
 target_link_libraries(Test ${CUDA_LIBRARIES} ${CUDA_CUBLAS_LIBRARIES})
 target_link_libraries(Test "${TORCH_LIBRARIES}")
 target_link_libraries(Test xtensor)
+target_link_libraries(Test ${OpenCV_LIBS})
 
 
 target_link_libraries(Open_CV_Project ${CUDA_LIBRARIES} ${CUDA_CUBLAS_LIBRARIES})

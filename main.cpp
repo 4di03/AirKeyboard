@@ -5,14 +5,17 @@
 #include <ctime>
 #include "data_work.h"
 #include "train.h"
+#include <filesystem>
 
 using namespace std;
 
 
-void saveSample(float propTrain = 0.1, float propTest = 0.1 , std::string save_folder = "/scratch/palle.a/AirKeyboard/data/data_tensors", bool excludeMerged){
+void saveSample(float propTrain = 0.1, float propTest = 0.1 , std::string save_folder = "/scratch/palle.a/AirKeyboard/data/data_tensors", bool excludeMerged= false){
     /**
      * @brief This function  loads data and saves samples o a tensor file in data/data_tensors
      */
+
+    std::filesystem::create_directories(save_folder);
     std::string trainData = "/scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/train_keypoint_data.csv";
     Dataset train = prepData(trainData, propTrain, excludeMerged);
 
@@ -87,28 +90,37 @@ std::vector<Dataset> loadSamples(std::string save_folder = "/scratch/palle.a/Air
     return {train, test};
 
 }
-//TODO: add flexibility with loss functions in trainModel
+// TODO: double check x,y stuff with predictions!!!( especially when averaging heatmap)
 int main(int argc, char* argv[]) {
+    bool SEED = false;
+    
+    // ARGUMENTS:
+    // arg 1 is loss name , arg 2 is model name, arg 3 is reload option
+
     // Open a connection to the webcam (usually 0 for the default webcam)
 
     //saveSample(0.002, 0.03,  "/scratch/palle.a/AirKeyboard/data/data_tensors/samples");
     //saveSample(0.0005, 0.005,  "/scratch/palle.a/AirKeyboard/data/data_tensors/samples");
+    if (argc == 1){
+        cout << "Provide cmd arguments : arg 1 is loss name , arg 2 is model name, arg 3 is reload option"  << endl;
+    }
 
     cout << "L98 " << std::string(argv[0]) <<std::string(argv[1])  << endl;
 
 
     std::string modelName = "default_model.pt";
     if (argc > 2){
-
+        cout <<  "L102" << argv[2] << endl;
         modelName = std::string(argv[2]);
 
         cout << "Model Name: " << modelName <<  endl;
 
     }
 
+    float propDataUsed = 1;
    
 
-    TrainParams tp = TrainParams().setBatchSize(128).setEpochs(300).setNeurons(64).setLevels(4).setCuda(true).setPropDataUsed(1).setModelName(modelName);
+    TrainParams tp = TrainParams().setBatchSize(64).setEpochs(500).setNeurons(16).setLevels(6).setCuda(true).setPropDataUsed(propDataUsed).setModelName(modelName).setPropVal(0.2);
 
     
     if (std::string(argv[1]) == "iou"){
@@ -121,19 +133,31 @@ int main(int argc, char* argv[]) {
 
     bool reload = false;
     if (argc > 3){
-        cout << "Not reloading data!" << endl;
-
-         reload = (std::string(argv[3]) == "--no-reload");
+        auto arg3 = std::string(argv[3]);
+        cout << "read argv" << arg3 << endl;
+         reload = (arg3 != "--no-reload");
     }
+    if (reload){
+        cout << "Reloading data!" <<endl;
+    }else{
+    cout << "Not reloading data!" << endl;
 
+    }   
 
     if (reload){
-    saveSample(0.05, 0.05,  "/scratch/palle.a/AirKeyboard/data/data_tensors/full_data");
+    bool em = true;
+    if (em){
+    cout << "Excluding background swapped images" << endl;
+    }
+    saveSample(0.01, 0.05,  "/scratch/palle.a/AirKeyboard/data/data_tensors/pure_data", em);
     }
 
+    if (SEED){
     torch::manual_seed(0);
     torch::cuda::manual_seed(0);
-    auto data = loadSamples("/scratch/palle.a/AirKeyboard/data/data_tensors/full_data");
+    }
+
+    auto data = loadSamples("/scratch/palle.a/AirKeyboard/data/data_tensors/pure_data");
     Dataset train = data[0];
     Dataset test = data[1];
     bool useCuda = true;

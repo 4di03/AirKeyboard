@@ -623,7 +623,7 @@ void trainModel(Dataset& train,
 
     train = train.sample(propDataUsed);
 
-    auto sets = train.sliceProp(0.1); // use 20% of train data for validation(early stopping)
+    auto sets = train.sliceProp(tp.propVal); // use 20% of train data for validation(early stopping)
     Dataset val = sets[0];
     train = sets[1];
     test = test.sample(propDataUsed);
@@ -729,7 +729,7 @@ void trainModel(Dataset& train,
         cout << "VALIDATION LOSS: ";
         float valLoss = evaluateTest(val,device,model, *loss_fn);
 
-        if (earlyStopping(valLoss, 15)){//if loss doesnt imporve for 15 epochs
+        if (earlyStopping(valLoss, 50)){//if loss doesnt imporve for 15 epochs
             std::cout << "Early stopping at epoch " << epoch << std::endl;
             break;
 

@@ -1,5 +1,6 @@
 #include <torch/torch.h>
 #include "data_work.h"
+#pragma once // or use include guards
 
 // class Loss : torch::nn::Module {
 // public:
@@ -110,9 +111,16 @@ public:
     bool cuda = true;
     float propDataUsed = 1;
     std::string model_name = "default_model.pt";
+    float propVal = 0.1;
    // builder for trian parameter
     TrainParams(){
 
+    }
+
+
+    TrainParams setPropVal(float propVal){
+        this->propVal = propVal;
+        return *this;
     }
 
     TrainParams  setLoss(Loss* loss_fn) {

@@ -4,7 +4,7 @@
 #SBATCH -n 1                 # Number of tasks
 #SBATCH --cpus-per-task=4
 #SBATCH -p gpu 
-#SBATCH --mem=50G
+#SBATCH --mem=100G
 #SBATCH --gres=gpu:v100-sxm2:1
 #SBATCH -o /scratch/palle.a/AirKeyboard/logs/train_out_%j.txt       # Standard output file
 #SBATCH -e /scratch/palle.a/AirKeyboard/logs/train_error_%j.txt        # Standard error file
