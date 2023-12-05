@@ -5,28 +5,13 @@
 #include <vector>
 #include <torch/script.h>
 #include "train.h"
+#include <opencv2/opencv.hpp>
+#include <filesystem>
+#include <iterator>
+#include <fstream>
+#include "cunet/cunet.h"
 
 using namespace std;
-
-// torch::Tensor IOU_loss(torch::Tensor y_pred, torch::Tensor y){
-//     /**
-//     * y and y_pred must have same shape!
-//     */
-    
-//     float I;
-//     float U;
-
-//     float iou;
-//     float loss
-
-//     return
-
-// }
-
-
-
-
-
 
 // Function to print the device of a PyTorch tensor
 void printTensorDevice(const torch::Tensor& tensor) {
@@ -65,18 +50,15 @@ void printModuleDevice(const torch::nn::Module& module) {
 
 
 class ConvBlock : public torch::nn::Module {
-private:
+public:
+
     torch::nn::BatchNorm2d batchNorm1 = nullptr, batchNorm2 = nullptr;
     torch::nn::Conv2d conv1 = nullptr, conv2 = nullptr;
     torch::nn::Functional relu1 = nullptr, relu2 = nullptr;
     bool debug;
-public:
     torch::nn::Sequential block = nullptr;
 
 //    torch::nn::Sequential block;
-
-
-
     ConvBlock(int inChannels = 3, int outChannels = 3, int kernelSize = 3, int padding = 1, bool debug = false) : debug(debug)
     {
         /**
@@ -147,46 +129,56 @@ public:
 };
 
 
-class UNet : public torch::nn::Module {
+// class UNet : public torch::nn::Module {
+// public:
+//     torch::nn::Sequential model;
+
+//     UNet(int nChannels, int initNeurons) {
+//         int c = nChannels;
+
+//         model = torch::nn::Sequential(
+//                 ConvBlock(c, initNeurons),
+//                 ConvBlock(initNeurons, initNeurons * 2),
+//                 ConvBlock(initNeurons * 2, initNeurons * 4),
+//                 ConvBlock(initNeurons * 4, initNeurons * 8),
+//                 ConvBlock(initNeurons * 12, initNeurons * 4),
+//                 ConvBlock(initNeurons * 6, initNeurons * 2),
+//                 ConvBlock(initNeurons * 3, initNeurons),
+//                 torch::nn::Conv2d(torch::nn::Conv2dOptions(initNeurons, 21, 3).padding(1)),
+//                 torch::nn::Functional(torch::sigmoid)
+//         );
+
+
+//     }
+
+
+//     torch::Tensor forward(torch::Tensor x) {
+//         return model->forward(x);
+//     }
+// };
+
+
+class Model : public torch::nn::Module {
 public:
-    torch::nn::Sequential model;
+    virtual torch::Tensor forward(const torch::Tensor& x)=0;
 
-    UNet(int nChannels, int initNeurons) {
-        int c = nChannels;
-
-        model = torch::nn::Sequential(
-                ConvBlock(c, initNeurons),
-                ConvBlock(initNeurons, initNeurons * 2),
-                ConvBlock(initNeurons * 2, initNeurons * 4),
-                ConvBlock(initNeurons * 4, initNeurons * 8),
-                ConvBlock(initNeurons * 12, initNeurons * 4),
-                ConvBlock(initNeurons * 6, initNeurons * 2),
-                ConvBlock(initNeurons * 3, initNeurons),
-                torch::nn::Conv2d(torch::nn::Conv2dOptions(initNeurons, 21, 1)),
-                torch::nn::Functional(torch::sigmoid)
-        );
-
-
-    }
-
-
-    torch::Tensor forward(torch::Tensor x) {
-        return model->forward(x);
-    }
 };
 
-class ResidualUNet : public torch::nn::Module {
-private:
+
+class ResidualUNet :public Model{
+public:
     std::shared_ptr<ConvBlock> conv1, conv2, conv3, conv4, conv5, conv6, conv7;
     torch::nn::ConvTranspose2d upsample1 = nullptr;
     torch::nn::ConvTranspose2d upsample2 = nullptr;
     torch::nn::ConvTranspose2d upsample3 =  nullptr;
     torch::nn::Conv2d finalConv = nullptr;
     torch::nn::Functional sigmoid = nullptr;
-    torch::nn::Sequential model;
+    // torch::nn::Sequential model;
+    torch::nn::MaxPool2d maxpool= nullptr;
+    torch::nn::Upsample upsample = nullptr;
+
 
     bool debug;
-public:
 
     ResidualUNet(int nChannels = 3, int initNeurons = 16, bool debug = false) : debug(debug)
     {
@@ -199,21 +191,17 @@ public:
         conv6 = register_module<ConvBlock>("conv6", std::make_shared<ConvBlock>(initNeurons * 6, initNeurons * 2));
         conv7 = register_module<ConvBlock>("conv7", std::make_shared<ConvBlock>(initNeurons * 3, initNeurons));
 
-//        // Define residual connections (skip connections)
-//        upsample1 = register_module("upsample1", torch::nn::ConvTranspose2d(
-//                torch::nn::ConvTranspose2dOptions(initNeurons, initNeurons, 2).stride(2)));
-//        upsample2 = register_module("upsample2", torch::nn::ConvTranspose2d(
-//                torch::nn::ConvTranspose2dOptions(initNeurons * 2, initNeurons * 2, 2).stride(2)));
-//        upsample3 = register_module("upsample3", torch::nn::ConvTranspose2d(
-//                torch::nn::ConvTranspose2dOptions(initNeurons * 4, initNeurons * 4, 2).stride(2)));
-
         finalConv = register_module("finalConv", torch::nn::Conv2d(torch::nn::Conv2dOptions(initNeurons, 21, 1)));
         sigmoid = register_module("sigmoid", torch::nn::Functional(torch::sigmoid));
+        maxpool = register_module("maxpool", torch::nn::MaxPool2d(torch::nn::MaxPool2dOptions(2)));
+        upsample = torch::nn::Upsample(torch::nn::UpsampleOptions().scale_factor(std::vector<double>({2,2})).mode(torch::kBilinear).align_corners(false));
+
+        cout <<"INIT RES-UNET" << endl;
 
     }
 
 
-    torch::Tensor forward(torch::Tensor x) {
+    torch::Tensor forward(const torch::Tensor& x) {
         if (debug) {
 
             cout << "x INPUT: " << x.sizes() << endl;
@@ -222,20 +210,12 @@ public:
             cout << "conv1Out: " << conv1Out.sizes() << endl;
 
 
-//            torch::Tensor upsampled1 = upsample1->forward(conv1Out);
-//            cout << "upsampled1: " << upsampled1.sizes() << endl;
-
             torch::Tensor conv2Out = conv2->forward(conv1Out);
             cout << "conv2Out: " << conv2Out.sizes() << endl;
-//
-//            torch::Tensor upsampled2 = upsample2->forward(conv2Out);
-//            cout << "upsampled2: " << upsampled2.sizes() << endl;
+
 
             torch::Tensor conv3Out = conv3->forward(conv2Out);
             cout << "conv3Out: " << conv3Out.sizes() << endl;
-
-//            torch::Tensor upsampled3 = upsample3->forward(conv3Out);
-//            cout << "upsampled3: " << upsampled3.sizes() << endl;
 
             torch::Tensor conv4Out = conv4->forward(conv3Out);
             cout << "conv4Out: " << conv4Out.sizes() << endl;
@@ -268,40 +248,76 @@ public:
             torch::Tensor finalOut = finalConv->forward(conv7Out);
             cout << "finalOut: " << finalOut.sizes() << endl;
 
+            auto sigm =sigmoid->forward(finalOut); 
+            return sigm;
+            // if (! normalize){
+            //     return sigm;
+            // }
+            // // sigm is of shape (n , 21, 128 , 128)
+            // torch::Tensor maxVals = sigm.sum({2,3});
+            // maxVals = maxVals.view({sigm.sizes()[0], sigm.sizes()[1],1,1});
+            // return sigm/(maxVals + 1e-12);// normalize output image 
 
-            return sigmoid->forward(finalOut);
         } else{
 
             torch::Tensor conv1Out = conv1->forward(x);
 
-            torch::Tensor conv2Out = conv2->forward(conv1Out);
+            cout <<"L257 convout size: "<< conv1Out.sizes()<< endl;
 
-            torch::Tensor conv3Out = conv3->forward(conv2Out);
+            cout <<"L258 maxpool(convout) size: "<< maxpool(conv1Out).sizes()<< endl;
 
-            torch::Tensor conv4Out = conv4->forward(conv3Out);
+            torch::Tensor conv2Out = conv2->forward(maxpool->forward(conv1Out));
 
-            torch::Tensor skipConnected1 = torch::cat({conv3Out,conv4Out},1);  // Concat along columns axis (3rd dimensions) conv4Out + upsampled3;
+            torch::Tensor conv3Out = conv3->forward(maxpool->forward(conv2Out));
+
+            torch::Tensor conv4Out = conv4->forward(maxpool->forward(conv3Out));
+
+            torch::Tensor skipConnected1 = torch::cat({upsample(conv4Out),conv3Out},1);  // Concat along columns axis (3rd dimensions) conv4Out + upsampled3;
 
             torch::Tensor conv5Out = conv5->forward(skipConnected1);
 
-            torch::Tensor skipConnected2 = torch::cat({conv2Out,conv5Out }, 1);
+            torch::Tensor skipConnected2 = torch::cat({upsample(conv5Out),conv2Out }, 1);
 
             torch::Tensor conv6Out = conv6->forward(skipConnected2);
 
-            torch::Tensor skipConnected3 = torch::cat({conv1Out, conv6Out },1);
+            torch::Tensor skipConnected3 = torch::cat({upsample(conv6Out) ,conv1Out},1);
 
             torch::Tensor conv7Out = conv7->forward(skipConnected3);
 
             torch::Tensor finalOut = finalConv->forward(conv7Out);
+            
+            auto sigm =sigmoid->forward(finalOut); 
 
-            return sigmoid->forward(finalOut);
-
+            return sigm;
+            // if (! normalize){
+            //     return sigm;
+            // }
+            // // sigm is of shape (n , 21, 128 , 128)
+            // torch::Tensor maxVals = sigm.max({2,3});
+            // maxVals = maxVals.view({sigm.sizes()[0], sigm.sizes()[1],1,1});
+            // return sigm/(maxVals + 1e-12);// normalize output image 
 
         }
     }
 
 
 };
+
+class CuNet : public Model{
+public:
+    std::shared_ptr<CUNet2dImpl> model;
+
+    CuNet(int inChannels = 3, int outChannels = 21, int initNeurons = 64, int levels = 4)
+        : model(std::make_shared<CUNet2dImpl>(inChannels, outChannels, initNeurons, levels)) {
+        model = register_module("model", model);
+    }
+    torch::Tensor forward(const torch::Tensor& x) {
+       return model->forward(x);
+    }
+
+
+};
+
 
 torch::Tensor removeExtraDim(torch::Tensor x){
     std::vector<int64_t> sizes;
@@ -314,8 +330,8 @@ torch::Tensor removeExtraDim(torch::Tensor x){
 
     return x.view(sizes);
 }
-
-float getMean(std::vector<float> nums){
+template <typename num>
+float getMean(std::vector<num> nums){
     float sum = 0;
 
     for (float n :nums){
@@ -381,26 +397,21 @@ void printModel(torch::nn::Module model) {
     
 }
 
-void evaluateTest( Dataset test, bool cuda, ResidualUNet model){
-    torch::Device device = initDevice(cuda);
-    auto loss_fn = MSELoss();
-
+float evaluateTest( Dataset& test, torch::Device device, Model& model, Loss& loss_fn){
+    //auto loss_fn = MSELoss();
 
     model.to(device);
-
     //printModel(model);
-
     //test = test.sample(0.025);
     test.y = removeExtraDim(test.y);
     model.eval();
-
 
     float maxBatchSize = 128.0;
 
     int nTrainSamples = test.y.sizes()[0];
     int nBatches = ceil(nTrainSamples / maxBatchSize);
 
-    cout << "Breaking data into " << nBatches << " Batches" << endl;
+    //cout << "Breaking data into " << nBatches << " Batches" << endl;
 
     float totalLoss = 0;
 
@@ -412,18 +423,15 @@ void evaluateTest( Dataset test, bool cuda, ResidualUNet model){
 
         x = x.to(device);
 
-
-
-        auto pred = model.forward(x);
+        auto pred = model.forward(x);//model.forward(x);
 
         // free up gpu space
         x.reset();
         
         y = y.to(device);
 
-
         //cout << pred.sizes() << endl;
-        torch::Tensor loss = loss_fn.forward(pred, y) * maxBatchSize;
+        torch::Tensor loss = loss_fn.forward(pred, y) * y.sizes()[0];
 
         //cout << loss.item<float>() << endl;
         totalLoss += loss.item<float>();
@@ -431,28 +439,168 @@ void evaluateTest( Dataset test, bool cuda, ResidualUNet model){
     }
 
 
-
+    //cout << "L411 nTrainSamples: " << nTrainSamples << ",maxBatchSize: " << maxBatchSize << ",nBatches: " << nBatches << ", total_loss: " << totalLoss << endl;
     float mse = totalLoss/nTrainSamples;
 
-    cout <<"Test Loss: " <<  mse<< endl;
+    cout <<"Loss: " <<  mse<< endl;
+
+    return mse;
 
 }
-void evaluate(Dataset test, bool cuda , std::string model_name){
+
+
+
+void drawPredictions(Dataset& d,Model& model, const std::string& valLossSavePath , torch::Device device){
+    // d should be small enough for the model to produce infereence in a single batch
+    d.to(device);
+    auto imageData = d.x;
+    auto expectedHeatmaps = d.y;
+
+
+    //auto pred =model.forward(imageData); //model.forward(imageData);
+
+    int nImages = d.x.sizes()[0];
+    auto gtColor = cv::Scalar(0, 0, 255); // in BGR
+    auto predColor = cv::Scalar(0,255,0); // in BGR
+
+    cout << "Ground truth keypoints are in Red, predicted are in Green" << endl;
+
+    std::filesystem::create_directories(valLossSavePath);
+    auto mse = MSELoss();
+    auto iou = IouLoss();
+
+    std::vector<int> predTimes; // in microseconds
+
+    for (int i = 0; i< nImages; i++){
+
+        auto start_time = std::chrono::high_resolution_clock::now();
+        auto predMap = model.forward(imageData[i].unsqueeze(0));
+        auto predKP = getKPFromHeatmap(predMap,device);
+        auto end_time = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
+        // Convert duration to int
+        int duration_int = static_cast<int>(duration.count());
+        predTimes.push_back(duration_int);
+        // std::string tmpFilePath = valLossSavePath + "val_hm_" + std::to_string(i) + ".jpg";
+        
+        // //cout << "L484" << expectedHeatmaps.sizes() << endl;
+        // auto tgt = expectedHeatmaps.index({i,0}).view({1,128,128});
+        // //cout << "L485" << tgt.sizes() << endl;
+
+        // saveImageToFile(tensorToMat(tgt)*255,tmpFilePath);
+
+        auto expectedKP = getKPFromHeatmap(expectedHeatmaps[i],device);
+
+        //cout << "L494: " <<  predMap.sizes() << endl;
+        auto predHM = predMap;//pred[i].unsqueeze(0);
+        auto expHM = expectedHeatmaps[i].unsqueeze(0);
+
+        // cout <<  "L455: "<<predHM.sizes() << expHM.sizes() << endl;
+        // cout << "Image " << i << " MSE: " << mse.forward(predHM,expHM).item<float>() << endl;
+        // cout << "Image " << i << " IOU: " << iou.forward(predHM,expHM).item<float>() << endl;
+
+
+        auto imageTensor = imageData[i];
+        cv::Mat image = tensorToMat(imageData[i]);
+
+        //std::string tmpFilePath = valLossSavePath + "Image_init" + std::to_string(i) + ".jpg";
+        
+        //saveImageToFile(image,tmpFilePath);
+        //cout << "L474" <<  expectedKP.sizes() << endl;
+
+        image = drawKeypoints(image ,expectedKP, gtColor);
+
+        image = drawKeypoints(image ,predKP, predColor);  
+
+
+        std::string filePath = valLossSavePath + "Image" + std::to_string(i) + ".jpg";
+        saveImageToFile(image, filePath);
+
+
+
+    }
+    cout << "Saved all predictions to " + valLossSavePath << endl;
+    cout << "Prediction per image took " << getMean(predTimes) << " microseconds  on average" << endl;
+
+    return;
+
+}
+
+void evaluate(Dataset& test,  TrainParams t ,bool draw = true){ // need to pass abstract classes by reference
+/**
+bool cuda, std::string model_name,bool draw, Loss& loss_fn
+*/
+    auto cuda = t.cuda;
+    auto model_name = t.model_name;
+    auto loss = t.loss_fn;
+
     cout << "running evaluation for " << model_name << endl;
 
-    ResidualUNet model;
+    CuNet model;
 
     loadModel("/scratch/palle.a/AirKeyboard/data/models/" + model_name, model);
 
-    evaluateTest(test,cuda,model);
+    auto device = initDevice(cuda);
+    evaluateTest(test,device,model,*loss);
+    
 
+    if (draw){
+    auto valLossSavePath = "/scratch/palle.a/AirKeyboard/data/analytics/" + model_name+ "_analytics/";
+    drawPredictions(test.slice(10)[0], model, valLossSavePath , device); // draws first  10 images in test set
+    }
 
 }
-void trainModel(Dataset train, 
-                Dataset test, 
-                bool cuda , 
-                float propDataUsed,
-                std::string model_name) {
+
+
+template <typename T>
+void writeVectorToFile(const std::vector<T>& vec, const std::string& filename) {
+    const std::string& delimiter = "\n";
+
+    // Create parent directories if they do not exist
+    std::filesystem::create_directories(std::filesystem::path(filename).parent_path());
+
+
+    // Open the file for writing
+    std::ofstream outputFile(filename);
+    
+    // Check if the file is open
+    if (!outputFile.is_open()) {
+        std::cerr << "Error opening file: " << filename << std::endl;
+        return;
+    }
+
+    // Use an iterator to copy vector elements to the output stream
+    std::copy(vec.begin(), vec.end() - 1, std::ostream_iterator<T>(outputFile, delimiter.c_str()));
+
+    // Write the last element without the delimiter
+    outputFile << vec.back();
+
+    // Close the file
+    outputFile.close();
+}
+
+
+
+
+// Early stopping logic based on validation loss
+bool earlyStopping(float validationLoss, int patience = 5) {
+    static int noImprovementCount = 0;
+    static float bestLoss = 100000000.0;
+
+    if (validationLoss < bestLoss) {
+        bestLoss = validationLoss;
+        noImprovementCount = 0;
+    } else {
+        noImprovementCount++;
+    }
+
+    return noImprovementCount >= patience;
+}
+
+void trainModel(Dataset& train, 
+                Dataset& test, 
+
+                TrainParams tp) {
     /**
      * @brief This function trains the model
      * @param train: Dataset
@@ -460,15 +608,33 @@ void trainModel(Dataset train,
      * ASSUMES CUDA WITH GPU IS AVAILABLE.
      */
 
-    auto loss_fn = MSELoss();
+    auto loss_fn = tp.loss_fn;
+
+    bool cuda = tp.cuda; 
+    float propDataUsed  = tp.propDataUsed;
+    std::string model_name = tp.model_name;
+    cout << "train x shape: " << train.x.sizes() << endl;
+    cout << "train y shape: " << train.y.sizes() << endl;
+    // cout << "val x shape: " << val.y.sizes() << endl;
+    // cout << "val y shape: " << val.y.sizes() << endl;
+    cout << "test x shape: " << test.x.sizes() << endl;
+    cout << "test y shape: " << test.y.sizes() << endl;
 
 
     train = train.sample(propDataUsed);
+
+    auto sets = train.sliceProp(0.1); // use 20% of train data for validation(early stopping)
+    Dataset val = sets[0];
+    train = sets[1];
     test = test.sample(propDataUsed);
 
 
+
+    cout << "POST SAMPLING" << endl;
     cout << "train x shape: " << train.x.sizes() << endl;
     cout << "train y shape: " << train.y.sizes() << endl;
+    cout << "val x shape: " << val.y.sizes() << endl;
+    cout << "val y shape: " << val.y.sizes() << endl;
     cout << "test x shape: " << test.x.sizes() << endl;
     cout << "test y shape: " << test.y.sizes() << endl;
 
@@ -477,18 +643,25 @@ void trainModel(Dataset train,
 
     int c = sizes[1];
     int nTrainSamples = sizes[0];
-    int initNeurons = 16;
-    float batchSize = 128.0;
-    int nEpochs = 200;
-    ResidualUNet model = ResidualUNet(c, initNeurons);
+    int initNeurons = tp.initNeurons;
+    float batchSize = tp.batchSize;
+    int nEpochs = tp.nEpochs;
+    int levels = tp.levels;
+    auto model = CuNet(c,21, initNeurons);//ResidualUNet(c, initNeurons);
 
     torch::Device device = initDevice(cuda);
     model.to(device);
 
     printModuleDevice(model);
 
-    torch::optim::SGD optimizer(model.parameters(), torch::optim::SGDOptions(0.1));
-    string model_path = "/scratch/palle.a/AirKeyboard/data/models/" + model_name;
+    torch::optim::SGD optimizer(model.parameters(), torch::optim::SGDOptions(1));//.momentum(0.9)); // lr = 1, momentum = 0.9
+
+    torch::optim::StepLR scheduler(optimizer, /* step_size = */ 20, /* gamma = */ 0.1);
+
+    std::string model_path = "/scratch/palle.a/AirKeyboard/data/models/" + model_name;
+
+    std::vector<float> trainLosses;
+    std::vector<float> valLosses;
 
     for (size_t epoch = 1; epoch <= nEpochs; ++epoch) {
         // Iterate over batches
@@ -504,14 +677,19 @@ void trainModel(Dataset train,
             auto x = batch.first;
             auto y = batch.second;
 
-    
 
+
+            // std::string tmpFilePath = "/scratch/palle.a/AirKeyboard/data/tmp/train_hm_" + std::to_string(i) + ".jpg";
+            // cout << "L592" << y.sizes() << endl;
+            // auto tgt = y.index({0,0}).view({1,128,128});
+            // cout << "L593" << tgt.sizes() << endl;
+            // saveImageToFile(tensorToMat(tgt)*255,tmpFilePath);
 
             // Zero gradients
             optimizer.zero_grad();
 
 
-           // cout << "x shape: " << x.sizes() << endl;
+            //cout << "x shape: " << x.sizes() << endl;
             // Forward pass
             x = x.to(device);
 
@@ -524,11 +702,16 @@ void trainModel(Dataset train,
             // cout << "y shape: " << y.sizes() << endl;
             // Compute Loss
 
-            torch::Tensor loss = loss_fn.forward(y_pred, y);
+            //cout << i << endl;
+
+
+            torch::Tensor loss = loss_fn->forward(y_pred, y);
             //batchLosses.push_back(loss.item<float>());
 
             if (i == 0){
-                cout << "Batch Loss " << loss.item<float>() <<endl;
+                auto bl = loss.item<float>();
+                cout << "Train (single batch) Loss " <<  bl<<endl;
+                trainLosses.push_back(bl);
 
             }
 
@@ -537,11 +720,24 @@ void trainModel(Dataset train,
 
             // Update the parameters
             optimizer.step();
+            //cout << i << endl;
         }
 
         auto end_time = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
 
+        cout << "VALIDATION LOSS: ";
+        float valLoss = evaluateTest(val,device,model, *loss_fn);
+
+        if (earlyStopping(valLoss, 15)){//if loss doesnt imporve for 15 epochs
+            std::cout << "Early stopping at epoch " << epoch << std::endl;
+            break;
+
+        }
+
+        valLosses.push_back(valLoss);
+
+        scheduler.step();
         if(epoch % 10 ==0){
             saveModel(model_path,model); //checkpointing model 
         }
@@ -555,23 +751,36 @@ void trainModel(Dataset train,
     }
 
     model.eval();
+    torch::NoGradGuard no_grad;
+
+
+    std::string valLossSavePath = "/scratch/palle.a/AirKeyboard/data/analytics/" + model_name + "_analytics";
+
+
+    writeVectorToFile(trainLosses, valLossSavePath+"/train_loss.list");
+    writeVectorToFile(valLosses, valLossSavePath+"/val_loss.list");
+
 
     cout << "Post-training loss:";
-    evaluateTest(test, cuda, model);
+    evaluateTest(test, device, model, *loss_fn);
+
+    Dataset sampleTestImages = test.shuffle().slice(10)[0];
+
 
     // SAVE MODEL
 
+
+    drawPredictions(sampleTestImages, model, valLossSavePath+"/predictions_presave/",device);
+
     saveModel( model_path,model);
+
+
+    cout << "Loading model after saving" << endl;
+    CuNet postModel;
+    loadModel(model_path,postModel);
+    postModel.eval();
+    drawPredictions(sampleTestImages, postModel, valLossSavePath+"/predictions_postsave/",device);
+
+
 }
 
-
-
-// torch::Tensor predict(torch::jit::script::Module model, torch::Tensor x){
-
-
-//     std::vector<torch::jit::IValue> inputs;
-
-//     inputs.push_back(x);
-
-//     return model.forward(inputs).toTensor();
-// }

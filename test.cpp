@@ -3,7 +3,9 @@
 #include "train.h"
 #include "data_work.h"
 #include <any>
-
+#include <xtensor/xarray.hpp>
+#include <xtensor/xio.hpp>
+#include <xtensor/xrandom.hpp>  // Include xrandom header for randn function
 using namespace std;
 
 // Assuming your model takes an input of shape (n, 21, 128, 128)
@@ -20,6 +22,24 @@ torch::Tensor yourModel(const torch::Tensor& input) {
 float calculateMSE(const torch::Tensor& predictions, const torch::Tensor& targets) {
     torch::Tensor mse = torch::mse_loss(predictions, targets);
     return mse.item<float>();
+}
+void xTensorTest(){
+        // Create a random 2D array with dimensions 3x4
+    xt::xarray<double> array = xt::random::randn<double>({3, 4});
+
+    // Print the original array
+    std::cout << "Original Array:\n" << array << std::endl;
+
+    // Perform operations on the array (e.g., element-wise multiplication)
+    array = array * 2.0;
+
+    // Print the modified array
+    std::cout << "Modified Array (element-wise multiplication by 2.0):\n" << array << std::endl;
+
+    // Accessing elements
+    double element = array(1, 2);
+    std::cout << "Element at (1, 2): " << element << std::endl;
+
 }
 
 void testMSEWithDifferentInputSizes() {
