@@ -84,6 +84,32 @@ int extractCameraId(std::string imagePath){
     throw std::runtime_error("Could not extract camera id from image path");
 }
 
+
+std::tuple<torch::Tensor, torch::Tensor> getNormParams(const torch::Tensor& imageBatch) {
+
+    //cout << "L90 get norma params tensor input max val: " << torch::max(imageBatch).item<float>() << endl;
+
+    torch::Device device = imageBatch.device();
+
+    torch::Tensor mean = torch::zeros({3}).to(device);
+    torch::Tensor std = torch::zeros({3}).to(device);
+    double nb_samples = 0.0;
+
+    auto data = imageBatch;
+
+    auto batch_samples = data.size(0);
+    data = data.view({batch_samples, data.size(1), -1});
+    mean += data.mean({2}).sum({0});
+    std += data.std({2}).sum({0});
+    nb_samples += batch_samples;
+
+    mean /= nb_samples;
+    std /= nb_samples;
+
+    return std::make_tuple(mean, std);
+}
+
+
 cv::Mat tensorToMat(const torch::Tensor& trueTensor){
     /**
      * @brief convert a tensor to a cv::Mat
@@ -110,10 +136,9 @@ cv::Mat tensorToMat(const torch::Tensor& trueTensor){
 
     // // Initialize a cv::Mat with the appropriate data type
     // cv::Mat mat(height, width, channels == 1 ? CV_8UC1 : CV_8UC3);
+    auto torchDTYPE =  tensor.dtype();//channels == 1 ? torch::kFloat : torch::kByte;
 
-
-    auto cvDTYPE = channels == 1 ? CV_32FC1: CV_8UC3;
-    auto torchDTYPE = channels == 1 ? torch::kFloat : torch::kByte;
+    auto cvDTYPE = ( torchDTYPE == torch::kFloat ? (channels == 1 ? CV_32FC1: CV_32FC3) : (channels == 1 ? CV_8UC1 : CV_8UC3));//channels == 1 ? CV_32FC1: CV_8UC3;
     // Convert the tensor data type to INT and copy data to the cv::Mat
     tensor = tensor.to(torchDTYPE);
 
@@ -128,39 +153,20 @@ cv::Mat tensorToMat(const torch::Tensor& trueTensor){
     return mat.clone(); // Ensure a deep copy to avoid memory issues
 }
 
+template <typename T>
+T findMaxValue(const cv::Mat& image) {
+    // Check if the image is empty
+    if (image.empty()) {
+        std::cerr << "Input image is empty!" << std::endl;
+        return 0.0;  // Return a default value (you may choose a different approach)
+    }
 
-// cv::Mat tensorToMat(torch::Tensor tensor){
-//     /**
-//      * @brief convert a tensor to a cv::Mat
-//      * tensor has dimension (C, H, W)
-//      */
-//     auto sizes = tensor.sizes();
-//     int c = sizes[0];
-//     int h = sizes[1];
-//     int w = sizes[2];
-//     tensor = tensor.view({h,w,c});// transform it to shape required for cv::Mat
+    // Find the maximum value in the image
+    T maxVal;
+    cv::minMaxLoc(image, nullptr, &maxVal);
 
-//     if (!tensor.is_contiguous() || !tensor.is_cpu()) {
-//         // You may need to make the tensor contiguous and move it to CPU if necessary
-//         tensor = tensor.contiguous().to(torch::kCPU);
-//     }
-
-//     // Get the tensor dimensions
-//     int height = tensor.size(0);
-//     int width = tensor.size(1);
-//     int channels = tensor.size(2);
-
-//     // Initialize a cv::Mat with the appropriate data type
-//     cv::Mat mat(height, width, channels == 1 ? CV_8UC1 : CV_8UC3);
-
-//     // Convert the tensor data type to INT and copy data to the cv::Mat
-//     tensor = tensor.to(torch::kByte);
-
-//     std::memcpy(mat.data, tensor.data_ptr(), sizeof(uint8_t) * tensor.numel());
-//     return mat.clone(); // Ensure a deep copy to avoid memory issues
-// }
-
-
+    return maxVal;
+}
 
 torch::Tensor matToTensor(const cv::Mat& image){
     // returns tenosr in (C,H,W format)
@@ -171,19 +177,28 @@ torch::Tensor matToTensor(const cv::Mat& image){
     }
     int nChannels = image.channels();
 
-    auto dtype = (nChannels == 1) ? at::kFloat: at::kByte ; //  reads floats for single channel image (0-1), bytes(ints) for BGR images
+    auto imgType = image.depth();  // Get the depth of the image (CV_8U, CV_32F, etc.)
+    c10::ScalarType dtype;
+    if (imgType == CV_32F || imgType == CV_64F) {
+        // Image is float, choose at::kFloat for PyTorch tensor
+        dtype = at::kFloat;
+    } else {
+        // Image is integer, choose at::kByte for single-channel or at::kRGB for BGR images
+        dtype = at::kByte;//(nChannels == 1) ? at::kByte;
+    }
+   // cout << " L166 : " << findMaxValue<double>(image) << " DTYPE: " << dtype  << " " << endl;
 
     // Convert OpenCV Mat to PyTorch Tensor
-    torch::Tensor tensor_image = torch::from_blob(image.data, {1, image.rows, image.cols, nChannels}, dtype).clone();
+    //cout << "L166.2 " <<  image.data.size() << endl;
+    torch::Tensor tensor_image = torch::from_blob(image.data, {image.rows, image.cols, nChannels}, dtype).clone();
+   // cout << "L166.5 : " <<  torch::max(tensor_image).item<float>();
 
     // Reshape the tensor to (C, H, W) format
     tensor_image = tensor_image.view({ nChannels,image.rows, image.cols});
+   // cout << " L167 : " <<  torch::max(tensor_image).item<float>() << endl;;
 
 
     tensor_image = tensor_image.to(at::kFloat);
-//    // Normalize the pixel values to the range [0, 1]
-//    tensor_image = tensor_image.to(torch::kFloat32) / 255.0;
-
 
     return tensor_image; // Ensure a deep copy to avoid memory issues
 }
@@ -215,7 +230,9 @@ torch::Tensor vectorToTensor(std::vector<std::vector<float>> vec){
 
 
 void saveImageToFile(const cv::Mat& image, const std::string& filePath) {
+    // image is a noramlzied image
     // Check if the input image is empty
+
     if (image.empty()) {
         std::cerr << "Error: Input image is empty." << std::endl;
         return;
@@ -223,6 +240,10 @@ void saveImageToFile(const cv::Mat& image, const std::string& filePath) {
 
     // Save the image to the specified file
     //cout << "Saving image to " << filePath << endl;
+
+    // cv::Mat img2;
+    // image.convertTo(img2, CV_8U, 255, 0);
+
     cv::imwrite(filePath, image);
     return;
 }
@@ -297,7 +318,6 @@ torch::Tensor resizeKeypoints(torch::Tensor kp2d ,const std::vector<int> origSiz
 }
 
 
-
 torch::Tensor getJointHeatmaps(const torch::Tensor& kp2d, const std::vector<int> imgSize){
     int w = imgSize[0];
     int h = imgSize[1];
@@ -308,67 +328,19 @@ torch::Tensor getJointHeatmaps(const torch::Tensor& kp2d, const std::vector<int>
         int kpY = kp2d.index({i, 1}).item<int>();
         cv::Mat heatmap = cv::Mat::zeros(w,h,CV_32FC1);
 
-        //cout << "X: " << kpX << "Y: " << kpY << endl;
-
-
-    
-       // cout << "Previous VALUE " <<  heatmap.at<float>(kpY,kpX) << endl;
-
 
         heatmap.at<float>(kpY, kpX) = 1.0;
-        // heatmap.at<float>(kpY+1, kpX+1) = 1.0;
-        // heatmap.at<float>(kpY-1, kpX+1) = 1.0;
-        // heatmap.at<float>(kpY-1, kpX-1) = 1.0;
-        // heatmap.at<float>(kpY, kpX+1) = 1.0;
-        // heatmap.at<float>(kpY, kpX-1) = 1.0;
-        // heatmap.at<float>(kpY+1, kpX) = 1.0;
-        // heatmap.at<float>(kpY-1, kpX) = 1.0;
 
-
-       // cout << "UPDATED VALUE " <<  heatmap.at<float>(kpY,kpX) << endl;
-
-        // cv::Mat intMat;
-        // heatmap.convertTo(intMat, CV_8U);
-        // Scale the values to the range [0, 255]
-        // heatmap *= 255; // for the sake of visualization
-        //saveImageToFile(heatmap, "/scratch/palle.a/AirKeyboard/data/tmp/pre_blur_tmp_heatmap_"+std::to_string(i)+".jpg");
-
-        cv::GaussianBlur(heatmap, heatmap, cv::Size(5,5), 0);
+        cv::GaussianBlur(heatmap, heatmap, cv::Size(51,51), 0);
 
         float maxPixel = *std::max_element(heatmap.begin<float>(),heatmap.end<float>());
-        // if (i == 0) {
 
-        // cout <<"L340 maxPixel:  " << maxPixel << endl;
-
-        // cout <<"L341 single heatmap sum(pre div):  " << cv::sum(heatmap)[0] << endl;
-
-        // }
         heatmap = heatmap / maxPixel; // normalization so that we can sigmoid it with model
 
-
-        //saveImageToFile(heatmap*255, "/scratch/palle.a/AirKeyboard/data/tmp/tmp_heatmap_pre_"+std::to_string(i)+".jpg");
 
      
         torch::Tensor heatmapTensor = matToTensor(heatmap);
 
-        // if (i == 0) {
-
-        // // cout << "L341.5" << heatmapTensor.sizes() << endl;
-        // // cout <<"L342 single heatmap sum(pre matToTensor):  " << heatmapTensor.sum(std::vector<int64_t>({0,1,2})).item<float>() << endl;
-
-
-        // // cout << "L346 " << heatmapTensor.sizes() << endl;
-        // // cout <<"single heatmap sum  " << heatmapTensor.sum(std::vector<int64_t>({0,1,2})).item<float>() << endl;
-
-
-        // // cout << "L347 " << heatmapTensor.sizes() << endl;
-        // // cout <<"sum per heatmap: " << endl;
-
-        // // printTensor(heatmapTensor.sum({1,2}));
-
-        // // auto mat = tensorToMat(heatmapTensor);
-        // // saveImageToFile(mat*255, "/scratch/palle.a/AirKeyboard/data/tmp/L347_tmp_heatmap_post_"+std::to_string(i)+".jpg");
-        // }
         heatmaps.push_back(heatmapTensor);
 
     }
@@ -377,20 +349,6 @@ torch::Tensor getJointHeatmaps(const torch::Tensor& kp2d, const std::vector<int>
 
 
     auto ret = heatmapsTensor.view({kp2d.sizes()[0],h,w});
-    // cout << "L362.5 " << ret[0].sizes() << endl;
-    // auto tgtTensor = ret[0].view({1,128,128});
-    // cout <<"single heatmap ( pre matToTensor, l363)  sum  " <<tgtTensor.sum({0,1,2}).item<float>() << endl;
-
-
-    // auto mat = tensorToMat(tgtTensor);
-
-    // cout <<"single heatmap ( post matToTensor, l364)  sum  " << matToTensor(mat).sum({0,1,2}).item<float>() << endl;
-
-    // saveImageToFile(mat*255, "/scratch/palle.a/AirKeyboard/data/tmp/L362_tmp_heatmap_post.jpg");
-
-    //cout << heFatmapsTensor.sizes() << endl;
-
-   // cout << "TOTAL SUM (init): " << heatmapsTensor.sum({0,1,2,3}) << endl; // expect 21
 
     return ret;
 
@@ -421,6 +379,24 @@ bool isSubstringPresent(const std::string mainString, const std::string searchSt
     return found != std::string::npos;
 }
 
+cv::Mat readImage(std::string imagePath){
+    auto img = cv::imread(imagePath);
+
+    cv::imwrite("L413_test.jpg", img);
+
+    cv::Mat img2;
+    img.convertTo(img2, CV_32F, 1.0 / 255, 0);
+
+    // cv::Mat img3;
+    // img2.convertTo(img3, CV_8U, 255, 0);
+    // // Save the normalized and converted image
+    cv::imwrite("L414_test_img2.jpg", img2);
+
+    
+   // cv::cvtColor(bgrImage, bgrImage, cv::COLOR_BGR2RGB);
+    return img2;
+}
+
 Dataset prepData(std::string path, float prop = 1.0,bool excludeMerged = false ){
     // exclude merged is whether or not to exclude bg shfited images from trianing 
     std::ifstream file(path);
@@ -444,7 +420,8 @@ Dataset prepData(std::string path, float prop = 1.0,bool excludeMerged = false )
     vector<torch::Tensor> yData(nDataPoints);
 
     cout << "N = " << nDataPoints << endl;
-    #pragma omp parallel for
+    bool printit = false;
+    //#pragma omp parallel for
     for (int i = 1; i < nDataPoints; ++i) {
         auto row = xt::view(data, i, xt::all());
 
@@ -458,6 +435,7 @@ Dataset prepData(std::string path, float prop = 1.0,bool excludeMerged = false )
         std::string rbm= "rgb_merged";
         if (excludeMerged && isSubstringPresent(imagePath, rbm)){
             // skip over rgb_merged data
+            //cout << "skipping " << imagePath << endl;
             continue;
         }
 
@@ -466,7 +444,7 @@ Dataset prepData(std::string path, float prop = 1.0,bool excludeMerged = false )
         }
         cv::Mat image;
         try {
-            image = cv::imread(imagePath);
+            image = readImage(imagePath);
 
             if (image.empty()){
                 throw std::exception();
@@ -503,75 +481,25 @@ Dataset prepData(std::string path, float prop = 1.0,bool excludeMerged = false )
         cv::resize(image,shrunkImage,cv::Size(128,128)); // condense for model
 
         torch::Tensor shrunk_kp2d = resizeKeypoints(kp2d, {s.width, s.height}, {128,128});
+        
 
-        // auto drawImage = drawKeypoints(shrunkImage, shrunk_kp2d);
+        cv::imwrite("L504_test_normalized.jpg", shrunkImage);
 
-        // saveImageToFile(drawImage, "/scratch/palle.a/AirKeyboard/data/tmp/pure_" + std::to_string(i) +".jpg");
+        cv::imwrite("L504_test.jpg", shrunkImage*255);
 
-        // cout << "L416 testing bidrectional conversion of mat to tensor " << drawImage.size() << endl;
 
-        // saveImageToFile(tensorToMat(matToTensor(drawImage)), "/scratch/palle.a/AirKeyboard/data/tmp/conv_tmp_" + std::to_string(i) +".jpg");
+       // cout << "L544: pre matToTensor" << findMaxValue<double>(shrunkImage) << endl;
 
         torch::Tensor imageTensor = matToTensor(shrunkImage);
+        //cout << "L545: mid data-prep: " << torch::max(imageTensor).item<float>() << endl;
 
+
+        //cout << " JOINT HEATMAP START: " << endl;
         torch::Tensor jointHeatmaps  = getJointHeatmaps(shrunk_kp2d, {128,128}); // gets 21x128x128 tensor where each of the 2d tensors is a heatmap for each keypoint
-        
-        // cout << "L498" << jointHeatmaps[0].sizes() << endl;
-        // auto tgt = jointHeatmaps[0].view({1,128,128});
-        // cout  << "L470 pre tensorToMat max "<< torch::max(tgt).item<float>()<< endl;
 
-        // cout  << "L470 pre tensorToMat sum "<< tgt.sum({0,1,2}).item<float>() << endl;
-
-        // cout  << "L470 pre tensorToMat full sum "<< jointHeatmaps.sum({0,1,2}).item<float>() << endl;
-
-        // auto mat = tensorToMat(tgt);
-        
-        // cout  << "L470.5 post tensorToMat single sum "<< cv::sum(mat)[0] << endl;
-        // cout  << "L470.5 post tensorToMat single max "<< findMaxValue(mat) << endl;
-
-        // cout  << "L471 "<< mat.size() << endl;
-        // cout  << "L472 single sum ,"<< matToTensor(mat).sum({0,1,2}).item<float>() << endl;
-        // cout  << "L473 single  2xconv sum ,"<< matToTensor(mat).sum({0,1,2}).item<float>() << endl;
-        // cout  << "L474 single 2x stacekd conv sum ,"<<  matToTensor(tensorToMat(matToTensor(mat))).sum({0,1,2}).item<float>()<< endl;
-
-        // saveImageToFile(mat*255, "/scratch/palle.a/AirKeyboard/data/tmp/L462_tmp_heatmap_post_"+std::to_string(i)+".jpg");
+       //cout << " JOINT HEATMAP END: " << endl;
 
 
-        // cout << "GT KP:" << endl;
-        // printTensor(shrunk_kp2d);
-
-        //saveImageToFile(tensorToMat(jointHeatmaps[0]*255), "/scratch/palle.a/AirKeyboard/data/tmp/heatmap0_" + std::to_string(i) +".jpg");
-
-
-        
-  
-        //cout << jointHeatmaps.sizes() << endl;
-
-        //cout << "input heatmaps:" << endl;
-        //printTensor(jointHeatmaps[0]);
-        // cout  << "L537 pre kp single sum: "<< jointHeatmaps[0].view({1,128,128}).sum({0,1,2}).item<float>() << endl;
-
-        // auto kp = getKPFromHeatmap(jointHeatmaps, torch::Device(torch::kCPU));
-    
-        // cout  << "L538 post kp single sum: "<< jointHeatmaps[0].view({1,128,128}).sum({0,1,2}).item<float>() << endl;
-
-        // cout << "extracted KP:" << endl;
-        // printTensor(kp);
-        
-        // auto revImage = tensorToMat(imageTensor);
-        // revImage = drawKeypoints(revImage, kp, cv::Scalar(0,0,255));
-        // //saveImageToFile(revImage, "/scratch/palle.a/AirKeyboard/data/tmp/draw_kp_" + std::to_string(i) +".jpg");
-
-
-        // mat = tensorToMat(jointHeatmaps);
-        // cout  << mat.size() << endl;
-        // saveImageToFile(mat*255, "/scratch/palle.a/AirKeyboard/data/tmp/L484_tmp_heatmap_post_"+std::to_string(i)+".jpg");
-
-        // if (i == 1){
-        // cout << "L549 , pre-push sum (full hm)" << jointHeatmaps.sum({0,1,2}).item<float>() << endl;
-        // }
-        // xData.push_back(imageTensor);
-        // yData.push_back(jointHeatmaps);
         xData[i - 1] = imageTensor;
         yData[i - 1] = jointHeatmaps;
 
@@ -583,16 +511,10 @@ Dataset prepData(std::string path, float prop = 1.0,bool excludeMerged = false )
     torch::Tensor xTensor = torch::stack(xData);
     torch::Tensor yTensor = torch::stack(yData);
 
+    cout << "L568: post data-prep: " << torch::max(xTensor).item<float>() << endl;
+
     std::string tmpFilePath = "/scratch/palle.a/AirKeyboard/data/tmp/pp_rand_hm.jpg";
     // not an issue with jointToHeatMaps , sum remains the same
-
-    // cout << "L563 " << yTensor.sizes() << endl;
-    // auto randomHeatmap = yTensor[0][0].view({1,128,128});
-
-    // cout << "L566: pp_rand sum (single hm)" << randomHeatmap.sum({0,1,2}).item<float>() << endl;
-    // saveImageToFile((tensorToMat(randomHeatmap))*255,tmpFilePath);
-
-
 
     Dataset d;
     d.x = xTensor;

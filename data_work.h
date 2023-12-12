@@ -101,3 +101,5 @@ cv::Mat tensorToMat(const torch::Tensor& tensor);
 cv::Mat drawKeypoints(cv::Mat image, const torch::Tensor kp2d, cv::Scalar color);
 
 bool isSubstringPresent(const std::string mainString, const std::string searchString);
+
+std::tuple<torch::Tensor, torch::Tensor> getNormParams(const torch::Tensor& imageBatch);

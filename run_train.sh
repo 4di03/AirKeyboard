@@ -4,10 +4,12 @@
 #SBATCH -n 1                 # Number of tasks
 #SBATCH --cpus-per-task=4
 #SBATCH -p gpu 
-#SBATCH --mem=100G
+#SBATCH --time=07:59:00
+#SBATCH --mem=150G
 #SBATCH --gres=gpu:v100-sxm2:1
 #SBATCH -o /scratch/palle.a/AirKeyboard/logs/train_out_%j.txt       # Standard output file
 #SBATCH -e /scratch/palle.a/AirKeyboard/logs/train_error_%j.txt        # Standard error file
 source setup_env.sh
 cd build
-bash build_and_run.sh $1 $2 $3
+cmake ..
+bash build_and_run.sh $1 $2 $3 $4 $5 $6 $7

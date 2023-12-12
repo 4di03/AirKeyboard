@@ -103,10 +103,23 @@ void verifyDifferentiability(const torch::Tensor& input, const torch::Tensor& ta
     
 }
 
-void testIOULoss(){
-    for (int i= 0; i < 2; i++){
+void testLosses(torch::Tensor& input, torch::Tensor& target){
     auto mse = MSELoss();
     auto iou = IouLoss();
+    float iou_loss  = iou.forward(input,target).item<float>();
+    float mse_loss  = mse.forward(input,target).item<float>();
+    float fmse = torch::mse_loss(input, target).item<float>();
+
+    cout << "IOU of identity : " << iou_loss << endl;
+    cout << "MSE of identity : " << mse_loss << endl;
+    cout << "func MSE of identity : " << fmse << endl;
+    verifyDifferentiability(input,target);
+    assert(iou_loss < 1);
+}
+
+void testIOULoss(){
+    for (int i= 0; i < 2; i++){
+
 
     // Create a tensor of shape (n, 21, 128, 128)
     torch::Tensor input = torch::randn({5, 21, 128, 128});
@@ -114,26 +127,11 @@ void testIOULoss(){
     // Create a tensor of shape (n, 21, 128, 128)
     torch::Tensor target = input;
 
-    torch::Tensor iou_loss  = iou.forward(input,target);
-    torch::Tensor mse_loss  = mse.forward(input,target);
-    torch::Tensor fmse = torch::mse_loss(input, target);
-    cout << "IOU of identity : " << iou_loss.item<float>() << endl;
-    cout << "MSE of identity : " << mse_loss.item<float>() << endl;
-    cout << "func MSE of identity : " << fmse.item<float>() << endl;
-    verifyDifferentiability(input,target);
-
-
+    testLosses(input,target);
 
 
     target = torch::randn({5, 21, 128, 128});
-    iou_loss  = iou.forward(input,target);
-    mse_loss  = mse.forward(input, target);
-    fmse = torch::mse_loss(input, target);
-
-    cout << "IOU of random : " << iou_loss.item<float>() << endl;
-    cout << "MSE of random: " << mse_loss.item<float>() << endl;
-    cout << "func MSE of random : " << fmse.item<float>() << endl;
-    verifyDifferentiability(input,target);
+    testLosses(input,target);
 
 
     input = torch::zeros({1, 1, 128, 128});
@@ -142,15 +140,7 @@ void testIOULoss(){
     input[0][0][10][10] = 1;
     target[0][0][10][10] = 1;
 
-    iou_loss  = iou.forward(input,target);
-    mse_loss  = mse.forward(input, target);
-    fmse = torch::mse_loss(input, target);
-
-
-    cout << "IOU of perfect match : " << iou_loss.item<float>() << endl;
-    cout << "MSE of perfect match: " << mse_loss.item<float>() << endl;
-    cout << "func MSE of perfect match : " << fmse.item<float>() << endl;
-    verifyDifferentiability(input,target);
+    testLosses(input,target);
 
     input = torch::zeros({1, 1, 128, 128});
     target = torch::zeros({1, 1, 128, 128});
@@ -159,16 +149,8 @@ void testIOULoss(){
     target[0][0][10][10] = 1;
     input[0][0][10][11] = 1;
     target[0][0][10][9] = 1;
-
-    iou_loss  = iou.forward(input,target);
-    mse_loss  = mse.forward(input, target);
-    fmse = torch::mse_loss(input, target);
-
-
-    cout << "IOU of 1/3: " << iou_loss.item<float>() << endl;
-    cout << "MSE of 1/3: " << mse_loss.item<float>() << endl;
-    cout << "func MSE of 1/3 : " << fmse.item<float>() << endl;
-    verifyDifferentiability(input,target);
+    
+    testLosses(input,target);
 
 
     }

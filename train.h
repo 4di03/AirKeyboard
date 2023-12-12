@@ -1,7 +1,8 @@
 #include <torch/torch.h>
 #include "data_work.h"
+//#include "model.h"
 #pragma once // or use include guards
-
+using namespace std;
 // class Loss : torch::nn::Module {
 // public:
 //     virtual torch::Tensor forward(const torch::Tensor input, const torch::Tensor target) = 0;
@@ -39,6 +40,11 @@ std::string getName(){ return "MSE";}
 class IouLoss : public Loss{
 private:
 float eps = 1e-12;
+
+torch::Tensor opSum(torch::Tensor t){
+    return t.sum(-1).sum(-1); // sums along last two axis (n,m,a,b) -> (n,m)
+}
+
 public:
 
 
@@ -46,58 +52,33 @@ torch::Tensor forward(const torch::Tensor& input, const torch::Tensor& target) {
     // IOU = (Intersection of Union) / (Union of Union)
     // Loss = 1 - IOU
 
-    auto I = input * target;
-    auto U = torch::pow(input,2) + torch::pow(target,2) - I;
+   // cout << " L52, inp: " << torch::max(input) << " target:" << torch::max(target) << endl;
 
+    auto I = opSum(input * target);
+
+    //cout << " L56 " << torch::max(I) << endl;
+
+    auto U = opSum(torch::pow(input,2)) + opSum(torch::pow(target,2)) - I;
+   // cout << " L57 " << torch::max(U) << endl;
     // Add a small epsilon to avoid division by zero
-    auto iou = (I.sum() + eps) / (U.sum() + eps);
 
-    // IoU loss
+    
+    auto iou = (I +  eps) / (U + eps);
+
+
+  //  cout << " L58 " << torch::max(iou) << endl;
+
+    iou = torch::mean(iou);
+
+   // cout << " L59 " << torch::max(iou) << endl;
+
+
     auto loss = 1.0 - iou;
+  //   cout << " L70 " << torch::max(loss) << endl;
+
 
     return loss;
 }
-// torch::Tensor forward(const torch::Tensor input, const torch::Tensor target) {
-//     // IOU = (interesting Area/ Union Area) of joint regions
-//     // Loss = 1- IOU
-//     //Loss is calculated for each heatmap separately, then averaged among all 21 heatmaps, and then averaged among the images in the batc
-//     // input is (nx21x128,128)
-//     //std::cout <<"L48" << input.sizes() << target.sizes() << std::endl;
-//     auto I = input * target;
-
-//     I =  I.sum({2,3}); // sum along last two axes to get intersection value per heatmap
-
-
-//     auto U = (input*input).sum({2,3})  + (target*target).sum({2,3}) - (input * target).sum({2,3}); // A OR  B - (A and B)
-
-
-// // U = U.sum({2,3}); // sum along last two axes to get  union value per heatmap, add epsilon to prevent 0 divison
-
-
-//     auto iou = (I+eps)/(U+eps);
-
-//     //std::cout << "L62 max iou: " << torch::max(iou).item<float>() <<  std::endl;
-
-
-//     //auto iou_loss = 1- iou;
-
-//     //std::cout << "L63 max 1-iou: " << torch::max(iou_loss).item<float>() <<  std::endl;
-
-
-//     auto iou_loss = iou.mean(1);// average IOU across 21 heatmaps, to get average IOU per sample
-
-//     //std::cout << "L64 max  hm-mean (iou_loss): " << torch::max(iou_loss).item<float>() <<  std::endl;
-
-//     auto  meanIOU =  iou_loss.mean(0);// get average across all samples in batch
-
-//     //std::cout << "L65 batch-mean (iou_loss): " <<  loss.item<float>() <<  std::endl;
-
-
-
-//     return 1-meanIOU;
-
-
-// }
 std::string getName(){ return "IOU";}
 };
 
@@ -112,6 +93,8 @@ public:
     float propDataUsed = 1;
     std::string model_name = "default_model.pt";
     float propVal = 0.1;
+    bool standardize = true;
+    std::string modelPath = "";
    // builder for trian parameter
     TrainParams(){
 
@@ -123,8 +106,18 @@ public:
         return *this;
     }
 
+    TrainParams setModelPath(std::string modelPath){
+        this->modelPath = modelPath;
+        return *this;
+    }
+
     TrainParams  setLoss(Loss* loss_fn) {
         this->loss_fn = loss_fn;
+        return *this;
+    }
+
+    TrainParams setStandardize(bool standardize){
+        this->standardize = standardize;
         return *this;
     }
 
@@ -162,6 +155,10 @@ public:
         this->model_name = modelName;
         return *this;
     }
+
+    bool pretrainedModelReady(){
+        return this->modelPath != "";
+    }
 };
 
 
@@ -172,3 +169,4 @@ void trainModel(Dataset& train,
 void evaluate(Dataset& test, TrainParams tp, bool draw);
 
 
+//float evaluateTest( Dataset test, torch::Device device, Model& model, Loss& loss_fn);

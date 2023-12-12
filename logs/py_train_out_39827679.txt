@@ -1,0 +1,50 @@
+cuda
+Couldn't read image /scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam5/00000011.jpg, got error cannot identify image file '/scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam5/00000011.jpg'
+Couldn't read image /scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam5/00000030.jpg, got error cannot identify image file '/scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam5/00000030.jpg'
+Couldn't read image /scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam6/00000032.jpg, got error cannot identify image file '/scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam6/00000032.jpg'
+Couldn't read image /scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/1319/cam5/00000027.jpg, got error cannot identify image file '/scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/1319/cam5/00000027.jpg'
+Couldn't read image /scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam5/00000049.jpg, got error cannot identify image file '/scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam5/00000049.jpg'
+Couldn't read image /scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam1/00000090.jpg, got error cannot identify image file '/scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam1/00000090.jpg'
+Couldn't read image /scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam6/00000045.jpg, got error cannot identify image file '/scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam6/00000045.jpg'
+Couldn't read image /scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam5/00000089.jpg, got error cannot identify image file '/scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam5/00000089.jpg'
+Couldn't read image /scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam6/00000097.jpg, got error cannot identify image file '/scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam6/00000097.jpg'
+Couldn't read image /scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam6/00000011.jpg, got error cannot identify image file '/scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam6/00000011.jpg'
+Couldn't read image /scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam6/00000012.jpg, got error cannot identify image file '/scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam6/00000012.jpg'
+Couldn't read image /scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam6/00000081.jpg, got error cannot identify image file '/scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam6/00000081.jpg'
+Couldn't read image /scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam6/00000038.jpg, got error cannot identify image file '/scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam6/00000038.jpg'
+999 124
+Epoch: 1/1000, Train Loss=0.9930151231, Val Loss=0.9928778353
+0 Epochs elapse, checkpointing training state
+Epoch: 2/1000, Train Loss=0.9926463764, Val Loss=0.9923379648
+Epoch: 3/1000, Train Loss=0.9918669024, Val Loss=0.9911660155
+Epoch: 4/1000, Train Loss=0.9897908983, Val Loss=0.9864550857
+Epoch: 5/1000, Train Loss=0.9723204094, Val Loss=0.9578587612
+Epoch: 6/1000, Train Loss=0.917280235, Val Loss=0.9316447661
+Epoch: 7/1000, Train Loss=0.8811528971, Val Loss=0.8558383187
+Epoch: 8/1000, Train Loss=0.8332262244, Val Loss=0.806762403
+Epoch: 9/1000, Train Loss=0.7951614415, Val Loss=0.7796169633
+Epoch: 10/1000, Train Loss=0.7745517409, Val Loss=0.7640026865
+Epoch: 11/1000, Train Loss=0.7607908679, Val Loss=0.7593439278
+10 Epochs elapse, checkpointing training state
+Epoch: 12/1000, Train Loss=0.7408872026, Val Loss=0.7267159649
+Epoch: 13/1000, Train Loss=0.7275788843, Val Loss=0.7176241619
+Epoch: 14/1000, Train Loss=0.7144258792, Val Loss=0.7161980498
+Epoch: 15/1000, Train Loss=0.6977195238, Val Loss=0.6882150826
+Epoch: 16/1000, Train Loss=0.6846491592, Val Loss=0.6941840762
+Epoch: 17/1000, Train Loss=0.6723677824, Val Loss=0.6828445366
+Epoch: 18/1000, Train Loss=0.662844324, Val Loss=0.6784704186
+Epoch: 19/1000, Train Loss=0.6515149975, Val Loss=0.6710239649
+Epoch: 20/1000, Train Loss=0.6413037674, Val Loss=0.6484362341
+Epoch: 21/1000, Train Loss=0.6306405435, Val Loss=0.6653721929
+20 Epochs elapse, checkpointing training state
+Epoch: 22/1000, Train Loss=0.6206780842, Val Loss=0.6644890819
+Epoch: 23/1000, Train Loss=0.6144484191, Val Loss=0.6350304655
+Epoch: 24/1000, Train Loss=0.6045753751, Val Loss=0.6117551412
+Epoch: 25/1000, Train Loss=0.5988336794, Val Loss=0.6083551816
+Epoch: 26/1000, Train Loss=0.5864533956, Val Loss=0.5903016726
+Epoch: 27/1000, Train Loss=0.5816551277, Val Loss=0.5870765618
+Epoch: 28/1000, Train Loss=0.5752384939, Val Loss=0.5790467347
+Epoch: 29/1000, Train Loss=0.5682358868, Val Loss=0.5945883762
+Epoch: 30/1000, Train Loss=0.5625989496, Val Loss=0.5916162531
+Epoch: 31/1000, Train Loss=0.5567808882, Val Loss=0.5806280857
+30 Epochs elapse, checkpointing training state

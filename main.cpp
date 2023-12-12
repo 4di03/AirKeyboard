@@ -6,6 +6,7 @@
 #include "data_work.h"
 #include "train.h"
 #include <filesystem>
+//#include "model.h"
 
 using namespace std;
 
@@ -24,6 +25,9 @@ void saveSample(float propTrain = 0.1, float propTest = 0.1 , std::string save_f
 
     torch::Tensor xTrain = train.x;
     torch::Tensor yTrain = train.y;
+
+    // torch::save(trainMeans, save_folder + "/xMean.pt");
+    // torch::save(trainStds, save_folder + "/xStd.pt");
 
     torch::save(xTrain, save_folder + "/xTrain.pt");
     torch::save(yTrain, save_folder + "/yTrain.pt");
@@ -105,12 +109,10 @@ int main(int argc, char* argv[]) {
         cout << "Provide cmd arguments : arg 1 is loss name , arg 2 is model name, arg 3 is reload option"  << endl;
     }
 
-    cout << "L98 " << std::string(argv[0]) <<std::string(argv[1])  << endl;
 
 
     std::string modelName = "default_model.pt";
     if (argc > 2){
-        cout <<  "L102" << argv[2] << endl;
         modelName = std::string(argv[2]);
 
         cout << "Model Name: " << modelName <<  endl;
@@ -118,38 +120,61 @@ int main(int argc, char* argv[]) {
     }
 
     float propDataUsed = 1;
-   
+    bool useCuda = true;
 
-    TrainParams tp = TrainParams().setBatchSize(64).setEpochs(500).setNeurons(16).setLevels(6).setCuda(true).setPropDataUsed(propDataUsed).setModelName(modelName).setPropVal(0.2);
 
-    
+    Loss* loss;
     if (std::string(argv[1]) == "iou"){
         cout << "USING IOU LOSS" << endl;
-        tp = tp.setLoss(new IouLoss());
+        loss = new IouLoss();
     }else{
         cout << "USING MSE LOSS" << endl;
-        tp = tp.setLoss(new MSELoss());
+        loss =new MSELoss();
     }
 
     bool reload = false;
     if (argc > 3){
         auto arg3 = std::string(argv[3]);
-        cout << "read argv" << arg3 << endl;
+        cout << "read argv " << arg3 << endl;
          reload = (arg3 != "--no-reload");
     }
+ 
+    std::string dataPath = "/scratch/palle.a/AirKeyboard/data/data_tensors/pure_data";
+    if (argc > 4){
+        dataPath = std::string(argv[4]);
+        cout << "setting data path as " << dataPath << endl;
+
+    }
+
+    float propTrain = 0.02;
+    if (argc > 5){
+        propTrain= std::stof(std::string(argv[5]));
+    }
+
+    float propTest= 0.08;
+    if (argc > 6){
+        propTest = std::stof(std::string(argv[6]));
+    }
+
+    std::string preloadedModelPath = "";
+
+    if (argc > 7){
+        preloadedModelPath = std::string(argv[7]);
+    }
+
     if (reload){
-        cout << "Reloading data!" <<endl;
+        cout << "Reloading data to " << dataPath << endl;
     }else{
-    cout << "Not reloading data!" << endl;
+    cout << "Not reloading data, pulling from " << dataPath << endl;
 
     }   
 
     if (reload){
-    bool em = true;
-    if (em){
+    bool excludeMerged = false;
+    if (excludeMerged){
     cout << "Excluding background swapped images" << endl;
     }
-    saveSample(0.01, 0.05,  "/scratch/palle.a/AirKeyboard/data/data_tensors/pure_data", em);
+    saveSample(propTrain,propTest, dataPath , excludeMerged);
     }
 
     if (SEED){
@@ -157,23 +182,37 @@ int main(int argc, char* argv[]) {
     torch::cuda::manual_seed(0);
     }
 
-    auto data = loadSamples("/scratch/palle.a/AirKeyboard/data/data_tensors/pure_data");
+    auto data = loadSamples(dataPath);
     Dataset train = data[0];
     Dataset test = data[1];
-    bool useCuda = true;
 
-    // // train = train.sample(0.1);
-    // // test = test.sample(0.5);
+    cout << "running Training!" << endl;
 
-    // cout << "running Training!" << endl;
+
+
+    TrainParams tp = TrainParams()
+        .setBatchSize(64)
+        .setEpochs(500)
+        .setNeurons(16)
+        .setLevels(6)
+        .setCuda(useCuda)
+        .setPropDataUsed(propDataUsed)
+        .setModelName(modelName)
+        .setPropVal(0.1)
+        .setStandardize(true)//false);
+        .setModelPath(preloadedModelPath)
+        .setLoss(loss);
 
     trainModel(train, test, tp);
-    // //trainModel(train, test, true,1, "sample_MSE.pt");
 
     evaluate(test, tp, true);
 
+    // auto device = torch::Device(torch::kCUDA,0);
+    // JitModel model("/scratch/palle.a/AirKeyboard/python_sample/weights/model_final", device );
+    // auto loss = IouLoss();
+    // float loss = evaluateTest(test,  device, model, loss);
 
-
+    // cout << "TEST LOSS FOR MODEL_FINAL " << loss << endl;
 
 
 }

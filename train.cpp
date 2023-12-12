@@ -10,313 +10,14 @@
 #include <iterator>
 #include <fstream>
 #include "cunet/cunet.h"
+#include "model.h"
 
 using namespace std;
 
-// Function to print the device of a PyTorch tensor
-void printTensorDevice(const torch::Tensor& tensor) {
-    // Get the device of the tensor
-    torch::Device device = tensor.device();
 
-    cout << device << endl;
-    // Print the device type (CPU or CUDA)
-    if (device.is_cpu()) {
-        std::cout << "Tensor is on CPU." << std::endl;
-    } else if (device.is_cuda()) {
-        std::cout << "Tensor is on GPU." << std::endl;
-    } else {
-        std::cout << "Tensor device is unknown." << std::endl;
-    }
-}
-// Function to print the device of a PyTorch module
-void printModuleDevice(const torch::nn::Module& module) {
-    // Get the device of the module parameters
-    for (const auto& parameter : module.parameters()) {
-        torch::Device device = parameter.device();
 
-        // Print the device type (CPU or CUDA)
-        if (device.is_cpu()) {
-            std::cout << "Module is on CPU." << std::endl;
-            return;  // Only need to print once
-        } else if (device.is_cuda()) {
-            std::cout << "Module is on GPU." << std::endl;
-            return;  // Only need to print once
-        }
-    }
 
-    // If no parameters found, assume the module is on CPU
-    std::cout << "Module is on CPU." << std::endl;
-}
 
-
-class ConvBlock : public torch::nn::Module {
-public:
-
-    torch::nn::BatchNorm2d batchNorm1 = nullptr, batchNorm2 = nullptr;
-    torch::nn::Conv2d conv1 = nullptr, conv2 = nullptr;
-    torch::nn::Functional relu1 = nullptr, relu2 = nullptr;
-    bool debug;
-    torch::nn::Sequential block = nullptr;
-
-//    torch::nn::Sequential block;
-    ConvBlock(int inChannels = 3, int outChannels = 3, int kernelSize = 3, int padding = 1, bool debug = false) : debug(debug)
-    {
-        /**
-         * @brief This function creates a convolutional block
-         * @param inChannels: int
-         * @param outChannels: int
-         * @param kernelSize: int
-         * @param padding: int
-         * @return torch::nn::Sequential
-         */
-        // Define each part of the block separately
-        batchNorm1 = register_module("batchNorm1", torch::nn::BatchNorm2d(inChannels));
-        conv1 = register_module("conv1", torch::nn::Conv2d(
-                torch::nn::Conv2dOptions(inChannels, outChannels, kernelSize).padding(padding)));
-        relu1 = register_module("relu1", torch::nn::Functional(torch::relu));
-
-        batchNorm2 = register_module("batchNorm2", torch::nn::BatchNorm2d(outChannels));
-        conv2 = register_module("conv2", torch::nn::Conv2d(
-                torch::nn::Conv2dOptions(outChannels, outChannels, kernelSize).padding(padding)));
-        relu2 = register_module("relu2", torch::nn::Functional(torch::relu));
-        debug = debug;
-
-        // Define the block as a sequence of the above parts
-        block = torch::nn::Sequential(
-                batchNorm1,
-                conv1,
-                relu1,
-                batchNorm2,
-                conv2,
-                relu2
-        );
-
-
-    }
-
-    torch::Tensor forward(torch::Tensor x) {
-        //cout << "in CONV BLOCK forward" << debug <<  endl;
-        if (debug) {
-            std::cout << "Input: " << x.sizes() << std::endl;
-
-            // Store the output of each layer for debugging
-            torch::Tensor out1 = batchNorm1->forward(x);
-            std::cout << "BatchNorm2d_1: " << out1.sizes() << std::endl;
-
-            torch::Tensor out2 = conv1->forward(out1);
-            std::cout << "Conv2d_1: " << out2.sizes() << std::endl;
-
-            torch::Tensor out3 = relu1->forward(out2);
-            std::cout << "Functional_1: " << out3.sizes() << std::endl;
-
-            torch::Tensor out4 = batchNorm2->forward(out3);
-            std::cout << "BatchNorm2d_2: " << out4.sizes() << std::endl;
-
-            torch::Tensor out5 = conv2->forward(out4);
-            std::cout << "Conv2d_2: " << out5.sizes() << std::endl;
-            torch::Tensor out6 = relu2->forward(out5);
-
-            std::cout << "Functional_2: " << out6.sizes() << std::endl;
-
-            return out6;
-
-        } else {
-            return block->forward(x);
-        }
-
-    }
-
-};
-
-
-// class UNet : public torch::nn::Module {
-// public:
-//     torch::nn::Sequential model;
-
-//     UNet(int nChannels, int initNeurons) {
-//         int c = nChannels;
-
-//         model = torch::nn::Sequential(
-//                 ConvBlock(c, initNeurons),
-//                 ConvBlock(initNeurons, initNeurons * 2),
-//                 ConvBlock(initNeurons * 2, initNeurons * 4),
-//                 ConvBlock(initNeurons * 4, initNeurons * 8),
-//                 ConvBlock(initNeurons * 12, initNeurons * 4),
-//                 ConvBlock(initNeurons * 6, initNeurons * 2),
-//                 ConvBlock(initNeurons * 3, initNeurons),
-//                 torch::nn::Conv2d(torch::nn::Conv2dOptions(initNeurons, 21, 3).padding(1)),
-//                 torch::nn::Functional(torch::sigmoid)
-//         );
-
-
-//     }
-
-
-//     torch::Tensor forward(torch::Tensor x) {
-//         return model->forward(x);
-//     }
-// };
-
-
-class Model : public torch::nn::Module {
-public:
-    virtual torch::Tensor forward(const torch::Tensor& x)=0;
-
-};
-
-
-class ResidualUNet :public Model{
-public:
-    std::shared_ptr<ConvBlock> conv1, conv2, conv3, conv4, conv5, conv6, conv7;
-    torch::nn::ConvTranspose2d upsample1 = nullptr;
-    torch::nn::ConvTranspose2d upsample2 = nullptr;
-    torch::nn::ConvTranspose2d upsample3 =  nullptr;
-    torch::nn::Conv2d finalConv = nullptr;
-    torch::nn::Functional sigmoid = nullptr;
-    // torch::nn::Sequential model;
-    torch::nn::MaxPool2d maxpool= nullptr;
-    torch::nn::Upsample upsample = nullptr;
-
-
-    bool debug;
-
-    ResidualUNet(int nChannels = 3, int initNeurons = 16, bool debug = false) : debug(debug)
-    {
-
-        conv1 = register_module<ConvBlock>("conv1", std::make_shared<ConvBlock>(nChannels, initNeurons));
-        conv2 = register_module<ConvBlock>("conv2", std::make_shared<ConvBlock>(initNeurons, initNeurons * 2));
-        conv3 = register_module<ConvBlock>("conv3", std::make_shared<ConvBlock>(initNeurons * 2, initNeurons * 4));
-        conv4 = register_module<ConvBlock>("conv4", std::make_shared<ConvBlock>(initNeurons * 4, initNeurons * 8));
-        conv5 = register_module<ConvBlock>("conv5", std::make_shared<ConvBlock>(initNeurons * 12, initNeurons * 4));
-        conv6 = register_module<ConvBlock>("conv6", std::make_shared<ConvBlock>(initNeurons * 6, initNeurons * 2));
-        conv7 = register_module<ConvBlock>("conv7", std::make_shared<ConvBlock>(initNeurons * 3, initNeurons));
-
-        finalConv = register_module("finalConv", torch::nn::Conv2d(torch::nn::Conv2dOptions(initNeurons, 21, 1)));
-        sigmoid = register_module("sigmoid", torch::nn::Functional(torch::sigmoid));
-        maxpool = register_module("maxpool", torch::nn::MaxPool2d(torch::nn::MaxPool2dOptions(2)));
-        upsample = torch::nn::Upsample(torch::nn::UpsampleOptions().scale_factor(std::vector<double>({2,2})).mode(torch::kBilinear).align_corners(false));
-
-        cout <<"INIT RES-UNET" << endl;
-
-    }
-
-
-    torch::Tensor forward(const torch::Tensor& x) {
-        if (debug) {
-
-            cout << "x INPUT: " << x.sizes() << endl;
-
-            torch::Tensor conv1Out = conv1->forward(x);
-            cout << "conv1Out: " << conv1Out.sizes() << endl;
-
-
-            torch::Tensor conv2Out = conv2->forward(conv1Out);
-            cout << "conv2Out: " << conv2Out.sizes() << endl;
-
-
-            torch::Tensor conv3Out = conv3->forward(conv2Out);
-            cout << "conv3Out: " << conv3Out.sizes() << endl;
-
-            torch::Tensor conv4Out = conv4->forward(conv3Out);
-            cout << "conv4Out: " << conv4Out.sizes() << endl;
-
-
-            torch::Tensor skipConnected1 = torch::cat({conv3Out,conv4Out},1);  // Concat along columns axis (3rd dimensions) conv4Out + upsampled3;
-            cout << "skipConnected1: " << skipConnected1.sizes() << endl;
-
-            torch::Tensor conv5Out = conv5->forward(skipConnected1);
-
-
-            cout << "conv5Out: " << conv5Out.sizes() << endl;
-
-            torch::Tensor skipConnected2 = torch::cat({conv2Out,conv5Out }, 1);
-            cout << "skipConnected2: " << skipConnected2.sizes() << endl;
-
-
-            torch::Tensor conv6Out = conv6->forward(skipConnected2);
-            cout << "conv6Out: " << conv6Out.sizes() << endl;
-
-            torch::Tensor skipConnected3 = torch::cat({conv1Out, conv6Out },1);
-            cout << "skipConnected3: " << skipConnected3.sizes() << endl;
-
-
-            torch::Tensor conv7Out = conv7->forward(skipConnected3);
-            cout << "conv7Out: " << conv7Out.sizes() << endl;
-
-
-
-            torch::Tensor finalOut = finalConv->forward(conv7Out);
-            cout << "finalOut: " << finalOut.sizes() << endl;
-
-            auto sigm =sigmoid->forward(finalOut); 
-            return sigm;
-            // if (! normalize){
-            //     return sigm;
-            // }
-            // // sigm is of shape (n , 21, 128 , 128)
-            // torch::Tensor maxVals = sigm.sum({2,3});
-            // maxVals = maxVals.view({sigm.sizes()[0], sigm.sizes()[1],1,1});
-            // return sigm/(maxVals + 1e-12);// normalize output image 
-
-        } else{
-
-            torch::Tensor conv1Out = conv1->forward(x);
-
-            cout <<"L257 convout size: "<< conv1Out.sizes()<< endl;
-
-            cout <<"L258 maxpool(convout) size: "<< maxpool(conv1Out).sizes()<< endl;
-
-            torch::Tensor conv2Out = conv2->forward(maxpool->forward(conv1Out));
-
-            torch::Tensor conv3Out = conv3->forward(maxpool->forward(conv2Out));
-
-            torch::Tensor conv4Out = conv4->forward(maxpool->forward(conv3Out));
-
-            torch::Tensor skipConnected1 = torch::cat({upsample(conv4Out),conv3Out},1);  // Concat along columns axis (3rd dimensions) conv4Out + upsampled3;
-
-            torch::Tensor conv5Out = conv5->forward(skipConnected1);
-
-            torch::Tensor skipConnected2 = torch::cat({upsample(conv5Out),conv2Out }, 1);
-
-            torch::Tensor conv6Out = conv6->forward(skipConnected2);
-
-            torch::Tensor skipConnected3 = torch::cat({upsample(conv6Out) ,conv1Out},1);
-
-            torch::Tensor conv7Out = conv7->forward(skipConnected3);
-
-            torch::Tensor finalOut = finalConv->forward(conv7Out);
-            
-            auto sigm =sigmoid->forward(finalOut); 
-
-            return sigm;
-            // if (! normalize){
-            //     return sigm;
-            // }
-            // // sigm is of shape (n , 21, 128 , 128)
-            // torch::Tensor maxVals = sigm.max({2,3});
-            // maxVals = maxVals.view({sigm.sizes()[0], sigm.sizes()[1],1,1});
-            // return sigm/(maxVals + 1e-12);// normalize output image 
-
-        }
-    }
-
-
-};
-
-class CuNet : public Model{
-public:
-    std::shared_ptr<CUNet2dImpl> model;
-
-    CuNet(int inChannels = 3, int outChannels = 21, int initNeurons = 64, int levels = 4)
-        : model(std::make_shared<CUNet2dImpl>(inChannels, outChannels, initNeurons, levels)) {
-        model = register_module("model", model);
-    }
-    torch::Tensor forward(const torch::Tensor& x) {
-       return model->forward(x);
-    }
-
-
-};
 
 
 torch::Tensor removeExtraDim(torch::Tensor x){
@@ -346,6 +47,7 @@ float getMean(std::vector<num> nums){
 torch::Device initDevice(bool cuda){
     torch::Device device(torch::kCUDA,0);
     if (!cuda){
+        cout << "using CPU" << endl;
         device = torch::Device(torch::kCPU);
     }else{
         cout <<"USING CUDA" << endl;
@@ -356,14 +58,14 @@ torch::Device initDevice(bool cuda){
 
 
 // Load Model
-void loadModel(const std::string& model_path, torch::nn::Module& model) {
+void loadModel(const std::string& model_path, torch::nn::Module* model) {
     //torch::jit::script::Module model;
 
     try {
         //model = torch::load(model,model_path)
         torch::serialize::InputArchive input_archive;
         input_archive.load_from(model_path);
-        model.load(input_archive);
+        model->load(input_archive);
         //model = torch::jit::load(model_path);
     } catch (const c10::Error& e) {
         std::cerr << "Error loading the model: " << e.what() << std::endl;
@@ -371,17 +73,6 @@ void loadModel(const std::string& model_path, torch::nn::Module& model) {
 
 }
 
-void saveModel(const std::string& model_path, torch::nn::Module& model){
-     try {
-        //model = torch::load(model,model_path)
-        torch::serialize::OutputArchive output_archive;
-        model.save(output_archive);
-        output_archive.save_to(model_path);
-        //model = torch::jit::load(model_path);
-    } catch (const c10::Error& e) {
-        std::cerr << "Error saving the model: " << e.what() << std::endl;
-    }
-}
 
 void printModel(torch::nn::Module model) {
     // Get named parameters of the model, gets parameters of last layer
@@ -397,7 +88,7 @@ void printModel(torch::nn::Module model) {
     
 }
 
-float evaluateTest( Dataset& test, torch::Device device, Model& model, Loss& loss_fn){
+float evaluateTest( Dataset test, torch::Device device, Model& model, Loss& loss_fn){
     //auto loss_fn = MSELoss();
 
     model.to(device);
@@ -450,11 +141,15 @@ float evaluateTest( Dataset& test, torch::Device device, Model& model, Loss& los
 
 
 
-void drawPredictions(Dataset& d,Model& model, const std::string& valLossSavePath , torch::Device device){
+void drawPredictions(Dataset d,Model& model, const std::string& valLossSavePath , torch::Device device){
     // d should be small enough for the model to produce infereence in a single batch
     d.to(device);
+    
+
+    //auto rawImages = dataset.x;
     auto imageData = d.x;
     auto expectedHeatmaps = d.y;
+
 
 
     //auto pred =model.forward(imageData); //model.forward(imageData);
@@ -474,47 +169,44 @@ void drawPredictions(Dataset& d,Model& model, const std::string& valLossSavePath
     for (int i = 0; i< nImages; i++){
 
         auto start_time = std::chrono::high_resolution_clock::now();
-        auto predMap = model.forward(imageData[i].unsqueeze(0));
+
+        auto it = imageData[i].unsqueeze(0);
+       // cout << "L186: " << torch::max(it) << endl; # is normalized
+        auto predMap = model.forward(it);
         auto predKP = getKPFromHeatmap(predMap,device);
         auto end_time = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
         // Convert duration to int
         int duration_int = static_cast<int>(duration.count());
         predTimes.push_back(duration_int);
-        // std::string tmpFilePath = valLossSavePath + "val_hm_" + std::to_string(i) + ".jpg";
-        
-        // //cout << "L484" << expectedHeatmaps.sizes() << endl;
-        // auto tgt = expectedHeatmaps.index({i,0}).view({1,128,128});
-        // //cout << "L485" << tgt.sizes() << endl;
-
-        // saveImageToFile(tensorToMat(tgt)*255,tmpFilePath);
+   
 
         auto expectedKP = getKPFromHeatmap(expectedHeatmaps[i],device);
 
-        //cout << "L494: " <<  predMap.sizes() << endl;
         auto predHM = predMap;//pred[i].unsqueeze(0);
         auto expHM = expectedHeatmaps[i].unsqueeze(0);
 
-        // cout <<  "L455: "<<predHM.sizes() << expHM.sizes() << endl;
-        // cout << "Image " << i << " MSE: " << mse.forward(predHM,expHM).item<float>() << endl;
-        // cout << "Image " << i << " IOU: " << iou.forward(predHM,expHM).item<float>() << endl;
 
 
-        auto imageTensor = imageData[i];
-        cv::Mat image = tensorToMat(imageData[i]);
+        // cv::Mat img1;
+        // imageData[i].convertTo(img1, CV_8U, 255, 0);
 
-        //std::string tmpFilePath = valLossSavePath + "Image_init" + std::to_string(i) + ".jpg";
-        
-        //saveImageToFile(image,tmpFilePath);
-        //cout << "L474" <<  expectedKP.sizes() << endl;
+       // cout << "L206(pre-tensorToMat) Max: " <<torch::max(imageData[i]) <<  " Mean: " << torch::mean(imageData[i]) << endl;
 
-        image = drawKeypoints(image ,expectedKP, gtColor);
+        cv::Mat image = tensorToMat(imageData[i]); // draw on non-standardized image
 
-        image = drawKeypoints(image ,predKP, predColor);  
+        cv::Mat img2;
+        image.convertTo(img2, CV_8U, 255, 0);
+
+        cv::imwrite("L207_image_convert_img2.jpg" , img2);
+
+        img2 = drawKeypoints(img2 ,expectedKP, gtColor);
+
+        img2 = drawKeypoints(img2 ,predKP, predColor);  
 
 
         std::string filePath = valLossSavePath + "Image" + std::to_string(i) + ".jpg";
-        saveImageToFile(image, filePath);
+        saveImageToFile(img2, filePath);
 
 
 
@@ -533,20 +225,24 @@ bool cuda, std::string model_name,bool draw, Loss& loss_fn
     auto cuda = t.cuda;
     auto model_name = t.model_name;
     auto loss = t.loss_fn;
+    auto device = initDevice(cuda);
 
-    cout << "running evaluation for " << model_name << endl;
+    // cout << "running evaluation for " << model_name << endl;
 
-    CuNet model;
+    Model* model;
 
     loadModel("/scratch/palle.a/AirKeyboard/data/models/" + model_name, model);
 
-    auto device = initDevice(cuda);
-    evaluateTest(test,device,model,*loss);
+
+    // cout << "L248: " ;
+    // Model* model = new JitModel("/scratch/palle.a/AirKeyboard/python_sample/weights/model_final.pt", device);
+
+    evaluateTest(test,device,*model,*loss);
     
 
     if (draw){
     auto valLossSavePath = "/scratch/palle.a/AirKeyboard/data/analytics/" + model_name+ "_analytics/";
-    drawPredictions(test.slice(10)[0], model, valLossSavePath , device); // draws first  10 images in test set
+    drawPredictions(test.slice(10)[0], *model, valLossSavePath , device); // draws first  10 images in test set
     }
 
 }
@@ -580,22 +276,34 @@ void writeVectorToFile(const std::vector<T>& vec, const std::string& filename) {
 }
 
 
+class LossTracker {
+public:
+    int noImprovementCount = 0;
+    int patience;
+    float bestLoss = 100000000.0;
+    LossTracker( int patience):patience(patience){}
+
+    // Early stopping logic based on validation loss
+    bool earlyStopping(float validationLoss) {
+
+        if (validationLoss < bestLoss) {
+            bestLoss = validationLoss;
+            noImprovementCount = 0;
+        } else {
+            noImprovementCount++;
+        }
 
 
-// Early stopping logic based on validation loss
-bool earlyStopping(float validationLoss, int patience = 5) {
-    static int noImprovementCount = 0;
-    static float bestLoss = 100000000.0;
-
-    if (validationLoss < bestLoss) {
-        bestLoss = validationLoss;
-        noImprovementCount = 0;
-    } else {
-        noImprovementCount++;
+        return noImprovementCount >= patience;
     }
 
-    return noImprovementCount >= patience;
-}
+
+};
+
+
+
+
+
 
 void trainModel(Dataset& train, 
                 Dataset& test, 
@@ -611,6 +319,8 @@ void trainModel(Dataset& train,
     auto loss_fn = tp.loss_fn;
 
     bool cuda = tp.cuda; 
+    torch::Device device = initDevice(cuda);
+
     float propDataUsed  = tp.propDataUsed;
     std::string model_name = tp.model_name;
     cout << "train x shape: " << train.x.sizes() << endl;
@@ -619,6 +329,8 @@ void trainModel(Dataset& train,
     // cout << "val y shape: " << val.y.sizes() << endl;
     cout << "test x shape: " << test.x.sizes() << endl;
     cout << "test y shape: " << test.y.sizes() << endl;
+
+    int plateauPatience = 20;
 
 
     train = train.sample(propDataUsed);
@@ -638,8 +350,26 @@ void trainModel(Dataset& train,
     cout << "test x shape: " << test.x.sizes() << endl;
     cout << "test y shape: " << test.y.sizes() << endl;
 
+    // Dataset standardTrainData;
+    // Dataset standardValData;
+    // Dataset standardTestData;
+    StandardizeTransform transformer;
+    if(tp.standardize){
+        auto trainStats = getNormParams(train.x);
+        torch::Tensor trainMeans = std::get<0>(trainStats).to(device);
+        torch::Tensor trainStds = std::get<1>(trainStats).to(device);
+
+        cout << "Initializing trian standardizer with below means and sts: " << endl;
+        printTensor(trainMeans);
+        printTensor(trainStds);
+
+
+        transformer = StandardizeTransform(trainMeans, trainStds);
+    } 
+   
+
     
-    auto sizes = train.x.sizes();
+    auto sizes =train.x.sizes();
 
     int c = sizes[1];
     int nTrainSamples = sizes[0];
@@ -647,22 +377,49 @@ void trainModel(Dataset& train,
     float batchSize = tp.batchSize;
     int nEpochs = tp.nEpochs;
     int levels = tp.levels;
-    auto model = CuNet(c,21, initNeurons);//ResidualUNet(c, initNeurons);
 
-    torch::Device device = initDevice(cuda);
-    model.to(device);
 
-    printModuleDevice(model);
 
-    torch::optim::SGD optimizer(model.parameters(), torch::optim::SGDOptions(1));//.momentum(0.9)); // lr = 1, momentum = 0.9
+    Model* model= new ResidualUNet(c, initNeurons, 7);//CuNet(c,21, initNeurons);//
 
-    torch::optim::StepLR scheduler(optimizer, /* step_size = */ 20, /* gamma = */ 0.1);
 
+    if (tp.pretrainedModelReady()){
+        cout << "Loading pretrained model for retraining" << endl;
+        loadModel(tp.modelPath, model);
+    }
+    
+    //Model* model= new JitModel("/scratch/palle.a/AirKeyboard/python_sample/weights/untrained_test_model.pt", device);
+
+    if (tp.standardize){
+        cout<< "STANDARDIZING DATA" <<endl;
+        model->setTransformer(transformer); // 
+    }else{
+        cout << "NOT STANDARDIZING DATA" <<endl;
+    }
+
+    model->to(device);
+
+    printModuleDevice(*model);
+
+    torch::optim::SGD optimizer(model->parameters(), torch::optim::SGDOptions(0.1));//.momentum(0.9)); // lr = 1, momentum = 0.9
+
+    torch::optim::StepLR scheduler(optimizer, /* step_size = */ 1, /* gamma = */ 0.5); // do it on plateau ()
+
+    LossTracker plateauTracker(10); // checks for plteaus with 20 patience
+    LossTracker lossTracker(50); // checks for when to stop trianig wieht early stopping (50 patitence)
+    // ReduceLROnPlateau scheduler(
+    //     optimizer, 
+    //     0.5,
+    //     10,
+    //     0.00001
+    // );
     std::string model_path = "/scratch/palle.a/AirKeyboard/data/models/" + model_name;
 
     std::vector<float> trainLosses;
     std::vector<float> valLosses;
 
+    //auto standardTrainData = transformer.transform(train);
+   //auto standardValData = transformer.transform(val);
     for (size_t epoch = 1; epoch <= nEpochs; ++epoch) {
         // Iterate over batches
         //std::cout << "Epoch: " << epoch << std::endl;
@@ -680,10 +437,10 @@ void trainModel(Dataset& train,
 
 
             // std::string tmpFilePath = "/scratch/palle.a/AirKeyboard/data/tmp/train_hm_" + std::to_string(i) + ".jpg";
-            // cout << "L592" << y.sizes() << endl;
-            // auto tgt = y.index({0,0}).view({1,128,128});
-            // cout << "L593" << tgt.sizes() << endl;
-            // saveImageToFile(tensorToMat(tgt)*255,tmpFilePath);
+            //cout << "L592" << y.sizes() << endl;
+            auto tgt = y.index({0,0}).view({1,128,128});
+            //cout << "L593" << tgt.sizes() << endl;
+            saveImageToFile(tensorToMat(tgt)*255,"L437_hm_train.jpg");
 
             // Zero gradients
             optimizer.zero_grad();
@@ -693,7 +450,7 @@ void trainModel(Dataset& train,
             // Forward pass
             x = x.to(device);
 
-            torch::Tensor y_pred = model.forward(x);
+            torch::Tensor y_pred = model->forward(x);
 
             y = y.to(device);
             y = removeExtraDim(y); // to remove extra axis for 1 channel image
@@ -727,19 +484,24 @@ void trainModel(Dataset& train,
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
 
         cout << "VALIDATION LOSS: ";
-        float valLoss = evaluateTest(val,device,model, *loss_fn);
+        float valLoss = evaluateTest(val,device,*model, *loss_fn);
 
-        if (earlyStopping(valLoss, 50)){//if loss doesnt imporve for 15 epochs
+        if (plateauTracker.earlyStopping(valLoss)){
+            cout << "Reducing Learning Rate!" << endl;
+            scheduler.step(); // if no imporvement for n1 epcosh, update LR
+        }
+
+        if (lossTracker.earlyStopping(valLoss)){//if loss doesnt imporve for n2 epochs, break out of training
             std::cout << "Early stopping at epoch " << epoch << std::endl;
+            
             break;
 
         }
 
         valLosses.push_back(valLoss);
 
-        scheduler.step();
         if(epoch % 10 ==0){
-            saveModel(model_path,model); //checkpointing model 
+            model->save(model_path);
         }
         // Print the time taken for the forward pass
         //std::cout << "Epoch took " << duration.count() << " microseconds." << std::endl;
@@ -749,8 +511,9 @@ void trainModel(Dataset& train,
 
 
     }
+    model->save(model_path);
 
-    model.eval();
+    model->eval();
     torch::NoGradGuard no_grad;
 
 
@@ -762,7 +525,9 @@ void trainModel(Dataset& train,
 
 
     cout << "Post-training loss:";
-    evaluateTest(test, device, model, *loss_fn);
+
+    evaluateTest(test, device, *model, *loss_fn);
+
 
     Dataset sampleTestImages = test.shuffle().slice(10)[0];
 
@@ -770,16 +535,14 @@ void trainModel(Dataset& train,
     // SAVE MODEL
 
 
-    drawPredictions(sampleTestImages, model, valLossSavePath+"/predictions_presave/",device);
-
-    saveModel( model_path,model);
+    drawPredictions(sampleTestImages,*model, valLossSavePath+"/predictions_presave/",device);
 
 
-    cout << "Loading model after saving" << endl;
-    CuNet postModel;
+    cout << "Loading model after saving from " << model_path << endl ;
+    Model* postModel = new ResidualUNet(c, initNeurons,7);//JitModel(model_path,device);
     loadModel(model_path,postModel);
-    postModel.eval();
-    drawPredictions(sampleTestImages, postModel, valLossSavePath+"/predictions_postsave/",device);
+    postModel->eval();
+    drawPredictions(sampleTestImages, *postModel, valLossSavePath+"/predictions_postsave/",device);
 
 
 }

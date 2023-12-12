@@ -1,0 +1,577 @@
+-- Caffe2: CUDA detected: 11.8
+-- Caffe2: CUDA nvcc is: /shared/centos7/cuda/11.8/bin/nvcc
+-- Caffe2: CUDA toolkit directory: /shared/centos7/cuda/11.8
+-- Caffe2: Header version is: 11.8
+-- /shared/centos7/cuda/11.8/lib64/libnvrtc.so shorthash is 672ee683
+-- USE_CUDNN is set to 0. Compiling without cuDNN support
+-- USE_CUSPARSELT is set to 0. Compiling without cuSPARSELt support
+-- Autodetected CUDA architecture(s):  7.0
+-- Added CUDA NVCC flags for: -gencode;arch=compute_70,code=sm_70
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /scratch/palle.a/AirKeyboard/build
+Consolidate compiler generated dependencies of target Test
+Consolidate compiler generated dependencies of target Open_CV_Project
+[ 57%] Built target Test
+[100%] Built target Open_CV_Project
+Model Name: mid_iou.pt
+USING IOU LOSS
+read argv --reload
+setting data path as /scratch/palle.a/AirKeyboard/data/data_tensors/mid_data
+Reloading data to /scratch/palle.a/AirKeyboard/data/data_tensors/mid_data
+Processing 12033 Images
+N = 12033
+Processing Image 100
+Processing Image 200
+Processing Image 300
+Processing Image 400
+Processing Image 500
+Processing Image 600
+Processing Image 700
+Processing Image 800
+Processing Image 900
+Processing Image 1000
+Processing Image 1100
+Processing Image 1200
+Processing Image 1300
+Processing Image 1400
+Processing Image 1500
+Processing Image 1600
+Processing Image 1700
+Processing Image 1800
+Processing Image 1900
+Processing Image 2000
+Processing Image 2100
+Processing Image 2200
+Processing Image 2300
+Processing Image 2400
+Processing Image 2500
+Could not read image: /scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam5/00000011.jpg
+Processing Image 2600
+Processing Image 2700
+Processing Image 2800
+Processing Image 2900
+Processing Image 3000
+Processing Image 3100
+Processing Image 3200
+Processing Image 3300
+Processing Image 3400
+Processing Image 3500
+Processing Image 3600
+Processing Image 3700
+Processing Image 3800
+Processing Image 3900
+Processing Image 4000
+Processing Image 4100
+Processing Image 4200
+Processing Image 4300
+Processing Image 4400
+Processing Image 4500
+Processing Image 4600
+Processing Image 4700
+Processing Image 4800
+Processing Image 4900
+Processing Image 5000
+Processing Image 5100
+Processing Image 5200
+Processing Image 5300
+Processing Image 5400
+Processing Image 5500
+Processing Image 5600
+Processing Image 5700
+Processing Image 5800
+Processing Image 5900
+Processing Image 6000
+Processing Image 6100
+Processing Image 6200
+Processing Image 6300
+Processing Image 6400
+Processing Image 6500
+Processing Image 6600
+Processing Image 6700
+Processing Image 6800
+Processing Image 6900
+Processing Image 7000
+Processing Image 7100
+Processing Image 7200
+Processing Image 7300
+Processing Image 7400
+Processing Image 7500
+Processing Image 7600
+Processing Image 7700
+Processing Image 7800
+Processing Image 7900
+Processing Image 8000
+Processing Image 8100
+Processing Image 8200
+Processing Image 8300
+Processing Image 8400
+Processing Image 8500
+Processing Image 8600
+Processing Image 8700
+Processing Image 8800
+Processing Image 8900
+Processing Image 9000
+Processing Image 9100
+Processing Image 9200
+Processing Image 9300
+Processing Image 9400
+Processing Image 9500
+Processing Image 9600
+Processing Image 9700
+Processing Image 9800
+Processing Image 9900
+Processing Image 10000
+Processing Image 10100
+Processing Image 10200
+Processing Image 10300
+Processing Image 10400
+Processing Image 10500
+Processing Image 10600
+Processing Image 10700
+Processing Image 10800
+Processing Image 10900
+Processing Image 11000
+Processing Image 11100
+Processing Image 11200
+Processing Image 11300
+Processing Image 11400
+Processing Image 11500
+Processing Image 11600
+Processing Image 11700
+Processing Image 11800
+Processing Image 11900
+Processing Image 12000
+L568: post data-prep: 1
+train x shape: [12031, 3, 128, 128]
+train y shape: [12031, 21, 128, 128]
+Processing 4538 Images
+N = 4538
+Processing Image 100
+Processing Image 200
+Processing Image 300
+Processing Image 400
+Could not read image: /scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0860/cam4/00000035.jpg
+Processing Image 500
+Processing Image 600
+Processing Image 700
+Processing Image 800
+Processing Image 900
+Processing Image 1000
+Processing Image 1100
+Processing Image 1200
+Processing Image 1300
+Could not read image: /scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0860/cam4/00000014.jpg
+Processing Image 1400
+Processing Image 1500
+Processing Image 1600
+Processing Image 1700
+Processing Image 1800
+Processing Image 1900
+Processing Image 2000
+Processing Image 2100
+Processing Image 2200
+Processing Image 2300
+Processing Image 2400
+Processing Image 2500
+Processing Image 2600
+Processing Image 2700
+Processing Image 2800
+Processing Image 2900
+Processing Image 3000
+Processing Image 3100
+Processing Image 3200
+Processing Image 3300
+Processing Image 3400
+Could not read image: /scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0860/cam4/00000013.jpg
+Processing Image 3500
+Could not read image: /scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0860/cam4/00000017.jpg
+Processing Image 3600
+Processing Image 3700
+Processing Image 3800
+Processing Image 3900
+Processing Image 4000
+Processing Image 4100
+Could not read image: /scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0860/cam4/00000000.jpg
+Processing Image 4200
+Processing Image 4300
+Processing Image 4400
+Processing Image 4500
+L568: post data-prep: 1
+running Training!
+USING CUDA
+train x shape: [12031, 3, 128, 128]
+train y shape: [12031, 21, 128, 128]
+test x shape: [4532, 3, 128, 128]
+test y shape: [4532, 21, 128, 128]
+POST SAMPLING
+train x shape: [10828, 3, 128, 128]
+train y shape: [10828, 21, 128, 128]
+val x shape: [1203, 21, 128, 128]
+val y shape: [1203, 21, 128, 128]
+test x shape: [4532, 3, 128, 128]
+test y shape: [4532, 21, 128, 128]
+Initializing trian standardizer with below means and sts: 
+ 0.4985
+ 0.4291
+ 0.3556
+[ CUDAFloatType{3} ]
+ 0.1874
+ 0.2020
+ 0.1734
+[ CUDAFloatType{3} ]
+INIT RES-UNET
+STANDARDIZING DATA
+Module is on GPU.
+Train (single batch) Loss 0.950406
+VALIDATION LOSS: Loss: 0.94575
+Train (single batch) Loss 0.946043
+VALIDATION LOSS: Loss: 0.8479
+Train (single batch) Loss 0.851038
+VALIDATION LOSS: Loss: 0.850471
+Train (single batch) Loss 0.851598
+VALIDATION LOSS: Loss: 0.784343
+Train (single batch) Loss 0.785304
+VALIDATION LOSS: Loss: 0.718638
+Train (single batch) Loss 0.715446
+VALIDATION LOSS: Loss: 0.697972
+Train (single batch) Loss 0.694247
+VALIDATION LOSS: Loss: 0.684094
+Train (single batch) Loss 0.678218
+VALIDATION LOSS: Loss: 0.671114
+Train (single batch) Loss 0.663599
+VALIDATION LOSS: Loss: 0.663791
+Train (single batch) Loss 0.653856
+VALIDATION LOSS: Loss: 0.657064
+Train (single batch) Loss 0.646439
+VALIDATION LOSS: Loss: 0.650566
+Train (single batch) Loss 0.638871
+VALIDATION LOSS: Loss: 0.649379
+Train (single batch) Loss 0.636034
+VALIDATION LOSS: Loss: 0.646306
+Train (single batch) Loss 0.631175
+VALIDATION LOSS: Loss: 0.643858
+Train (single batch) Loss 0.627198
+VALIDATION LOSS: Loss: 0.640118
+Train (single batch) Loss 0.622707
+VALIDATION LOSS: Loss: 0.637225
+Train (single batch) Loss 0.61984
+VALIDATION LOSS: Loss: 0.635589
+Train (single batch) Loss 0.617736
+VALIDATION LOSS: Loss: 0.634028
+Train (single batch) Loss 0.615988
+VALIDATION LOSS: Loss: 0.633335
+Train (single batch) Loss 0.614393
+VALIDATION LOSS: Loss: 0.629319
+Train (single batch) Loss 0.611793
+VALIDATION LOSS: Loss: 0.626353
+Train (single batch) Loss 0.609551
+VALIDATION LOSS: Loss: 0.628508
+Train (single batch) Loss 0.610175
+VALIDATION LOSS: Loss: 0.623971
+Train (single batch) Loss 0.605706
+VALIDATION LOSS: Loss: 0.621268
+Train (single batch) Loss 0.604841
+VALIDATION LOSS: Loss: 0.615314
+Train (single batch) Loss 0.597035
+VALIDATION LOSS: Loss: 0.616352
+Train (single batch) Loss 0.59827
+VALIDATION LOSS: Loss: 0.619343
+Train (single batch) Loss 0.599959
+VALIDATION LOSS: Loss: 0.617263
+Train (single batch) Loss 0.593991
+VALIDATION LOSS: Loss: 0.613226
+Train (single batch) Loss 0.587929
+VALIDATION LOSS: Loss: 0.609177
+Train (single batch) Loss 0.581719
+VALIDATION LOSS: Loss: 0.60687
+Train (single batch) Loss 0.583916
+VALIDATION LOSS: Loss: 0.604727
+Train (single batch) Loss 0.577058
+VALIDATION LOSS: Loss: 0.611107
+Train (single batch) Loss 0.586263
+VALIDATION LOSS: Loss: 0.606656
+Train (single batch) Loss 0.571753
+VALIDATION LOSS: Loss: 0.606978
+Train (single batch) Loss 0.573252
+VALIDATION LOSS: Loss: 0.606716
+Train (single batch) Loss 0.579435
+VALIDATION LOSS: Loss: 0.60766
+Train (single batch) Loss 0.571569
+VALIDATION LOSS: Loss: 0.615433
+Train (single batch) Loss 0.591077
+VALIDATION LOSS: Loss: 0.599437
+Train (single batch) Loss 0.562054
+VALIDATION LOSS: Loss: 0.597843
+Train (single batch) Loss 0.55975
+VALIDATION LOSS: Loss: 0.610567
+Train (single batch) Loss 0.586071
+VALIDATION LOSS: Loss: 0.606638
+Train (single batch) Loss 0.571657
+VALIDATION LOSS: Loss: 0.596595
+Train (single batch) Loss 0.560721
+VALIDATION LOSS: Loss: 0.607863
+Train (single batch) Loss 0.571719
+VALIDATION LOSS: Loss: 0.635674
+Train (single batch) Loss 0.61445
+VALIDATION LOSS: Loss: 0.616173
+Train (single batch) Loss 0.592425
+VALIDATION LOSS: Loss: 0.610891
+Train (single batch) Loss 0.573695
+VALIDATION LOSS: Loss: 0.598848
+Train (single batch) Loss 0.56222
+VALIDATION LOSS: Loss: 0.599574
+Train (single batch) Loss 0.553954
+VALIDATION LOSS: Loss: 0.611483
+Train (single batch) Loss 0.577593
+VALIDATION LOSS: Loss: 0.607597
+Train (single batch) Loss 0.563616
+VALIDATION LOSS: Loss: 0.601826
+Train (single batch) Loss 0.565649
+VALIDATION LOSS: Loss: 0.616155
+Reducing Learning Rate!
+Train (single batch) Loss 0.575605
+VALIDATION LOSS: Loss: 0.60318
+Reducing Learning Rate!
+Train (single batch) Loss 0.55587
+VALIDATION LOSS: Loss: 0.588749
+Train (single batch) Loss 0.534816
+VALIDATION LOSS: Loss: 0.589694
+Train (single batch) Loss 0.527203
+VALIDATION LOSS: Loss: 0.591274
+Train (single batch) Loss 0.525629
+VALIDATION LOSS: Loss: 0.592237
+Train (single batch) Loss 0.521922
+VALIDATION LOSS: Loss: 0.594243
+Train (single batch) Loss 0.51999
+VALIDATION LOSS: Loss: 0.598332
+Train (single batch) Loss 0.527944
+VALIDATION LOSS: Loss: 0.59383
+Train (single batch) Loss 0.525099
+VALIDATION LOSS: Loss: 0.59598
+Train (single batch) Loss 0.519764
+VALIDATION LOSS: Loss: 0.606654
+Train (single batch) Loss 0.529984
+VALIDATION LOSS: Loss: 0.605008
+Train (single batch) Loss 0.528173
+VALIDATION LOSS: Loss: 0.601919
+Reducing Learning Rate!
+Train (single batch) Loss 0.534005
+VALIDATION LOSS: Loss: 0.594878
+Reducing Learning Rate!
+Train (single batch) Loss 0.510159
+VALIDATION LOSS: Loss: 0.589686
+Reducing Learning Rate!
+Train (single batch) Loss 0.508085
+VALIDATION LOSS: Loss: 0.584939
+Train (single batch) Loss 0.507349
+VALIDATION LOSS: Loss: 0.583057
+Train (single batch) Loss 0.504212
+VALIDATION LOSS: Loss: 0.581946
+Train (single batch) Loss 0.502062
+VALIDATION LOSS: Loss: 0.580967
+Train (single batch) Loss 0.499939
+VALIDATION LOSS: Loss: 0.579936
+Train (single batch) Loss 0.497673
+VALIDATION LOSS: Loss: 0.578628
+Train (single batch) Loss 0.495145
+VALIDATION LOSS: Loss: 0.577101
+Train (single batch) Loss 0.492277
+VALIDATION LOSS: Loss: 0.575365
+Train (single batch) Loss 0.489035
+VALIDATION LOSS: Loss: 0.573734
+Train (single batch) Loss 0.485688
+VALIDATION LOSS: Loss: 0.572391
+Train (single batch) Loss 0.482696
+VALIDATION LOSS: Loss: 0.571691
+Train (single batch) Loss 0.480437
+VALIDATION LOSS: Loss: 0.57144
+Train (single batch) Loss 0.479017
+VALIDATION LOSS: Loss: 0.571386
+Train (single batch) Loss 0.477868
+VALIDATION LOSS: Loss: 0.571452
+Train (single batch) Loss 0.476922
+VALIDATION LOSS: Loss: 0.571566
+Train (single batch) Loss 0.476077
+VALIDATION LOSS: Loss: 0.571703
+Train (single batch) Loss 0.475337
+VALIDATION LOSS: Loss: 0.571869
+Train (single batch) Loss 0.474625
+VALIDATION LOSS: Loss: 0.572058
+Train (single batch) Loss 0.473939
+VALIDATION LOSS: Loss: 0.572202
+Train (single batch) Loss 0.473267
+VALIDATION LOSS: Loss: 0.57244
+Train (single batch) Loss 0.472713
+VALIDATION LOSS: Loss: 0.57263
+Train (single batch) Loss 0.472064
+VALIDATION LOSS: Loss: 0.572811
+Train (single batch) Loss 0.471503
+VALIDATION LOSS: Loss: 0.573018
+Reducing Learning Rate!
+Train (single batch) Loss 0.470917
+VALIDATION LOSS: Loss: 0.572175
+Reducing Learning Rate!
+Train (single batch) Loss 0.471844
+VALIDATION LOSS: Loss: 0.571508
+Reducing Learning Rate!
+Train (single batch) Loss 0.472265
+VALIDATION LOSS: Loss: 0.571325
+Train (single batch) Loss 0.472225
+VALIDATION LOSS: Loss: 0.571263
+Train (single batch) Loss 0.471984
+VALIDATION LOSS: Loss: 0.571246
+Train (single batch) Loss 0.471749
+VALIDATION LOSS: Loss: 0.571243
+Train (single batch) Loss 0.471539
+VALIDATION LOSS: Loss: 0.571252
+Train (single batch) Loss 0.471349
+VALIDATION LOSS: Loss: 0.571263
+Train (single batch) Loss 0.471178
+VALIDATION LOSS: Loss: 0.571283
+Train (single batch) Loss 0.471019
+VALIDATION LOSS: Loss: 0.571307
+Train (single batch) Loss 0.470865
+VALIDATION LOSS: Loss: 0.571332
+Train (single batch) Loss 0.470723
+VALIDATION LOSS: Loss: 0.571354
+Train (single batch) Loss 0.470585
+VALIDATION LOSS: Loss: 0.571381
+Train (single batch) Loss 0.470453
+VALIDATION LOSS: Loss: 0.571409
+Train (single batch) Loss 0.470332
+VALIDATION LOSS: Loss: 0.571437
+Train (single batch) Loss 0.47021
+VALIDATION LOSS: Loss: 0.571471
+Reducing Learning Rate!
+Train (single batch) Loss 0.470099
+VALIDATION LOSS: Loss: 0.57145
+Reducing Learning Rate!
+Train (single batch) Loss 0.470067
+VALIDATION LOSS: Loss: 0.571427
+Reducing Learning Rate!
+Train (single batch) Loss 0.469894
+VALIDATION LOSS: Loss: 0.571409
+Reducing Learning Rate!
+Train (single batch) Loss 0.469786
+VALIDATION LOSS: Loss: 0.571399
+Reducing Learning Rate!
+Train (single batch) Loss 0.469727
+VALIDATION LOSS: Loss: 0.571394
+Reducing Learning Rate!
+Train (single batch) Loss 0.469697
+VALIDATION LOSS: Loss: 0.571391
+Reducing Learning Rate!
+Train (single batch) Loss 0.469682
+VALIDATION LOSS: Loss: 0.57139
+Reducing Learning Rate!
+Train (single batch) Loss 0.469674
+VALIDATION LOSS: Loss: 0.571389
+Reducing Learning Rate!
+Train (single batch) Loss 0.46967
+VALIDATION LOSS: Loss: 0.571389
+Reducing Learning Rate!
+Train (single batch) Loss 0.469668
+VALIDATION LOSS: Loss: 0.571388
+Reducing Learning Rate!
+Train (single batch) Loss 0.469667
+VALIDATION LOSS: Loss: 0.571388
+Reducing Learning Rate!
+Train (single batch) Loss 0.469667
+VALIDATION LOSS: Loss: 0.571388
+Reducing Learning Rate!
+Train (single batch) Loss 0.469667
+VALIDATION LOSS: Loss: 0.571388
+Reducing Learning Rate!
+Train (single batch) Loss 0.469667
+VALIDATION LOSS: Loss: 0.571388
+Reducing Learning Rate!
+Train (single batch) Loss 0.469667
+VALIDATION LOSS: Loss: 0.571388
+Reducing Learning Rate!
+Train (single batch) Loss 0.469667
+VALIDATION LOSS: Loss: 0.571388
+Reducing Learning Rate!
+Train (single batch) Loss 0.469667
+VALIDATION LOSS: Loss: 0.571388
+Reducing Learning Rate!
+Train (single batch) Loss 0.469667
+VALIDATION LOSS: Loss: 0.571388
+Reducing Learning Rate!
+Train (single batch) Loss 0.469667
+VALIDATION LOSS: Loss: 0.571388
+Reducing Learning Rate!
+Train (single batch) Loss 0.469667
+VALIDATION LOSS: Loss: 0.571388
+Reducing Learning Rate!
+Train (single batch) Loss 0.469667
+VALIDATION LOSS: Loss: 0.571388
+Reducing Learning Rate!
+Train (single batch) Loss 0.469667
+VALIDATION LOSS: Loss: 0.571388
+Reducing Learning Rate!
+Train (single batch) Loss 0.469667
+VALIDATION LOSS: Loss: 0.571388
+Reducing Learning Rate!
+Train (single batch) Loss 0.469667
+VALIDATION LOSS: Loss: 0.571388
+Reducing Learning Rate!
+Train (single batch) Loss 0.469667
+VALIDATION LOSS: Loss: 0.571388
+Reducing Learning Rate!
+Train (single batch) Loss 0.469667
+VALIDATION LOSS: Loss: 0.571388
+Reducing Learning Rate!
+Train (single batch) Loss 0.469667
+VALIDATION LOSS: Loss: 0.571388
+Reducing Learning Rate!
+Train (single batch) Loss 0.469667
+VALIDATION LOSS: Loss: 0.571388
+Reducing Learning Rate!
+Train (single batch) Loss 0.469667
+VALIDATION LOSS: Loss: 0.571388
+Reducing Learning Rate!
+Train (single batch) Loss 0.469667
+VALIDATION LOSS: Loss: 0.571388
+Reducing Learning Rate!
+Train (single batch) Loss 0.469667
+VALIDATION LOSS: Loss: 0.571388
+Reducing Learning Rate!
+Train (single batch) Loss 0.469667
+VALIDATION LOSS: Loss: 0.571388
+Reducing Learning Rate!
+Train (single batch) Loss 0.469667
+VALIDATION LOSS: Loss: 0.571388
+Reducing Learning Rate!
+Train (single batch) Loss 0.469667
+VALIDATION LOSS: Loss: 0.571388
+Reducing Learning Rate!
+Train (single batch) Loss 0.469667
+VALIDATION LOSS: Loss: 0.571388
+Reducing Learning Rate!
+Train (single batch) Loss 0.469667
+VALIDATION LOSS: Loss: 0.571388
+Reducing Learning Rate!
+Train (single batch) Loss 0.469667
+VALIDATION LOSS: Loss: 0.571388
+Reducing Learning Rate!
+Train (single batch) Loss 0.469667
+VALIDATION LOSS: Loss: 0.571388
+Reducing Learning Rate!
+Train (single batch) Loss 0.469667
+VALIDATION LOSS: Loss: 0.571388
+Reducing Learning Rate!
+Train (single batch) Loss 0.469667
+VALIDATION LOSS: Loss: 0.571388
+Reducing Learning Rate!
+Early stopping at epoch 146
+Post-training loss:Loss: nan
+Ground truth keypoints are in Red, predicted are in Green
+Saved all predictions to /scratch/palle.a/AirKeyboard/data/analytics/mid_iou.pt_analytics/predictions_presave/
+Prediction per image took 13318.8 microseconds  on average
+Loading model after saving from /scratch/palle.a/AirKeyboard/data/models/mid_iou.pt
+INIT RES-UNET
+Ground truth keypoints are in Red, predicted are in Green
+Saved all predictions to /scratch/palle.a/AirKeyboard/data/analytics/mid_iou.pt_analytics/predictions_postsave/
+Prediction per image took 2037.8 microseconds  on average
+USING CUDA
