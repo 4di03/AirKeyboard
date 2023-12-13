@@ -1,0 +1,1 @@
+g++ -o mouseControl mouseControl.cpp -arch arm64 -framework ApplicationServices -framework CoreFoundation -framework CoreGraphics && ./mouseControl
