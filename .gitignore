@@ -1,8 +1,12 @@
 .DS_Store
 data/
 .vscode/
+<<<<<<< HEAD
 build
 .idea/
 cmake_build_debug
 python_sample/weights
 
+=======
+build
+>>>>>>> 9faf08865b02c831689cb0fbc1434c782d8b2966

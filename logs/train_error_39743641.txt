@@ -1,0 +1,61 @@
+cuda/9.2(3):ERROR:150: Module 'cuda/9.2' conflicts with the currently loaded module(s) 'cuda/11.8'
+cuda/9.2(3):ERROR:102: Tcl command execution failed: conflict cuda
+
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Error opening file: /scratch/palle.a/AirKeyboard/data/analytics/model_full_IOU2.pt_analytics/train_loss.list
+Error opening file: /scratch/palle.a/AirKeyboard/data/analytics/model_full_IOU2.pt_analytics/val_loss.list
+terminate called after throwing an instance of 'c10::Error'
+  what():  Expected all tensors to be on the same device, but found at least two devices, cpu and cuda:0! (when checking argument for argument weight in method wrapper_CUDA__native_batch_norm)
+Exception raised from common_device_check_failure at ../aten/src/ATen/core/adaption.cpp:7 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x57 (0x2ad69cde9617 in /home/palle.a/CPP_packages/libtorch/lib/libc10.so)
+frame #1: c10::detail::torchCheckFail(char const*, char const*, unsigned int, std::string const&) + 0x64 (0x2ad69cda498d in /home/palle.a/CPP_packages/libtorch/lib/libc10.so)
+frame #2: c10::impl::common_device_check_failure(c10::optional<c10::Device>&, at::Tensor const&, char const*, char const*) + 0x345 (0x2ad6af535235 in /home/palle.a/CPP_packages/libtorch/lib/libtorch_cpu.so)
+frame #3: <unknown function> + 0x31c601e (0x2ad6c826c01e in /home/palle.a/CPP_packages/libtorch/lib/libtorch_cuda.so)
+frame #4: <unknown function> + 0x31c6097 (0x2ad6c826c097 in /home/palle.a/CPP_packages/libtorch/lib/libtorch_cuda.so)
+frame #5: at::_ops::native_batch_norm::redispatch(c10::DispatchKeySet, at::Tensor const&, c10::optional<at::Tensor> const&, c10::optional<at::Tensor> const&, c10::optional<at::Tensor> const&, c10::optional<at::Tensor> const&, bool, double, double) + 0xb1 (0x2ad6b0065c71 in /home/palle.a/CPP_packages/libtorch/lib/libtorch_cpu.so)
+frame #6: <unknown function> + 0x4237a30 (0x2ad6b1d6ba30 in /home/palle.a/CPP_packages/libtorch/lib/libtorch_cpu.so)
+frame #7: <unknown function> + 0x4238545 (0x2ad6b1d6c545 in /home/palle.a/CPP_packages/libtorch/lib/libtorch_cpu.so)
+frame #8: at::_ops::native_batch_norm::call(at::Tensor const&, c10::optional<at::Tensor> const&, c10::optional<at::Tensor> const&, c10::optional<at::Tensor> const&, c10::optional<at::Tensor> const&, bool, double, double) + 0x221 (0x2ad6b00d23e1 in /home/palle.a/CPP_packages/libtorch/lib/libtorch_cpu.so)
+frame #9: at::native::_batch_norm_impl_index(at::Tensor const&, c10::optional<at::Tensor> const&, c10::optional<at::Tensor> const&, c10::optional<at::Tensor> const&, c10::optional<at::Tensor> const&, bool, double, double, bool) + 0x4fe (0x2ad6af86357e in /home/palle.a/CPP_packages/libtorch/lib/libtorch_cpu.so)
+frame #10: <unknown function> + 0x2dfdc89 (0x2ad6b0931c89 in /home/palle.a/CPP_packages/libtorch/lib/libtorch_cpu.so)
+frame #11: at::_ops::_batch_norm_impl_index::call(at::Tensor const&, c10::optional<at::Tensor> const&, c10::optional<at::Tensor> const&, c10::optional<at::Tensor> const&, c10::optional<at::Tensor> const&, bool, double, double, bool) + 0x231 (0x2ad6aff077d1 in /home/palle.a/CPP_packages/libtorch/lib/libtorch_cpu.so)
+frame #12: at::native::batch_norm(at::Tensor const&, c10::optional<at::Tensor> const&, c10::optional<at::Tensor> const&, c10::optional<at::Tensor> const&, c10::optional<at::Tensor> const&, bool, double, double, bool) + 0x158 (0x2ad6af864ef8 in /home/palle.a/CPP_packages/libtorch/lib/libtorch_cpu.so)
+frame #13: <unknown function> + 0x2dfdc49 (0x2ad6b0931c49 in /home/palle.a/CPP_packages/libtorch/lib/libtorch_cpu.so)
+frame #14: at::_ops::batch_norm::call(at::Tensor const&, c10::optional<at::Tensor> const&, c10::optional<at::Tensor> const&, c10::optional<at::Tensor> const&, c10::optional<at::Tensor> const&, bool, double, double, bool) + 0x221 (0x2ad6b0236141 in /home/palle.a/CPP_packages/libtorch/lib/libtorch_cpu.so)
+frame #15: build/Open_CV_Project() [0x46de88]
+frame #16: build/Open_CV_Project() [0x46fdfa]
+frame #17: build/Open_CV_Project() [0x47ab59]
+frame #18: build/Open_CV_Project() [0x4929b5]
+frame #19: build/Open_CV_Project() [0x491fbb]
+frame #20: build/Open_CV_Project() [0x49175d]
+frame #21: build/Open_CV_Project() [0x4900a1]
+frame #22: build/Open_CV_Project() [0x47f9a8]
+frame #23: build/Open_CV_Project() [0x47ad27]
+frame #24: build/Open_CV_Project() [0x473da0]
+frame #25: build/Open_CV_Project() [0x4755f4]
+frame #26: build/Open_CV_Project() [0x46a947]
+frame #27: build/Open_CV_Project() [0x46bb48]
+frame #28: build/Open_CV_Project() [0x40f607]
+frame #29: __libc_start_main + 0xf5 (0x2ad71e542555 in /lib64/libc.so.6)
+frame #30: build/Open_CV_Project() [0x40dfa9]
+
+/var/spool/slurmd/job39743641/slurm_script: line 12: 129522 Aborted                 build/Open_CV_Project

@@ -1,0 +1,1024 @@
+Processing 602 Images
+Processing Image 100
+Processing Image 200
+Processing Image 300
+Processing Image 400
+Processing Image 500
+Processing Image 600
+train x shape: [601, 128, 128, 3]
+train y shape: [601, 21, 128, 128, 1]
+Processing 284 Images
+Processing Image 100
+Processing Image 200
+running Training!
+train x shape: [481, 3, 128, 128]
+train y shape: [481, 1, 21, 128, 128]
+val x shape: [120, 1, 21, 128, 128]
+val y shape: [120, 1, 21, 128, 128]
+test x shape: [283, 3, 128, 128]
+test y shape: [283, 1, 21, 128, 128]
+USING CUDA
+Module is on GPU.
+Batch Loss 0.392665
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.436967
+Batch Loss 0.382835
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.434685
+Batch Loss 0.38069
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.432516
+Batch Loss 0.378675
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.430407
+Batch Loss 0.376707
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.428203
+Batch Loss 0.374651
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.425792
+Batch Loss 0.372407
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.423084
+Batch Loss 0.369895
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.419943
+Batch Loss 0.366982
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.416112
+Batch Loss 0.363426
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.411229
+Batch Loss 0.358884
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.404646
+Batch Loss 0.352742
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.394783
+Batch Loss 0.343536
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.381508
+Batch Loss 0.331076
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.36444
+Batch Loss 0.314992
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.34345
+Batch Loss 0.295186
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.319367
+Batch Loss 0.272455
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.295422
+Batch Loss 0.249775
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.270054
+Batch Loss 0.225713
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.224355
+Batch Loss 0.183392
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.207336
+Batch Loss 0.167212
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.200189
+Batch Loss 0.16049
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.196213
+Batch Loss 0.156788
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.193612
+Batch Loss 0.15438
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.191707
+Batch Loss 0.152622
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.190182
+Batch Loss 0.151219
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.1889
+Batch Loss 0.150036
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.187774
+Batch Loss 0.148997
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.186757
+Batch Loss 0.148057
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.185815
+Batch Loss 0.147186
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.184928
+Batch Loss 0.146367
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.184086
+Batch Loss 0.145588
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.183279
+Batch Loss 0.144841
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.182504
+Batch Loss 0.144123
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.181757
+Batch Loss 0.14343
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.181036
+Batch Loss 0.142761
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.180339
+Batch Loss 0.142114
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.179667
+Batch Loss 0.141489
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.179018
+Batch Loss 0.140886
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.178392
+Batch Loss 0.140304
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.17779
+Batch Loss 0.139744
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.17721
+Batch Loss 0.139204
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.176653
+Batch Loss 0.138684
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.176118
+Batch Loss 0.138184
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.175606
+Batch Loss 0.137705
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.175115
+Batch Loss 0.137246
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.174634
+Batch Loss 0.136795
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.174167
+Batch Loss 0.13636
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.173728
+Batch Loss 0.135951
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.173319
+Batch Loss 0.135568
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.172939
+Batch Loss 0.135213
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.172588
+Batch Loss 0.134884
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.172265
+Batch Loss 0.13458
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.171966
+Batch Loss 0.134299
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.171691
+Batch Loss 0.13404
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.17144
+Batch Loss 0.133802
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.17121
+Batch Loss 0.133585
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.170999
+Batch Loss 0.133385
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.170807
+Batch Loss 0.133203
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.170631
+Batch Loss 0.133036
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.17047
+Batch Loss 0.132882
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.170323
+Batch Loss 0.132742
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.170188
+Batch Loss 0.132612
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.170063
+Batch Loss 0.132493
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.169949
+Batch Loss 0.132384
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.169844
+Batch Loss 0.132283
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.169747
+Batch Loss 0.13219
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.169658
+Batch Loss 0.132103
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.169575
+Batch Loss 0.132024
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.169498
+Batch Loss 0.131949
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.169427
+Batch Loss 0.131881
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.16936
+Batch Loss 0.131817
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.169299
+Batch Loss 0.131757
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.169242
+Batch Loss 0.131701
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.169188
+Batch Loss 0.13165
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.169138
+Batch Loss 0.131601
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.169092
+Batch Loss 0.131556
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.169048
+Batch Loss 0.131513
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.169007
+Batch Loss 0.131473
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168969
+Batch Loss 0.131436
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168933
+Batch Loss 0.131401
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168899
+Batch Loss 0.131367
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168867
+Batch Loss 0.131336
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168837
+Batch Loss 0.131307
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168808
+Batch Loss 0.131279
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168781
+Batch Loss 0.131252
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168756
+Batch Loss 0.131227
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168732
+Batch Loss 0.131203
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168709
+Batch Loss 0.131181
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168687
+Batch Loss 0.131159
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168666
+Batch Loss 0.131139
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168647
+Batch Loss 0.13112
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168628
+Batch Loss 0.131101
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.16861
+Batch Loss 0.131084
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168593
+Batch Loss 0.131067
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168577
+Batch Loss 0.131051
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168562
+Batch Loss 0.131036
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168547
+Batch Loss 0.131021
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168533
+Batch Loss 0.131007
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168519
+Batch Loss 0.130994
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168506
+Batch Loss 0.130981
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168494
+Batch Loss 0.130968
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168482
+Batch Loss 0.130957
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168471
+Batch Loss 0.130945
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.16846
+Batch Loss 0.130934
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168449
+Batch Loss 0.130924
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168439
+Batch Loss 0.130914
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168429
+Batch Loss 0.130904
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.16842
+Batch Loss 0.130895
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168411
+Batch Loss 0.130886
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168402
+Batch Loss 0.130877
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168394
+Batch Loss 0.130869
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168386
+Batch Loss 0.130861
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168378
+Batch Loss 0.130853
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.16837
+Batch Loss 0.130845
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168363
+Batch Loss 0.130838
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168356
+Batch Loss 0.130831
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168349
+Batch Loss 0.130824
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168343
+Batch Loss 0.130818
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168336
+Batch Loss 0.130811
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.16833
+Batch Loss 0.130805
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168324
+Batch Loss 0.130799
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168318
+Batch Loss 0.130793
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168313
+Batch Loss 0.130788
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168307
+Batch Loss 0.130782
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168302
+Batch Loss 0.130777
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168297
+Batch Loss 0.130772
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168292
+Batch Loss 0.130767
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168287
+Batch Loss 0.130762
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168283
+Batch Loss 0.130757
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168278
+Batch Loss 0.130753
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168274
+Batch Loss 0.130748
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168269
+Batch Loss 0.130744
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168265
+Batch Loss 0.13074
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168261
+Batch Loss 0.130736
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168257
+Batch Loss 0.130732
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168253
+Batch Loss 0.130728
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.16825
+Batch Loss 0.130724
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168246
+Batch Loss 0.13072
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168242
+Batch Loss 0.130717
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168239
+Batch Loss 0.130713
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168235
+Batch Loss 0.13071
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168232
+Batch Loss 0.130706
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168229
+Batch Loss 0.130703
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168226
+Batch Loss 0.1307
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168223
+Batch Loss 0.130697
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.16822
+Batch Loss 0.130694
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168217
+Batch Loss 0.130691
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168214
+Batch Loss 0.130688
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168211
+Batch Loss 0.130685
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168209
+Batch Loss 0.130682
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168206
+Batch Loss 0.13068
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168203
+Batch Loss 0.130677
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168201
+Batch Loss 0.130675
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168198
+Batch Loss 0.130672
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168196
+Batch Loss 0.13067
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168194
+Batch Loss 0.130667
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168191
+Batch Loss 0.130665
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168189
+Batch Loss 0.130663
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168187
+Batch Loss 0.13066
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168185
+Batch Loss 0.130658
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168182
+Batch Loss 0.130656
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.16818
+Batch Loss 0.130654
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168178
+Batch Loss 0.130652
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168176
+Batch Loss 0.13065
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168174
+Batch Loss 0.130648
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168172
+Batch Loss 0.130646
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168171
+Batch Loss 0.130644
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168169
+Batch Loss 0.130642
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168167
+Batch Loss 0.13064
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168165
+Batch Loss 0.130638
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168163
+Batch Loss 0.130637
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168162
+Batch Loss 0.130635
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.16816
+Batch Loss 0.130633
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168158
+Batch Loss 0.130631
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168157
+Batch Loss 0.13063
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168155
+Batch Loss 0.130628
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168154
+Batch Loss 0.130627
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168152
+Batch Loss 0.130625
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168151
+Batch Loss 0.130624
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168149
+Batch Loss 0.130622
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168148
+Batch Loss 0.130621
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168146
+Batch Loss 0.130619
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168145
+Batch Loss 0.130618
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168144
+Batch Loss 0.130616
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168142
+Batch Loss 0.130615
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168141
+Batch Loss 0.130614
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.16814
+Batch Loss 0.130612
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168138
+Batch Loss 0.130611
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168137
+Batch Loss 0.13061
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168136
+Batch Loss 0.130608
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168135
+Batch Loss 0.130607
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168133
+Batch Loss 0.130606
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168132
+Batch Loss 0.130605
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168131
+Batch Loss 0.130604
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.16813
+Batch Loss 0.130602
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168129
+Batch Loss 0.130601
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168128
+Batch Loss 0.1306
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168127
+Batch Loss 0.130599
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168126
+Batch Loss 0.130598
+VALIDATION LOSS
+USING CUDA
+Breaking data into 1 Batches
+Test Loss: 0.168125
+Post-training loss:USING CUDA
+Breaking data into 3 Batches
+Test Loss: 0.762853
