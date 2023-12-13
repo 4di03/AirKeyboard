@@ -1,0 +1,253 @@
+Consolidate compiler generated dependencies of target Open_CV_Project
+[ 33%] Built target Test
+[100%] Built target Open_CV_Project
+L98 ./Open_CV_Projectmse
+L102model_mse1_9k.pt
+Model Name: model_mse1_9k.pt
+USING MSE LOSS
+train x shape: [60154, 3, 128, 128]
+train y shape: [60154, 21, 128, 128]
+test x shape: [2833, 3, 128, 128]
+test y shape: [2833, 21, 128, 128]
+POST SAMPLING
+train x shape: [9625, 3, 128, 128]
+train y shape: [9625, 21, 128, 128]
+val x shape: [2406, 21, 128, 128]
+val y shape: [2406, 21, 128, 128]
+test x shape: [567, 3, 128, 128]
+test y shape: [567, 21, 128, 128]
+USING CUDA
+Module is on GPU.
+Train (single batch) Loss 0.154267
+VALIDATION LOSS: Loss: 0.000496025
+Train (single batch) Loss 0.00049018
+VALIDATION LOSS: Loss: 0.00036985
+Train (single batch) Loss 0.000367966
+VALIDATION LOSS: Loss: 0.000334117
+Train (single batch) Loss 0.000332864
+VALIDATION LOSS: Loss: 0.000313031
+Train (single batch) Loss 0.00031217
+VALIDATION LOSS: Loss: 0.000298593
+Train (single batch) Loss 0.00029799
+VALIDATION LOSS: Loss: 0.000287785
+Train (single batch) Loss 0.000287386
+VALIDATION LOSS: Loss: 0.000279272
+Train (single batch) Loss 0.000279047
+VALIDATION LOSS: Loss: 0.000272302
+Train (single batch) Loss 0.000272215
+VALIDATION LOSS: Loss: 0.000266219
+Train (single batch) Loss 0.000266258
+VALIDATION LOSS: Loss: 0.000260062
+Train (single batch) Loss 0.000260197
+VALIDATION LOSS: Loss: 0.000253643
+Train (single batch) Loss 0.000253798
+VALIDATION LOSS: Loss: 0.000247779
+Train (single batch) Loss 0.000247999
+VALIDATION LOSS: Loss: 0.000242097
+Train (single batch) Loss 0.000242233
+VALIDATION LOSS: Loss: 0.000238144
+Train (single batch) Loss 0.000238233
+VALIDATION LOSS: Loss: 0.000235901
+Train (single batch) Loss 0.000235944
+VALIDATION LOSS: Loss: 0.00023484
+Train (single batch) Loss 0.000234865
+VALIDATION LOSS: Loss: 0.000234185
+Train (single batch) Loss 0.000234203
+VALIDATION LOSS: Loss: 0.000233718
+Train (single batch) Loss 0.000233733
+VALIDATION LOSS: Loss: 0.000233357
+Train (single batch) Loss 0.000233372
+VALIDATION LOSS: Loss: 0.000233065
+Train (single batch) Loss 0.000233079
+VALIDATION LOSS: Loss: 0.000232817
+Train (single batch) Loss 0.000232832
+VALIDATION LOSS: Loss: 0.000232792
+Train (single batch) Loss 0.000232808
+VALIDATION LOSS: Loss: 0.00023277
+Train (single batch) Loss 0.000232785
+VALIDATION LOSS: Loss: 0.000232748
+Train (single batch) Loss 0.000232763
+VALIDATION LOSS: Loss: 0.000232725
+Train (single batch) Loss 0.000232741
+VALIDATION LOSS: Loss: 0.000232704
+Train (single batch) Loss 0.000232719
+VALIDATION LOSS: Loss: 0.000232682
+Train (single batch) Loss 0.000232698
+VALIDATION LOSS: Loss: 0.000232661
+Train (single batch) Loss 0.000232677
+VALIDATION LOSS: Loss: 0.00023264
+Train (single batch) Loss 0.000232656
+VALIDATION LOSS: Loss: 0.000232619
+Train (single batch) Loss 0.000232635
+VALIDATION LOSS: Loss: 0.000232598
+Train (single batch) Loss 0.000232614
+VALIDATION LOSS: Loss: 0.000232578
+Train (single batch) Loss 0.000232594
+VALIDATION LOSS: Loss: 0.000232557
+Train (single batch) Loss 0.000232574
+VALIDATION LOSS: Loss: 0.000232537
+Train (single batch) Loss 0.000232554
+VALIDATION LOSS: Loss: 0.000232517
+Train (single batch) Loss 0.000232534
+VALIDATION LOSS: Loss: 0.000232498
+Train (single batch) Loss 0.000232514
+VALIDATION LOSS: Loss: 0.000232478
+Train (single batch) Loss 0.000232495
+VALIDATION LOSS: Loss: 0.000232459
+Train (single batch) Loss 0.000232476
+VALIDATION LOSS: Loss: 0.000232439
+Train (single batch) Loss 0.000232456
+VALIDATION LOSS: Loss: 0.00023242
+Train (single batch) Loss 0.000232437
+VALIDATION LOSS: Loss: 0.000232401
+Train (single batch) Loss 0.000232419
+VALIDATION LOSS: Loss: 0.0002324
+Train (single batch) Loss 0.000232417
+VALIDATION LOSS: Loss: 0.000232398
+Train (single batch) Loss 0.000232415
+VALIDATION LOSS: Loss: 0.000232396
+Train (single batch) Loss 0.000232414
+VALIDATION LOSS: Loss: 0.000232395
+Train (single batch) Loss 0.000232412
+VALIDATION LOSS: Loss: 0.000232393
+Train (single batch) Loss 0.00023241
+VALIDATION LOSS: Loss: 0.000232391
+Train (single batch) Loss 0.000232409
+VALIDATION LOSS: Loss: 0.000232389
+Train (single batch) Loss 0.000232407
+VALIDATION LOSS: Loss: 0.000232388
+Train (single batch) Loss 0.000232405
+VALIDATION LOSS: Loss: 0.000232386
+Train (single batch) Loss 0.000232404
+VALIDATION LOSS: Loss: 0.000232384
+Train (single batch) Loss 0.000232402
+VALIDATION LOSS: Loss: 0.000232383
+Train (single batch) Loss 0.0002324
+VALIDATION LOSS: Loss: 0.000232381
+Train (single batch) Loss 0.000232399
+VALIDATION LOSS: Loss: 0.000232379
+Train (single batch) Loss 0.000232397
+VALIDATION LOSS: Loss: 0.000232378
+Train (single batch) Loss 0.000232395
+VALIDATION LOSS: Loss: 0.000232376
+Train (single batch) Loss 0.000232394
+VALIDATION LOSS: Loss: 0.000232374
+Train (single batch) Loss 0.000232392
+VALIDATION LOSS: Loss: 0.000232373
+Train (single batch) Loss 0.00023239
+VALIDATION LOSS: Loss: 0.000232371
+Train (single batch) Loss 0.000232389
+VALIDATION LOSS: Loss: 0.000232369
+Train (single batch) Loss 0.000232387
+VALIDATION LOSS: Loss: 0.000232368
+Train (single batch) Loss 0.000232385
+VALIDATION LOSS: Loss: 0.000232368
+Train (single batch) Loss 0.000232385
+VALIDATION LOSS: Loss: 0.000232367
+Train (single batch) Loss 0.000232385
+VALIDATION LOSS: Loss: 0.000232367
+Train (single batch) Loss 0.000232385
+VALIDATION LOSS: Loss: 0.000232367
+Train (single batch) Loss 0.000232385
+VALIDATION LOSS: Loss: 0.000232367
+Train (single batch) Loss 0.000232385
+VALIDATION LOSS: Loss: 0.000232367
+Train (single batch) Loss 0.000232385
+VALIDATION LOSS: Loss: 0.000232367
+Train (single batch) Loss 0.000232385
+VALIDATION LOSS: Loss: 0.000232367
+Train (single batch) Loss 0.000232385
+VALIDATION LOSS: Loss: 0.000232367
+Train (single batch) Loss 0.000232385
+VALIDATION LOSS: Loss: 0.000232367
+Train (single batch) Loss 0.000232385
+VALIDATION LOSS: Loss: 0.000232367
+Train (single batch) Loss 0.000232385
+VALIDATION LOSS: Loss: 0.000232367
+Train (single batch) Loss 0.000232385
+VALIDATION LOSS: Loss: 0.000232367
+Train (single batch) Loss 0.000232384
+VALIDATION LOSS: Loss: 0.000232367
+Train (single batch) Loss 0.000232384
+VALIDATION LOSS: Loss: 0.000232367
+Train (single batch) Loss 0.000232384
+VALIDATION LOSS: Loss: 0.000232367
+Train (single batch) Loss 0.000232384
+VALIDATION LOSS: Loss: 0.000232366
+Train (single batch) Loss 0.000232384
+VALIDATION LOSS: Loss: 0.000232366
+Train (single batch) Loss 0.000232384
+VALIDATION LOSS: Loss: 0.000232366
+Train (single batch) Loss 0.000232384
+VALIDATION LOSS: Loss: 0.000232366
+Train (single batch) Loss 0.000232384
+VALIDATION LOSS: Loss: 0.000232366
+Train (single batch) Loss 0.000232384
+VALIDATION LOSS: Loss: 0.000232366
+Train (single batch) Loss 0.000232384
+VALIDATION LOSS: Loss: 0.000232366
+Train (single batch) Loss 0.000232384
+VALIDATION LOSS: Loss: 0.000232366
+Train (single batch) Loss 0.000232384
+VALIDATION LOSS: Loss: 0.000232366
+Train (single batch) Loss 0.000232384
+VALIDATION LOSS: Loss: 0.000232366
+Train (single batch) Loss 0.000232384
+VALIDATION LOSS: Loss: 0.000232366
+Train (single batch) Loss 0.000232384
+VALIDATION LOSS: Loss: 0.000232366
+Train (single batch) Loss 0.000232384
+VALIDATION LOSS: Loss: 0.000232366
+Train (single batch) Loss 0.000232384
+VALIDATION LOSS: Loss: 0.000232366
+Train (single batch) Loss 0.000232384
+VALIDATION LOSS: Loss: 0.000232366
+Train (single batch) Loss 0.000232384
+VALIDATION LOSS: Loss: 0.000232366
+Train (single batch) Loss 0.000232384
+VALIDATION LOSS: Loss: 0.000232366
+Train (single batch) Loss 0.000232384
+VALIDATION LOSS: Loss: 0.000232366
+Train (single batch) Loss 0.000232384
+VALIDATION LOSS: Loss: 0.000232366
+Train (single batch) Loss 0.000232384
+VALIDATION LOSS: Loss: 0.000232366
+Train (single batch) Loss 0.000232384
+VALIDATION LOSS: Loss: 0.000232366
+Train (single batch) Loss 0.000232384
+VALIDATION LOSS: Loss: 0.000232366
+Train (single batch) Loss 0.000232384
+VALIDATION LOSS: Loss: 0.000232366
+Train (single batch) Loss 0.000232384
+VALIDATION LOSS: Loss: 0.000232366
+Train (single batch) Loss 0.000232384
+VALIDATION LOSS: Loss: 0.000232366
+Train (single batch) Loss 0.000232384
+VALIDATION LOSS: Loss: 0.000232366
+Train (single batch) Loss 0.000232384
+VALIDATION LOSS: Loss: 0.000232366
+Train (single batch) Loss 0.000232384
+VALIDATION LOSS: Loss: 0.000232366
+Train (single batch) Loss 0.000232384
+VALIDATION LOSS: Loss: 0.000232366
+Train (single batch) Loss 0.000232384
+VALIDATION LOSS: Loss: 0.000232366
+Train (single batch) Loss 0.000232384
+VALIDATION LOSS: Loss: 0.000232366
+Train (single batch) Loss 0.000232384
+VALIDATION LOSS: Loss: 0.000232366
+Early stopping at epoch 109
+Post-training loss:Loss: 0.000232178
+Ground truth keypoints are in Red, predicted are in Green
+Saved all predictions to /scratch/palle.a/AirKeyboard/data/analytics/model_mse1_9k.pt_analytics/predictions_presave/
+Prediction per image took 10920.8 microseconds  on average
+Loading model after saving
+Ground truth keypoints are in Red, predicted are in Green
+Saved all predictions to /scratch/palle.a/AirKeyboard/data/analytics/model_mse1_9k.pt_analytics/predictions_postsave/
+Prediction per image took 4687.1 microseconds  on average
+running evaluation for model_mse1_9k.pt
+USING CUDA
+Loss: 0.000232178
+Ground truth keypoints are in Red, predicted are in Green
+Saved all predictions to /scratch/palle.a/AirKeyboard/data/analytics/model_mse1_9k.pt_analytics/
+Prediction per image took 4646.7 microseconds  on average

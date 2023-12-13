@@ -1,0 +1,59 @@
+In file included from /scratch/palle.a/AirKeyboard/cunet/cunet.h:29,
+                 from /scratch/palle.a/AirKeyboard/train.cpp:12:
+/scratch/palle.a/AirKeyboard/cunet/partialconv.h: In member function ‘std::tuple<at::Tensor, at::Tensor> PartialMaskConv2dImpl::forward(std::tuple<at::Tensor, at::Tensor>)’:
+/scratch/palle.a/AirKeyboard/cunet/partialconv.h:72:73: warning: ‘at::DeprecatedTypeProperties& at::Tensor::type() const’ is deprecated: Tensor.type() is deprecated. Instead use Tensor.options(), which in many cases (e.g. in a constructor) is a drop-in replacement. If you were using data from type(), that is now available from Tensor itself, so instead of tensor.type().scalar_type(), use tensor.scalar_type() instead and instead of tensor.type().backend() use tensor.device(). [-Wdeprecated-declarations]
+   72 |                     mask_ratio = slide_winsize/(update_mask + (mask.type().scalarType()==torch::kFloat?1e-8:1e-6));
+      |                                                                ~~~~~~~~~^~
+In file included from /home/palle.a/CPP_packages/libtorch/include/ATen/core/Tensor.h:3,
+                 from /home/palle.a/CPP_packages/libtorch/include/ATen/Tensor.h:3,
+                 from /home/palle.a/CPP_packages/libtorch/include/torch/csrc/autograd/function_hook.h:3,
+                 from /home/palle.a/CPP_packages/libtorch/include/torch/csrc/autograd/cpp_hook.h:2,
+                 from /home/palle.a/CPP_packages/libtorch/include/torch/csrc/autograd/variable.h:6,
+                 from /home/palle.a/CPP_packages/libtorch/include/torch/csrc/autograd/autograd.h:3,
+                 from /home/palle.a/CPP_packages/libtorch/include/torch/csrc/api/include/torch/autograd.h:3,
+                 from /home/palle.a/CPP_packages/libtorch/include/torch/csrc/api/include/torch/all.h:7,
+                 from /home/palle.a/CPP_packages/libtorch/include/torch/csrc/api/include/torch/torch.h:3,
+                 from /scratch/palle.a/AirKeyboard/train.cpp:2:
+/home/palle.a/CPP_packages/libtorch/include/ATen/core/TensorBody.h:225:30: note: declared here
+  225 |   DeprecatedTypeProperties & type() const {
+      |                              ^~~~
+In file included from /scratch/palle.a/AirKeyboard/cunet/cunet.h:29,
+                 from /scratch/palle.a/AirKeyboard/train.cpp:12:
+/scratch/palle.a/AirKeyboard/cunet/partialconv.h: In member function ‘std::tuple<at::Tensor, at::Tensor> PartialMaskConv1dImpl::forward(std::tuple<at::Tensor, at::Tensor>)’:
+/scratch/palle.a/AirKeyboard/cunet/partialconv.h:159:73: warning: ‘at::DeprecatedTypeProperties& at::Tensor::type() const’ is deprecated: Tensor.type() is deprecated. Instead use Tensor.options(), which in many cases (e.g. in a constructor) is a drop-in replacement. If you were using data from type(), that is now available from Tensor itself, so instead of tensor.type().scalar_type(), use tensor.scalar_type() instead and instead of tensor.type().backend() use tensor.device(). [-Wdeprecated-declarations]
+  159 |                     mask_ratio = slide_winsize/(update_mask + (mask.type().scalarType()==torch::kFloat?1e-8:1e-6));
+      |                                                                ~~~~~~~~~^~
+In file included from /home/palle.a/CPP_packages/libtorch/include/ATen/core/Tensor.h:3,
+                 from /home/palle.a/CPP_packages/libtorch/include/ATen/Tensor.h:3,
+                 from /home/palle.a/CPP_packages/libtorch/include/torch/csrc/autograd/function_hook.h:3,
+                 from /home/palle.a/CPP_packages/libtorch/include/torch/csrc/autograd/cpp_hook.h:2,
+                 from /home/palle.a/CPP_packages/libtorch/include/torch/csrc/autograd/variable.h:6,
+                 from /home/palle.a/CPP_packages/libtorch/include/torch/csrc/autograd/autograd.h:3,
+                 from /home/palle.a/CPP_packages/libtorch/include/torch/csrc/api/include/torch/autograd.h:3,
+                 from /home/palle.a/CPP_packages/libtorch/include/torch/csrc/api/include/torch/all.h:7,
+                 from /home/palle.a/CPP_packages/libtorch/include/torch/csrc/api/include/torch/torch.h:3,
+                 from /scratch/palle.a/AirKeyboard/train.cpp:2:
+/home/palle.a/CPP_packages/libtorch/include/ATen/core/TensorBody.h:225:30: note: declared here
+  225 |   DeprecatedTypeProperties & type() const {
+      |                              ^~~~
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+Could not load library libcudnn_cnn_train.so.8. Error: /home/palle.a/CPP_packages/libtorch/lib/libcudnn_cnn_train.so.8: symbol _ZTIN10cask_cudnn14BaseKernelInfoE, version libcudnn_cnn_infer.so.8 not defined in file libcudnn_cnn_infer.so.8 with link time reference
+build_and_run.sh: line 6: 106735 Segmentation fault      ./Open_CV_Project $1 $2 $3 $4 $5 $6

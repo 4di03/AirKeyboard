@@ -1,0 +1,15 @@
+cuda
+Couldn't read image /scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam5/00000011.jpg, got error cannot identify image file '/scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam5/00000011.jpg'
+Couldn't read image /scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam5/00000030.jpg, got error cannot identify image file '/scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam5/00000030.jpg'
+Couldn't read image /scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam6/00000032.jpg, got error cannot identify image file '/scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam6/00000032.jpg'
+Couldn't read image /scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/1319/cam5/00000027.jpg, got error cannot identify image file '/scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/1319/cam5/00000027.jpg'
+Couldn't read image /scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam5/00000049.jpg, got error cannot identify image file '/scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam5/00000049.jpg'
+Couldn't read image /scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam1/00000090.jpg, got error cannot identify image file '/scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam1/00000090.jpg'
+Couldn't read image /scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam6/00000045.jpg, got error cannot identify image file '/scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam6/00000045.jpg'
+Couldn't read image /scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam5/00000089.jpg, got error cannot identify image file '/scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam5/00000089.jpg'
+Couldn't read image /scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam6/00000097.jpg, got error cannot identify image file '/scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam6/00000097.jpg'
+Couldn't read image /scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam6/00000011.jpg, got error cannot identify image file '/scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam6/00000011.jpg'
+Couldn't read image /scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam6/00000012.jpg, got error cannot identify image file '/scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam6/00000012.jpg'
+Couldn't read image /scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam6/00000081.jpg, got error cannot identify image file '/scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam6/00000081.jpg'
+Couldn't read image /scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam6/00000038.jpg, got error cannot identify image file '/scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/rgb/0400/cam6/00000038.jpg'
+999 124
