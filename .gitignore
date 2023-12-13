@@ -3,4 +3,6 @@ data/
 .vscode/
 build
 .idea/
-cmake_build_debug/
+cmake_build_debug
+python_sample/weights
+
