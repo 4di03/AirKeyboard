@@ -1,4 +1,0 @@
-Traceback (most recent call last):
-  File "train.py", line 139, in <module>
-    train_model(config,model)
-NameError: name 'train_model' is not defined
