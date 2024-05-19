@@ -5,3 +5,4 @@ build
 .idea/
 cmake_build_debug/
 *.ipynb_checkpoints*
+logs/*
