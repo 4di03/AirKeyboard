@@ -1,1 +1,1 @@
-*.ipynb* linguist-vendored
+python_sample/notebooks/* linguist-vendored
