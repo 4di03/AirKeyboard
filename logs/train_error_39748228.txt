@@ -1,6 +1,0 @@
-/var/spool/slurmd/job39748228/slurm_script: line 14: 
-This set of moduels (module list) works:
-  1) discovery/2019-02-21   3) anaconda3/2020.02      5) vscode-server/4.16.1   7) cmake/3.23.2           9) opencv/3.1.0
-  2) git/2.19.0             4) cuda/11.8              6) discovery/2021-10-06   8) gcc/11.1.0
-: No such file or directory
-build/Open_CV_Project: error while loading shared libraries: libiomp5.so: cannot open shared object file: No such file or directory
