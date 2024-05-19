@@ -47,10 +47,14 @@ def keypoint_data_to_csv(data_path= "/Users/adithyapalle/work/CS5100/Project/dat
     total_data = 0
 
     index_data =set()
+<<<<<<< HEAD
+    for path in [rgb_path, rbg_merged_path]:
+=======
     for path in [rgb_path, rgb_merged_path]:
         if not os.path.exists(path) and os.path.isdir(path):
             print(f"could not find {path}")
             continue
+>>>>>>> 9faf08865b02c831689cb0fbc1434c782d8b2966
         for dir in sorted(os.listdir(path)):
             sid = int(dir)
             for cam in sorted(os.listdir(os.path.join(path, dir))):

@@ -4,6 +4,10 @@
 #include "data_work.h"
 #include <vector>
 #include <xtensor/xarray.hpp>
+<<<<<<< HEAD
+#include <xtensor/xadapt.hpp>
+=======
+>>>>>>> 9faf08865b02c831689cb0fbc1434c782d8b2966
 #include <xtensor/xio.hpp>
 #include <xtensor/xview.hpp>
 #include <xtensor/xcsv.hpp>
@@ -11,9 +15,12 @@
 #include <opencv2/opencv.hpp>
 #include <json.hpp>
 #include <cmath>
+<<<<<<< HEAD
+=======
 #include <opencv2/imgcodecs.hpp>
 #include <omp.h>
 
+>>>>>>> 9faf08865b02c831689cb0fbc1434c782d8b2966
 
 using namespace std;
 
@@ -26,7 +33,11 @@ std::string getTensorString(torch::Tensor tensor){
     return tensor_string;
 }
 
+<<<<<<< HEAD
+void printTensor(torch::Tensor tensor){
+=======
 void printTensor(const torch::Tensor tensor){
+>>>>>>> 9faf08865b02c831689cb0fbc1434c782d8b2966
 
     std::string tensor_string = getTensorString(tensor);
     std::cout << tensor_string << std::endl;
@@ -84,6 +95,13 @@ int extractCameraId(std::string imagePath){
     throw std::runtime_error("Could not extract camera id from image path");
 }
 
+<<<<<<< HEAD
+cv::Mat tensorToMat(torch::Tensor tensor){
+    /**
+     * @brief convert a tensor to a cv::Mat
+     *
+     */
+=======
 
 std::tuple<torch::Tensor, torch::Tensor> getNormParams(const torch::Tensor& imageBatch) {
 
@@ -124,6 +142,7 @@ cv::Mat tensorToMat(const torch::Tensor& trueTensor){
     //cout <<"L96 " <<  c  << " "<< h  << " " << w << endl;
     auto tensor = trueTensor.view({h,w,c});// transform it to shape required for cv::Mat
 
+>>>>>>> 9faf08865b02c831689cb0fbc1434c782d8b2966
     if (!tensor.is_contiguous() || !tensor.is_cpu()) {
         // You may need to make the tensor contiguous and move it to CPU if necessary
         tensor = tensor.contiguous().to(torch::kCPU);
@@ -134,6 +153,21 @@ cv::Mat tensorToMat(const torch::Tensor& trueTensor){
     int width = tensor.size(1);
     int channels = tensor.size(2);
 
+<<<<<<< HEAD
+    // Initialize a cv::Mat with the appropriate data type
+    cv::Mat mat(height, width, channels == 1 ? CV_8UC1 : CV_8UC3);
+
+    // Convert the tensor data type to INT and copy data to the cv::Mat
+    tensor = tensor.to(torch::kByte);
+    std::memcpy(mat.data, tensor.data_ptr(), sizeof(uint8_t) * tensor.numel());
+
+    return mat.clone(); // Ensure a deep copy to avoid memory issues
+}
+torch::Tensor matToTensor(const cv::Mat& image){
+
+    // Check if the image is empty
+    if (image.empty()) {
+=======
     // // Initialize a cv::Mat with the appropriate data type
     // cv::Mat mat(height, width, channels == 1 ? CV_8UC1 : CV_8UC3);
     auto torchDTYPE =  tensor.dtype();//channels == 1 ? torch::kFloat : torch::kByte;
@@ -173,10 +207,27 @@ torch::Tensor matToTensor(const cv::Mat& image){
     // Check if the image is empty  
     //  reads floats for single channel image (0-1), bytes(ints) for BGR images
     if (image.empty()) {
+>>>>>>> 9faf08865b02c831689cb0fbc1434c782d8b2966
         throw std::invalid_argument("Input image is empty.");
     }
     int nChannels = image.channels();
 
+<<<<<<< HEAD
+    // Convert OpenCV Mat to PyTorch Tensor
+    torch::Tensor tensor_image = torch::from_blob(image.data, {1, image.rows, image.cols, nChannels}, at::kByte).clone();
+
+    // Reshape the tensor to (C, H, W) format
+    tensor_image = tensor_image.view({ image.rows, image.cols,nChannels});
+
+
+    tensor_image = tensor_image.to(at::kFloat);
+//    // Normalize the pixel values to the range [0, 1]
+//    tensor_image = tensor_image.to(torch::kFloat32) / 255.0;
+
+//    // Transpose the tensor to (H, W, C) format
+//    tensor_image = tensor_image.permute({1, 2, 0});
+
+=======
     auto imgType = image.depth();  // Get the depth of the image (CV_8U, CV_32F, etc.)
     c10::ScalarType dtype;
     if (imgType == CV_32F || imgType == CV_64F) {
@@ -199,6 +250,7 @@ torch::Tensor matToTensor(const cv::Mat& image){
 
 
     tensor_image = tensor_image.to(at::kFloat);
+>>>>>>> 9faf08865b02c831689cb0fbc1434c782d8b2966
 
     return tensor_image; // Ensure a deep copy to avoid memory issues
 }
@@ -210,6 +262,16 @@ torch::Tensor vectorToTensor(std::vector<std::vector<float>> vec){
      * 
      */
 
+<<<<<<< HEAD
+    // cout << "Vector(pre-conversion): " << endl;
+    // for (auto& el : vec){
+    //     for (auto& el2 : el){
+    //         cout << el2 << ", ";
+    //     }
+    //     cout << endl;
+    // }
+=======
+>>>>>>> 9faf08865b02c831689cb0fbc1434c782d8b2966
 
     std::vector<float> flattened;
 
@@ -229,6 +291,9 @@ torch::Tensor vectorToTensor(std::vector<std::vector<float>> vec){
 }
 
 
+<<<<<<< HEAD
+cv::Mat drawKeypoints(cv::Mat image, torch::Tensor kp2d){
+=======
 void saveImageToFile(const cv::Mat& image, const std::string& filePath) {
     // image is a noramlzied image
     // Check if the input image is empty
@@ -249,6 +314,7 @@ void saveImageToFile(const cv::Mat& image, const std::string& filePath) {
 }
 
 cv::Mat drawKeypoints(cv::Mat image, const torch::Tensor kp2d, cv::Scalar color = cv::Scalar(0, 0, 255)){
+>>>>>>> 9faf08865b02c831689cb0fbc1434c782d8b2966
     /**
      * @brief draw keypoints on image
      *
@@ -260,9 +326,15 @@ cv::Mat drawKeypoints(cv::Mat image, const torch::Tensor kp2d, cv::Scalar color 
     int numKeypoints = kp2d.size(0);
 
     for (int i = 0; i < numKeypoints; i++){
+<<<<<<< HEAD
+        int x = kp2d[i][0].item<int>();
+        int y = kp2d[i][1].item<int>();
+        cv::circle(image, cv::Point(x, y), 2, cv::Scalar(0, 0, 255), -1);
+=======
         int x = round(kp2d[i][0].item<float>());
         int y = round(kp2d[i][1].item<float>());
         cv::circle(image, cv::Point(x, y), 2, color  , -1);
+>>>>>>> 9faf08865b02c831689cb0fbc1434c782d8b2966
     }
 
     return image;
@@ -318,6 +390,10 @@ torch::Tensor resizeKeypoints(torch::Tensor kp2d ,const std::vector<int> origSiz
 }
 
 
+<<<<<<< HEAD
+
+=======
+>>>>>>> 9faf08865b02c831689cb0fbc1434c782d8b2966
 torch::Tensor getJointHeatmaps(const torch::Tensor& kp2d, const std::vector<int> imgSize){
     int w = imgSize[0];
     int h = imgSize[1];
@@ -327,6 +403,26 @@ torch::Tensor getJointHeatmaps(const torch::Tensor& kp2d, const std::vector<int>
         int kpX= kp2d.index({i, 0}).item<int>();
         int kpY = kp2d.index({i, 1}).item<int>();
         cv::Mat heatmap = cv::Mat::zeros(w,h,CV_32FC1);
+<<<<<<< HEAD
+        heatmap.at<float>(kpY, kpX) = 1.0;
+
+
+        cv::GaussianBlur(heatmap, heatmap, cv::Size(5,5), 0);
+        float maxPixel = *std::max_element(heatmap.begin<float>(),heatmap.end<float>());
+        heatmap = heatmap / maxPixel; // normalization so that we can sigmoid it with model
+
+
+        torch::Tensor heatmapTensor = matToTensor(heatmap);
+        heatmaps.push_back(heatmapTensor);
+    }
+
+    torch::Tensor heatmapsTensor = torch::stack(heatmaps);
+    return heatmapsTensor;
+
+}
+
+Dataset prepData(std::string path, float prop = 1.0){
+=======
 
 
         heatmap.at<float>(kpY, kpX) = 1.0;
@@ -399,6 +495,7 @@ cv::Mat readImage(std::string imagePath){
 
 Dataset prepData(std::string path, float prop = 1.0,bool excludeMerged = false ){
     // exclude merged is whether or not to exclude bg shfited images from trianing 
+>>>>>>> 9faf08865b02c831689cb0fbc1434c782d8b2966
     std::ifstream file(path);
     auto data = xt::load_csv<std::string>(file);
 
@@ -413,6 +510,16 @@ Dataset prepData(std::string path, float prop = 1.0,bool excludeMerged = false )
         colMap[column_names[i]] = i;
     }
 
+<<<<<<< HEAD
+    vector<torch::Tensor> xData;
+    vector<torch::Tensor> yData;
+
+    cout << "Processing "<< data.shape()[0] << " Images" << endl;
+
+    for (int i = 1; i < data.shape()[0]; ++i) {
+        auto row = xt::view(data, i, xt::all());
+
+=======
     cout << "Processing "<< data.shape()[0] << " Images" << endl;
 
     int nDataPoints = data.shape()[0];
@@ -427,10 +534,13 @@ Dataset prepData(std::string path, float prop = 1.0,bool excludeMerged = false )
 
     
 
+>>>>>>> 9faf08865b02c831689cb0fbc1434c782d8b2966
         std::string imagePath = row[colMap["image_file"]];
         std::string keypointPath = row[colMap["kp_data_file"]];
         std::string calibPath = row[colMap["calib_file"]];
 
+<<<<<<< HEAD
+=======
         
         std::string rbm= "rgb_merged";
         if (excludeMerged && isSubstringPresent(imagePath, rbm)){
@@ -439,12 +549,17 @@ Dataset prepData(std::string path, float prop = 1.0,bool excludeMerged = false )
             continue;
         }
 
+>>>>>>> 9faf08865b02c831689cb0fbc1434c782d8b2966
         if ( i % 100 == 0) {
             cout << "Processing Image " << i << endl;
         }
         cv::Mat image;
         try {
+<<<<<<< HEAD
+            image = cv::imread(imagePath);
+=======
             image = readImage(imagePath);
+>>>>>>> 9faf08865b02c831689cb0fbc1434c782d8b2966
 
             if (image.empty()){
                 throw std::exception();
@@ -481,6 +596,23 @@ Dataset prepData(std::string path, float prop = 1.0,bool excludeMerged = false )
         cv::resize(image,shrunkImage,cv::Size(128,128)); // condense for model
 
         torch::Tensor shrunk_kp2d = resizeKeypoints(kp2d, {s.width, s.height}, {128,128});
+<<<<<<< HEAD
+
+        image = drawKeypoints(shrunkImage, shrunk_kp2d);
+
+
+        torch::Tensor imageTensor = matToTensor(shrunkImage);
+
+        xData.push_back(imageTensor);
+        torch::Tensor jointHeatmaps  = getJointHeatmaps(shrunk_kp2d, {128,128}); // gets 21x128x128 tensor where each of the 2d tensors is a heatmap for each keypoint
+        yData.push_back(jointHeatmaps);
+
+    }
+
+    torch::Tensor xTensor = torch::stack(xData);
+    torch::Tensor yTensor = torch::stack(yData);
+
+=======
         
 
         cv::imwrite("L504_test_normalized.jpg", shrunkImage);
@@ -515,6 +647,7 @@ Dataset prepData(std::string path, float prop = 1.0,bool excludeMerged = false )
 
     std::string tmpFilePath = "/scratch/palle.a/AirKeyboard/data/tmp/pp_rand_hm.jpg";
     // not an issue with jointToHeatMaps , sum remains the same
+>>>>>>> 9faf08865b02c831689cb0fbc1434c782d8b2966
 
     Dataset d;
     d.x = xTensor;
@@ -522,6 +655,8 @@ Dataset prepData(std::string path, float prop = 1.0,bool excludeMerged = false )
     return d;
 
 }
+<<<<<<< HEAD
+=======
 
 
 torch::Tensor getKPFromHeatmap(const torch::Tensor& heatmaps, torch::Device device){
@@ -566,3 +701,4 @@ torch::Tensor getKPFromHeatmap(const torch::Tensor& heatmaps, torch::Device devi
 
 
 
+>>>>>>> 9faf08865b02c831689cb0fbc1434c782d8b2966

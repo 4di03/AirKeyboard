@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+#include "data_work.h"
+void trainModel(Dataset train,  Dataset test);
+=======
 #include <torch/torch.h>
 #include "data_work.h"
 //#include "model.h"
@@ -170,3 +174,4 @@ void evaluate(Dataset& test, TrainParams tp, bool draw);
 
 
 //float evaluateTest( Dataset test, torch::Device device, Model& model, Loss& loss_fn);
+>>>>>>> 9faf08865b02c831689cb0fbc1434c782d8b2966
