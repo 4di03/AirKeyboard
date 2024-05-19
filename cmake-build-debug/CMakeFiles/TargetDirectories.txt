@@ -1,3 +1,0 @@
-/Users/adithyapalle/work/CS5100/Project/cmake-build-debug/CMakeFiles/Open_CV_Project.dir
-/Users/adithyapalle/work/CS5100/Project/cmake-build-debug/CMakeFiles/edit_cache.dir
-/Users/adithyapalle/work/CS5100/Project/cmake-build-debug/CMakeFiles/rebuild_cache.dir
