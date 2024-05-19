@@ -1,3 +1,1 @@
-Early efforts were conducted in C++ for modeling, seen in the root of the repo.
-
-Later efforts were done in Python, for which the code is found in the python samples folder.
+This repo is supplementary to the hand-pose tracking reserach done in this [paper](https://github.com/4di03/PalmPilot/blob/master/Real-Time%20Hand%20Joint%20Tracking.pdf).

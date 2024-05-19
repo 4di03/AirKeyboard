@@ -1,10 +1,22 @@
+<<<<<<< HEAD
+=======
 #include <cmath>
 #include <opencv2/opencv.hpp>
 #include <torch/torch.h>
+>>>>>>> 9faf08865b02c831689cb0fbc1434c782d8b2966
 #pragma once // or use include guards
 
 struct Dataset {
     torch::Tensor x;
+<<<<<<< HEAD
+    torch::Tensor y;
+
+
+    // Method to get a batch for a given epoch and batch size
+    std::pair<torch::Tensor, torch::Tensor> getBatch(size_t epoch, size_t batchSize) const {
+        // Calculate the starting index of the batch
+        size_t startIndex = epoch * batchSize;
+=======
     torch::Tensor y; 
     // x and y must have same size at dimension 0
 
@@ -17,6 +29,7 @@ struct Dataset {
         int endIndex =  std::min(nSamples, (startIndex+batchSize));
 
 
+>>>>>>> 9faf08865b02c831689cb0fbc1434c782d8b2966
 
         // Extract a batch from the dataset
         torch::Tensor batchX = x.index({torch::indexing::Slice(startIndex, startIndex + batchSize)});
@@ -24,6 +37,12 @@ struct Dataset {
 
         return {batchX, batchY};
     }
+<<<<<<< HEAD
+};
+
+
+Dataset prepData(std::string path, float prop);
+=======
 
     Dataset sample(float propDataUsed){
         // slices data by propDataUsed
@@ -103,3 +122,4 @@ cv::Mat drawKeypoints(cv::Mat image, const torch::Tensor kp2d, cv::Scalar color)
 bool isSubstringPresent(const std::string mainString, const std::string searchString);
 
 std::tuple<torch::Tensor, torch::Tensor> getNormParams(const torch::Tensor& imageBatch);
+>>>>>>> 9faf08865b02c831689cb0fbc1434c782d8b2966
