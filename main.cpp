@@ -11,13 +11,13 @@
 using namespace std;
 
 
-void saveSample(float propTrain = 0.1, float propTest = 0.1 , std::string save_folder = "/scratch/palle.a/AirKeyboard/data/data_tensors", bool excludeMerged= false){
+void saveSample(float propTrain = 0.1, float propTest = 0.1 , std::string save_folder = "/scratch/palle.a/PalmPilot/data/data_tensors", bool excludeMerged= false){
     /**
      * @brief This function  loads data and saves samples o a tensor file in data/data_tensors
      */
 
     std::filesystem::create_directories(save_folder);
-    std::string trainData = "/scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/train_keypoint_data.csv";
+    std::string trainData = "/scratch/palle.a/PalmPilot/data/hanco_all/HanCo/train_keypoint_data.csv";
     Dataset train = prepData(trainData, propTrain, excludeMerged);
 
     cout << "train x shape: " << train.x.sizes() << endl;
@@ -32,7 +32,7 @@ void saveSample(float propTrain = 0.1, float propTest = 0.1 , std::string save_f
     torch::save(xTrain, save_folder + "/xTrain.pt");
     torch::save(yTrain, save_folder + "/yTrain.pt");
 
-    std::string testData = "/scratch/palle.a/AirKeyboard/data/hanco_all/HanCo/test_keypoint_data.csv";
+    std::string testData = "/scratch/palle.a/PalmPilot/data/hanco_all/HanCo/test_keypoint_data.csv";
     Dataset test = prepData(testData, propTest,excludeMerged);
 
     torch::Tensor xTest = test.x;
@@ -68,7 +68,7 @@ void torchCudaTest(){
 
 
 
-std::vector<Dataset> loadSamples(std::string save_folder = "/scratch/palle.a/AirKeyboard/data/data_tensors"){
+std::vector<Dataset> loadSamples(std::string save_folder = "/scratch/palle.a/PalmPilot/data/data_tensors"){
     /**
      * @brief This function loads samples from the tensor files in data/data_tensors
      * @return std::tuple<Dataset>
@@ -103,8 +103,8 @@ int main(int argc, char* argv[]) {
 
     // Open a connection to the webcam (usually 0 for the default webcam)
 
-    //saveSample(0.002, 0.03,  "/scratch/palle.a/AirKeyboard/data/data_tensors/samples");
-    //saveSample(0.0005, 0.005,  "/scratch/palle.a/AirKeyboard/data/data_tensors/samples");
+    //saveSample(0.002, 0.03,  "/scratch/palle.a/PalmPilot/data/data_tensors/samples");
+    //saveSample(0.0005, 0.005,  "/scratch/palle.a/PalmPilot/data/data_tensors/samples");
     if (argc == 1){
         cout << "Provide cmd arguments : arg 1 is loss name , arg 2 is model name, arg 3 is reload option"  << endl;
     }
@@ -139,7 +139,7 @@ int main(int argc, char* argv[]) {
          reload = (arg3 != "--no-reload");
     }
  
-    std::string dataPath = "/scratch/palle.a/AirKeyboard/data/data_tensors/pure_data";
+    std::string dataPath = "/scratch/palle.a/PalmPilot/data/data_tensors/pure_data";
     if (argc > 4){
         dataPath = std::string(argv[4]);
         cout << "setting data path as " << dataPath << endl;
@@ -208,7 +208,7 @@ int main(int argc, char* argv[]) {
     evaluate(test, tp, true);
 
     // auto device = torch::Device(torch::kCUDA,0);
-    // JitModel model("/scratch/palle.a/AirKeyboard/python_sample/weights/model_final", device );
+    // JitModel model("/scratch/palle.a/PalmPilot/python_sample/weights/model_final", device );
     // auto loss = IouLoss();
     // float loss = evaluateTest(test,  device, model, loss);
 

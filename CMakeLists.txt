@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.18) # FOR LINUX
 project( Open_CV_Project )
 
 
-# Set the path to your CUDA installation
+# Set thle path to your CUDA installation
 set(CUDA_TOOLKIT_ROOT_DIR /shared/centos7/cuda/11.8)
 
 # Set C++ standard to 17

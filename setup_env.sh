@@ -1,4 +1,3 @@
-
 module load cmake/3.23.2
 module load opencv/3.1.0 #-contrib
 module unload cuda/9.2

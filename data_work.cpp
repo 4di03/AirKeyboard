@@ -513,7 +513,7 @@ Dataset prepData(std::string path, float prop = 1.0,bool excludeMerged = false )
 
     cout << "L568: post data-prep: " << torch::max(xTensor).item<float>() << endl;
 
-    std::string tmpFilePath = "/scratch/palle.a/AirKeyboard/data/tmp/pp_rand_hm.jpg";
+    std::string tmpFilePath = "/scratch/palle.a/PalmPilot/data/tmp/pp_rand_hm.jpg";
     // not an issue with jointToHeatMaps , sum remains the same
 
     Dataset d;

@@ -231,17 +231,17 @@ bool cuda, std::string model_name,bool draw, Loss& loss_fn
 
     Model* model;
 
-    loadModel("/scratch/palle.a/AirKeyboard/data/models/" + model_name, model);
+    loadModel("/scratch/palle.a/PalmPilot/data/models/" + model_name, model);
 
 
     // cout << "L248: " ;
-    // Model* model = new JitModel("/scratch/palle.a/AirKeyboard/python_sample/weights/model_final.pt", device);
+    // Model* model = new JitModel("/scratch/palle.a/PalmPilot/python_sample/weights/model_final.pt", device);
 
     evaluateTest(test,device,*model,*loss);
     
 
     if (draw){
-    auto valLossSavePath = "/scratch/palle.a/AirKeyboard/data/analytics/" + model_name+ "_analytics/";
+    auto valLossSavePath = "/scratch/palle.a/PalmPilot/data/analytics/" + model_name+ "_analytics/";
     drawPredictions(test.slice(10)[0], *model, valLossSavePath , device); // draws first  10 images in test set
     }
 
@@ -388,7 +388,7 @@ void trainModel(Dataset& train,
         loadModel(tp.modelPath, model);
     }
     
-    //Model* model= new JitModel("/scratch/palle.a/AirKeyboard/python_sample/weights/untrained_test_model.pt", device);
+    //Model* model= new JitModel("/scratch/palle.a/PalmPilot/python_sample/weights/untrained_test_model.pt", device);
 
     if (tp.standardize){
         cout<< "STANDARDIZING DATA" <<endl;
@@ -413,7 +413,7 @@ void trainModel(Dataset& train,
     //     10,
     //     0.00001
     // );
-    std::string model_path = "/scratch/palle.a/AirKeyboard/data/models/" + model_name;
+    std::string model_path = "/scratch/palle.a/PalmPilot/data/models/" + model_name;
 
     std::vector<float> trainLosses;
     std::vector<float> valLosses;
@@ -436,7 +436,7 @@ void trainModel(Dataset& train,
 
 
 
-            // std::string tmpFilePath = "/scratch/palle.a/AirKeyboard/data/tmp/train_hm_" + std::to_string(i) + ".jpg";
+            // std::string tmpFilePath = "/scratch/palle.a/PalmPilot/data/tmp/train_hm_" + std::to_string(i) + ".jpg";
             //cout << "L592" << y.sizes() << endl;
             auto tgt = y.index({0,0}).view({1,128,128});
             //cout << "L593" << tgt.sizes() << endl;
@@ -517,7 +517,7 @@ void trainModel(Dataset& train,
     torch::NoGradGuard no_grad;
 
 
-    std::string valLossSavePath = "/scratch/palle.a/AirKeyboard/data/analytics/" + model_name + "_analytics";
+    std::string valLossSavePath = "/scratch/palle.a/PalmPilot/data/analytics/" + model_name + "_analytics";
 
 
     writeVectorToFile(trainLosses, valLossSavePath+"/train_loss.list");

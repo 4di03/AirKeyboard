@@ -7,8 +7,9 @@
 #SBATCH --time=07:59:00
 #SBATCH --mem=150G
 #SBATCH --gres=gpu:v100-sxm2:1
-#SBATCH -o /scratch/palle.a/AirKeyboard/logs/train_out_%j.txt       # Standard output file
-#SBATCH -e /scratch/palle.a/AirKeyboard/logs/train_error_%j.txt        # Standard error file
+#SBATCH -o /scratch/palle.a/PalmPilot/logs/train_out_%j.txt       # Standard output file
+#SBATCH -e /scratch/palle.a/PalmPilot/logs/train_error_%j.txt        # Standard error file
+
 source setup_env.sh
 cd build
 cmake ..

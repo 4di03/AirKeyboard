@@ -1,4 +1,10 @@
 .DS_Store
 data/
 .vscode/
-build
+build/*
+!build/build_and_run.sh
+.idea/
+cmake_build_debug/
+**/.ipynb_checkpoints/
+logs/*
+python_sample/weights
