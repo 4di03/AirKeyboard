@@ -381,7 +381,7 @@ void trainModel(Dataset& train,
 
 
 
-    Model* model= new ResidualUNet(c, initNeurons, 7);//CuNet(c,21, initNeurons);//
+    Model* model= new CuNet(c, initNeurons, 7, true);//CuNet(c,21, initNeurons);//
 
 
     if (tp.pretrainedModelReady()){
@@ -447,21 +447,26 @@ void trainModel(Dataset& train,
             optimizer.zero_grad();
 
 
-            //cout << "x shape: " << x.sizes() <<std::endl;
             // Forward pass
             x = x.to(device);
+            
+            
+            cout << "x shape: " << x.sizes() <<std::endl;
+
 
             torch::Tensor y_pred = model->forward(x);
+
+            cout << "y_pred shape: " << y_pred.sizes() <<std::endl;
+            cout << "y shape: " << y.sizes() <<std::endl;
 
             y = y.to(device);
             y = removeExtraDim(y); // to remove extra axis for 1 channel image
 
-            // cout << "y_pred shape: " << y_pred.sizes() <<std::endl;
-            // cout << "y shape: " << y.sizes() <<std::endl;
             // Compute Loss
 
-            //cout << i <<std::endl;
+            cout << i <<std::endl;
 
+        
 
             torch::Tensor loss = loss_fn->forward(y_pred, y);
             //batchLosses.push_back(loss.item<float>());
@@ -540,7 +545,7 @@ void trainModel(Dataset& train,
 
 
     cout << "Loading model after saving from " << model_path <<std::endl ;
-    Model* postModel = new ResidualUNet(c, initNeurons,7);//JitModel(model_path,device);
+    Model* postModel = new CuNet(c, initNeurons,7);//JitModel(model_path,device);
     loadModel(model_path,postModel);
     postModel->eval();
     drawPredictions(sampleTestImages, *postModel, valLossSavePath+"/predictions_postsave/",device);
