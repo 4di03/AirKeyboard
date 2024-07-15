@@ -13,7 +13,7 @@
 #include <cmath>
 #include <opencv2/imgcodecs.hpp>
 #include <omp.h>
-
+#include "constants.h"
 
 using namespace std;
 
@@ -87,7 +87,7 @@ int extractCameraId(std::string imagePath){
 
 std::tuple<torch::Tensor, torch::Tensor> getNormParams(const torch::Tensor& imageBatch) {
 
-    //cout << "L90 get norma params tensor input max val: " << torch::max(imageBatch).item<float>() << endl;
+    //cout << "L90 get norma params tensor input max val: " << torch::max(imageBatch).item<float>() <<std::endl;
 
     torch::Device device = imageBatch.device();
 
@@ -121,7 +121,7 @@ cv::Mat tensorToMat(const torch::Tensor& trueTensor){
     int h = sizes[1];
     int w = sizes[2];
 
-    //cout <<"L96 " <<  c  << " "<< h  << " " << w << endl;
+    //cout <<"L96 " <<  c  << " "<< h  << " " << w <<std::endl;
     auto tensor = trueTensor.view({h,w,c});// transform it to shape required for cv::Mat
 
     if (!tensor.is_contiguous() || !tensor.is_cpu()) {
@@ -144,12 +144,12 @@ cv::Mat tensorToMat(const torch::Tensor& trueTensor){
 
     tensor = tensor.view({h,w,c});
 
-    //cout << "Input Tensor size: " << tensor.sizes() << endl;
+    //cout << "Input Tensor size: " << tensor.sizes() <<std::endl;
 
     // Create a cv::Mat directly from tensor data
     cv::Mat mat(height, width, cvDTYPE, tensor.data_ptr());
 
-    //cout << "Converted Mat size : " << mat.size() << endl;
+    //cout << "Converted Mat size : " << mat.size() <<std::endl;
     return mat.clone(); // Ensure a deep copy to avoid memory issues
 }
 
@@ -186,16 +186,16 @@ torch::Tensor matToTensor(const cv::Mat& image){
         // Image is integer, choose at::kByte for single-channel or at::kRGB for BGR images
         dtype = at::kByte;//(nChannels == 1) ? at::kByte;
     }
-   // cout << " L166 : " << findMaxValue<double>(image) << " DTYPE: " << dtype  << " " << endl;
+   // cout << " L166 : " << findMaxValue<double>(image) << " DTYPE: " << dtype  << " " <<std::endl;
 
     // Convert OpenCV Mat to PyTorch Tensor
-    //cout << "L166.2 " <<  image.data.size() << endl;
+    //cout << "L166.2 " <<  image.data.size() <<std::endl;
     torch::Tensor tensor_image = torch::from_blob(image.data, {image.rows, image.cols, nChannels}, dtype).clone();
    // cout << "L166.5 : " <<  torch::max(tensor_image).item<float>();
 
     // Reshape the tensor to (C, H, W) format
     tensor_image = tensor_image.view({ nChannels,image.rows, image.cols});
-   // cout << " L167 : " <<  torch::max(tensor_image).item<float>() << endl;;
+   // cout << " L167 : " <<  torch::max(tensor_image).item<float>() <<std::endl;;
 
 
     tensor_image = tensor_image.to(at::kFloat);
@@ -239,7 +239,7 @@ void saveImageToFile(const cv::Mat& image, const std::string& filePath) {
     }
 
     // Save the image to the specified file
-    //cout << "Saving image to " << filePath << endl;
+    //cout << "Saving image to " << filePath <<std::endl;
 
     // cv::Mat img2;
     // image.convertTo(img2, CV_8U, 255, 0);
@@ -254,7 +254,7 @@ cv::Mat drawKeypoints(cv::Mat image, const torch::Tensor kp2d, cv::Scalar color 
      *
      */
 
-    // cout << "kp2d: " << endl;
+    // cout << "kp2d: " <<std::endl;
     // printTensor(kp2d);
 
     int numKeypoints = kp2d.size(0);
@@ -413,13 +413,13 @@ Dataset prepData(std::string path, float prop = 1.0,bool excludeMerged = false )
         colMap[column_names[i]] = i;
     }
 
-    cout << "Processing "<< data.shape()[0] << " Images" << endl;
+    cout << "Processing "<< data.shape()[0] << " Images" <<std::endl;
 
     int nDataPoints = data.shape()[0];
     vector<torch::Tensor> xData(nDataPoints);
     vector<torch::Tensor> yData(nDataPoints);
 
-    cout << "N = " << nDataPoints << endl;
+    cout << "N = " << nDataPoints <<std::endl;
     bool printit = false;
     //#pragma omp parallel for
     for (int i = 1; i < nDataPoints; ++i) {
@@ -435,12 +435,12 @@ Dataset prepData(std::string path, float prop = 1.0,bool excludeMerged = false )
         std::string rbm= "rgb_merged";
         if (excludeMerged && isSubstringPresent(imagePath, rbm)){
             // skip over rgb_merged data
-            //cout << "skipping " << imagePath << endl;
+            //cout << "skipping " << imagePath <<std::endl;
             continue;
         }
 
         if ( i % 100 == 0) {
-            cout << "Processing Image " << i << endl;
+            cout << "Processing Image " << i <<std::endl;
         }
         cv::Mat image;
         try {
@@ -450,7 +450,7 @@ Dataset prepData(std::string path, float prop = 1.0,bool excludeMerged = false )
                 throw std::exception();
             }
         } catch (std::exception& e){
-            cout << "Could not read image: " << imagePath << endl;
+            cout << "Could not read image: " << imagePath <<std::endl;
             continue;
         }
 
@@ -488,16 +488,16 @@ Dataset prepData(std::string path, float prop = 1.0,bool excludeMerged = false )
         cv::imwrite("L504_test.jpg", shrunkImage*255);
 
 
-       // cout << "L544: pre matToTensor" << findMaxValue<double>(shrunkImage) << endl;
+       // cout << "L544: pre matToTensor" << findMaxValue<double>(shrunkImage) <<std::endl;
 
         torch::Tensor imageTensor = matToTensor(shrunkImage);
-        //cout << "L545: mid data-prep: " << torch::max(imageTensor).item<float>() << endl;
+        //cout << "L545: mid data-prep: " << torch::max(imageTensor).item<float>() <<std::endl;
 
 
-        //cout << " JOINT HEATMAP START: " << endl;
+        //cout << " JOINT HEATMAP START: " <<std::endl;
         torch::Tensor jointHeatmaps  = getJointHeatmaps(shrunk_kp2d, {128,128}); // gets 21x128x128 tensor where each of the 2d tensors is a heatmap for each keypoint
 
-       //cout << " JOINT HEATMAP END: " << endl;
+       //cout << " JOINT HEATMAP END: " <<std::endl;
 
 
         xData[i - 1] = imageTensor;
@@ -511,9 +511,9 @@ Dataset prepData(std::string path, float prop = 1.0,bool excludeMerged = false )
     torch::Tensor xTensor = torch::stack(xData);
     torch::Tensor yTensor = torch::stack(yData);
 
-    cout << "L568: post data-prep: " << torch::max(xTensor).item<float>() << endl;
+    cout << "L568: post data-prep: " << torch::max(xTensor).item<float>() <<std::endl;
 
-    std::string tmpFilePath = "/scratch/palle.a/PalmPilot/data/tmp/pp_rand_hm.jpg";
+    // std::string tmpFilePath = std::string(DATA_PATH) + "/tmp/pp_rand_hm.jpg";
     // not an issue with jointToHeatMaps , sum remains the same
 
     Dataset d;
@@ -527,18 +527,18 @@ Dataset prepData(std::string path, float prop = 1.0,bool excludeMerged = false )
 torch::Tensor getKPFromHeatmap(const torch::Tensor& heatmaps, torch::Device device){
     // heatmapStack has shape (21, 128,128) representing all 21 heatmaps
     // will return tensor of shape (21, 2) representing (x,y) point fo reach heatmap
-    //cout << "EXTRACTING KP" << endl;
+    //cout << "EXTRACTING KP" <<std::endl;
     auto heatmapStack = heatmaps.view({21,128,128}).clone();//.clone();
     //(heatmapStack[0]);
 
-    //cout << "TOTAL SUM: " << heatmapStack.sum({0,1,2}) << endl; // expect 21
+    //cout << "TOTAL SUM: " << heatmapStack.sum({0,1,2}) <<std::endl; // expect 21
 
     auto heatmapSums = heatmapStack.sum({1,2});
 
 
 
     auto hExpanded = heatmapSums.view({heatmapSums.sizes()[0],1,1});
-    // cout << "Heatmap sums" << endl;
+    // cout << "Heatmap sums" <<std::endl;
 
     // printTensor(hExpanded);
 

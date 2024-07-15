@@ -6,22 +6,25 @@
 #include "data_work.h"
 #include "train.h"
 #include <filesystem>
+#include "constants.h"
 //#include "model.h"
 
 using namespace std;
 
 
-void saveSample(float propTrain = 0.1, float propTest = 0.1 , std::string save_folder = "/scratch/palle.a/PalmPilot/data/data_tensors", bool excludeMerged= false){
+void saveSample(float propTrain = 0.1, float propTest = 0.1 , std::string save_folder = std::string(DATA_PATH) + "/data_tensors", bool excludeMerged= false){
     /**
      * @brief This function  loads data and saves samples o a tensor file in data/data_tensors
      */
 
     std::filesystem::create_directories(save_folder);
-    std::string trainData = "/scratch/palle.a/PalmPilot/data/hanco_all/HanCo/train_keypoint_data.csv";
+    std::string trainData = std::string(DATA_PATH) + "/hanco_all/HanCo/train_keypoint_data.csv";
+
+    cout << "loading train data from : " << trainData <<std::endl;
     Dataset train = prepData(trainData, propTrain, excludeMerged);
 
-    cout << "train x shape: " << train.x.sizes() << endl;
-    cout << "train y shape: " << train.y.sizes() << endl;
+    cout << "train x shape: " << train.x.sizes() <<std::endl;
+    cout << "train y shape: " << train.y.sizes() <<std::endl;
 
     torch::Tensor xTrain = train.x;
     torch::Tensor yTrain = train.y;
@@ -32,7 +35,7 @@ void saveSample(float propTrain = 0.1, float propTest = 0.1 , std::string save_f
     torch::save(xTrain, save_folder + "/xTrain.pt");
     torch::save(yTrain, save_folder + "/yTrain.pt");
 
-    std::string testData = "/scratch/palle.a/PalmPilot/data/hanco_all/HanCo/test_keypoint_data.csv";
+    std::string testData = std::string() + "/hanco_all/HanCo/test_keypoint_data.csv";
     Dataset test = prepData(testData, propTest,excludeMerged);
 
     torch::Tensor xTest = test.x;
@@ -68,7 +71,7 @@ void torchCudaTest(){
 
 
 
-std::vector<Dataset> loadSamples(std::string save_folder = "/scratch/palle.a/PalmPilot/data/data_tensors"){
+std::vector<Dataset> loadSamples(std::string save_folder = std::string(DATA_PATH) + "/data_tensors"){
     /**
      * @brief This function loads samples from the tensor files in data/data_tensors
      * @return std::tuple<Dataset>
@@ -103,10 +106,10 @@ int main(int argc, char* argv[]) {
 
     // Open a connection to the webcam (usually 0 for the default webcam)
 
-    //saveSample(0.002, 0.03,  "/scratch/palle.a/PalmPilot/data/data_tensors/samples");
-    //saveSample(0.0005, 0.005,  "/scratch/palle.a/PalmPilot/data/data_tensors/samples");
+    //saveSample(0.002, 0.03,  std::string(DATA_PATH) + "/data_tensors/samples");
+    //saveSample(0.0005, 0.005,  std::string(DATA_PATH) + "/data_tensors/samples");
     if (argc == 1){
-        cout << "Provide cmd arguments : arg 1 is loss name , arg 2 is model name, arg 3 is reload option"  << endl;
+        cout << "Provide cmd arguments : arg 1 is loss name , arg 2 is model name, arg 3 is reload option"  <<std::endl;
     }
 
 
@@ -115,7 +118,7 @@ int main(int argc, char* argv[]) {
     if (argc > 2){
         modelName = std::string(argv[2]);
 
-        cout << "Model Name: " << modelName <<  endl;
+        cout << "Model Name: " << modelName << std::endl;
 
     }
 
@@ -125,24 +128,24 @@ int main(int argc, char* argv[]) {
 
     Loss* loss;
     if (std::string(argv[1]) == "iou"){
-        cout << "USING IOU LOSS" << endl;
+        cout << "USING IOU LOSS" <<std::endl;
         loss = new IouLoss();
     }else{
-        cout << "USING MSE LOSS" << endl;
+        cout << "USING MSE LOSS" <<std::endl;
         loss =new MSELoss();
     }
 
     bool reload = false;
     if (argc > 3){
         auto arg3 = std::string(argv[3]);
-        cout << "read argv " << arg3 << endl;
+        cout << "read argv " << arg3 <<std::endl;
          reload = (arg3 != "--no-reload");
     }
  
-    std::string dataPath = "/scratch/palle.a/PalmPilot/data/data_tensors/pure_data";
+    std::string dataPath= std::string(DATA_PATH) + "/data_tensors/pure_data";
     if (argc > 4){
         dataPath = std::string(argv[4]);
-        cout << "setting data path as " << dataPath << endl;
+        cout << "setting data path as " << std::string(dataPath) <<std::endl;
 
     }
 
@@ -163,16 +166,16 @@ int main(int argc, char* argv[]) {
     }
 
     if (reload){
-        cout << "Reloading data to " << dataPath << endl;
+        cout << "Reloading data to " << dataPath <<std::endl;
     }else{
-    cout << "Not reloading data, pulling from " << dataPath << endl;
+    cout << "Not reloading data, pulling from " << dataPath <<std::endl;
 
     }   
 
     if (reload){
     bool excludeMerged = false;
     if (excludeMerged){
-    cout << "Excluding background swapped images" << endl;
+    cout << "Excluding background swapped images" <<std::endl;
     }
     saveSample(propTrain,propTest, dataPath , excludeMerged);
     }
@@ -186,7 +189,7 @@ int main(int argc, char* argv[]) {
     Dataset train = data[0];
     Dataset test = data[1];
 
-    cout << "running Training!" << endl;
+    cout << "running Training!" <<std::endl;
 
 
 
@@ -212,7 +215,7 @@ int main(int argc, char* argv[]) {
     // auto loss = IouLoss();
     // float loss = evaluateTest(test,  device, model, loss);
 
-    // cout << "TEST LOSS FOR MODEL_FINAL " << loss << endl;
+    // cout << "TEST LOSS FOR MODEL_FINAL " << loss <<std::endl;
 
 
 }

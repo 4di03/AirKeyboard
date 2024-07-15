@@ -11,6 +11,7 @@
 #include <fstream>
 #include "cunet/cunet.h"
 #include "model.h"
+#include "constants.h"
 
 using namespace std;
 
@@ -47,10 +48,10 @@ float getMean(std::vector<num> nums){
 torch::Device initDevice(bool cuda){
     torch::Device device(torch::kCUDA,0);
     if (!cuda){
-        cout << "using CPU" << endl;
+        cout << "Using CPU" <<std::endl;
         device = torch::Device(torch::kCPU);
     }else{
-        cout <<"USING CUDA" << endl;
+        cout << "Usinf CUDA" <<std::endl;
     }
 
     return device;
@@ -77,7 +78,7 @@ void loadModel(const std::string& model_path, torch::nn::Module* model) {
 void printModel(torch::nn::Module model) {
     // Get named parameters of the model, gets parameters of last layer
     auto named_params = model.named_parameters();
-    cout << "MODEL PARAMS (last layer): " << endl;
+    cout << "MODEL PARAMS (last layer): " <<std::endl;
     // Iterate over named parameters and print their names and values
     auto& named_param = named_params[named_params.size()-1];
     const std::string& name = named_param.key();
@@ -102,7 +103,7 @@ float evaluateTest( Dataset test, torch::Device device, Model& model, Loss& loss
     int nTrainSamples = test.y.sizes()[0];
     int nBatches = ceil(nTrainSamples / maxBatchSize);
 
-    //cout << "Breaking data into " << nBatches << " Batches" << endl;
+    //cout << "Breaking data into " << nBatches << " Batches" <<std::endl;
 
     float totalLoss = 0;
 
@@ -121,19 +122,19 @@ float evaluateTest( Dataset test, torch::Device device, Model& model, Loss& loss
         
         y = y.to(device);
 
-        //cout << pred.sizes() << endl;
+        //cout << pred.sizes() <<std::endl;
         torch::Tensor loss = loss_fn.forward(pred, y) * y.sizes()[0];
 
-        //cout << loss.item<float>() << endl;
+        //cout << loss.item<float>() <<std::endl;
         totalLoss += loss.item<float>();
 
     }
 
 
-    //cout << "L411 nTrainSamples: " << nTrainSamples << ",maxBatchSize: " << maxBatchSize << ",nBatches: " << nBatches << ", total_loss: " << totalLoss << endl;
+    //cout << "L411 nTrainSamples: " << nTrainSamples << ",maxBatchSize: " << maxBatchSize << ",nBatches: " << nBatches << ", total_loss: " << totalLoss <<std::endl;
     float mse = totalLoss/nTrainSamples;
 
-    cout <<"Loss: " <<  mse<< endl;
+    cout <<"Loss: " <<  mse<<std::endl;
 
     return mse;
 
@@ -158,7 +159,7 @@ void drawPredictions(Dataset d,Model& model, const std::string& valLossSavePath 
     auto gtColor = cv::Scalar(0, 0, 255); // in BGR
     auto predColor = cv::Scalar(0,255,0); // in BGR
 
-    cout << "Ground truth keypoints are in Red, predicted are in Green" << endl;
+    cout << "Ground truth keypoints are in Red, predicted are in Green" <<std::endl;
 
     std::filesystem::create_directories(valLossSavePath);
     auto mse = MSELoss();
@@ -171,7 +172,7 @@ void drawPredictions(Dataset d,Model& model, const std::string& valLossSavePath 
         auto start_time = std::chrono::high_resolution_clock::now();
 
         auto it = imageData[i].unsqueeze(0);
-       // cout << "L186: " << torch::max(it) << endl; # is normalized
+       // cout << "L186: " << torch::max(it) <<std::endl; # is normalized
         auto predMap = model.forward(it);
         auto predKP = getKPFromHeatmap(predMap,device);
         auto end_time = std::chrono::high_resolution_clock::now();
@@ -191,7 +192,7 @@ void drawPredictions(Dataset d,Model& model, const std::string& valLossSavePath 
         // cv::Mat img1;
         // imageData[i].convertTo(img1, CV_8U, 255, 0);
 
-       // cout << "L206(pre-tensorToMat) Max: " <<torch::max(imageData[i]) <<  " Mean: " << torch::mean(imageData[i]) << endl;
+       // cout << "L206(pre-tensorToMat) Max: " <<torch::max(imageData[i]) <<  " Mean: " << torch::mean(imageData[i]) <<std::endl;
 
         cv::Mat image = tensorToMat(imageData[i]); // draw on non-standardized image
 
@@ -211,8 +212,8 @@ void drawPredictions(Dataset d,Model& model, const std::string& valLossSavePath 
 
 
     }
-    cout << "Saved all predictions to " + valLossSavePath << endl;
-    cout << "Prediction per image took " << getMean(predTimes) << " microseconds  on average" << endl;
+    cout << "Saved all predictions to " + valLossSavePath <<std::endl;
+    cout << "Prediction per image took " << getMean(predTimes) << " microseconds  on average" <<std::endl;
 
     return;
 
@@ -227,11 +228,11 @@ bool cuda, std::string model_name,bool draw, Loss& loss_fn
     auto loss = t.loss_fn;
     auto device = initDevice(cuda);
 
-    // cout << "running evaluation for " << model_name << endl;
+    // cout << "running evaluation for " << model_name <<std::endl;
 
     Model* model;
 
-    loadModel("/scratch/palle.a/PalmPilot/data/models/" + model_name, model);
+    loadModel(std::string(DATA_PATH) + "/models/" + model_name, model);
 
 
     // cout << "L248: " ;
@@ -241,7 +242,7 @@ bool cuda, std::string model_name,bool draw, Loss& loss_fn
     
 
     if (draw){
-    auto valLossSavePath = "/scratch/palle.a/PalmPilot/data/analytics/" + model_name+ "_analytics/";
+    auto valLossSavePath = std::string(DATA_PATH) + "/analytics/" + model_name+ "_analytics/";
     drawPredictions(test.slice(10)[0], *model, valLossSavePath , device); // draws first  10 images in test set
     }
 
@@ -323,12 +324,12 @@ void trainModel(Dataset& train,
 
     float propDataUsed  = tp.propDataUsed;
     std::string model_name = tp.model_name;
-    cout << "train x shape: " << train.x.sizes() << endl;
-    cout << "train y shape: " << train.y.sizes() << endl;
-    // cout << "val x shape: " << val.y.sizes() << endl;
-    // cout << "val y shape: " << val.y.sizes() << endl;
-    cout << "test x shape: " << test.x.sizes() << endl;
-    cout << "test y shape: " << test.y.sizes() << endl;
+    cout << "train x shape: " << train.x.sizes() <<std::endl;
+    cout << "train y shape: " << train.y.sizes() <<std::endl;
+    // cout << "val x shape: " << val.y.sizes() <<std::endl;
+    // cout << "val y shape: " << val.y.sizes() <<std::endl;
+    cout << "test x shape: " << test.x.sizes() <<std::endl;
+    cout << "test y shape: " << test.y.sizes() <<std::endl;
 
     int plateauPatience = 20;
 
@@ -342,13 +343,13 @@ void trainModel(Dataset& train,
 
 
 
-    cout << "POST SAMPLING" << endl;
-    cout << "train x shape: " << train.x.sizes() << endl;
-    cout << "train y shape: " << train.y.sizes() << endl;
-    cout << "val x shape: " << val.y.sizes() << endl;
-    cout << "val y shape: " << val.y.sizes() << endl;
-    cout << "test x shape: " << test.x.sizes() << endl;
-    cout << "test y shape: " << test.y.sizes() << endl;
+    cout << "POST SAMPLING" <<std::endl;
+    cout << "train x shape: " << train.x.sizes() <<std::endl;
+    cout << "train y shape: " << train.y.sizes() <<std::endl;
+    cout << "val x shape: " << val.y.sizes() <<std::endl;
+    cout << "val y shape: " << val.y.sizes() <<std::endl;
+    cout << "test x shape: " << test.x.sizes() <<std::endl;
+    cout << "test y shape: " << test.y.sizes() <<std::endl;
 
     // Dataset standardTrainData;
     // Dataset standardValData;
@@ -359,7 +360,7 @@ void trainModel(Dataset& train,
         torch::Tensor trainMeans = std::get<0>(trainStats).to(device);
         torch::Tensor trainStds = std::get<1>(trainStats).to(device);
 
-        cout << "Initializing trian standardizer with below means and sts: " << endl;
+        cout << "Initializing trian standardizer with below means and sts: " <<std::endl;
         printTensor(trainMeans);
         printTensor(trainStds);
 
@@ -384,7 +385,7 @@ void trainModel(Dataset& train,
 
 
     if (tp.pretrainedModelReady()){
-        cout << "Loading pretrained model for retraining" << endl;
+        cout << "Loading pretrained model for retraining" <<std::endl;
         loadModel(tp.modelPath, model);
     }
     
@@ -413,7 +414,7 @@ void trainModel(Dataset& train,
     //     10,
     //     0.00001
     // );
-    std::string model_path = "/scratch/palle.a/PalmPilot/data/models/" + model_name;
+    std::string model_path = std::string(DATA_PATH) + "/models/" + model_name;
 
     std::vector<float> trainLosses;
     std::vector<float> valLosses;
@@ -436,17 +437,17 @@ void trainModel(Dataset& train,
 
 
 
-            // std::string tmpFilePath = "/scratch/palle.a/PalmPilot/data/tmp/train_hm_" + std::to_string(i) + ".jpg";
-            //cout << "L592" << y.sizes() << endl;
+            // std::string tmpFilePath = std::string(DATA_PATH) + "/tmp/train_hm_" + std::to_string(i) + ".jpg";
+            //cout << "L592" << y.sizes() <<std::endl;
             auto tgt = y.index({0,0}).view({1,128,128});
-            //cout << "L593" << tgt.sizes() << endl;
+            //cout << "L593" << tgt.sizes() <<std::endl;
             saveImageToFile(tensorToMat(tgt)*255,"L437_hm_train.jpg");
 
             // Zero gradients
             optimizer.zero_grad();
 
 
-            //cout << "x shape: " << x.sizes() << endl;
+            //cout << "x shape: " << x.sizes() <<std::endl;
             // Forward pass
             x = x.to(device);
 
@@ -455,11 +456,11 @@ void trainModel(Dataset& train,
             y = y.to(device);
             y = removeExtraDim(y); // to remove extra axis for 1 channel image
 
-            // cout << "y_pred shape: " << y_pred.sizes() << endl;
-            // cout << "y shape: " << y.sizes() << endl;
+            // cout << "y_pred shape: " << y_pred.sizes() <<std::endl;
+            // cout << "y shape: " << y.sizes() <<std::endl;
             // Compute Loss
 
-            //cout << i << endl;
+            //cout << i <<std::endl;
 
 
             torch::Tensor loss = loss_fn->forward(y_pred, y);
@@ -477,7 +478,7 @@ void trainModel(Dataset& train,
 
             // Update the parameters
             optimizer.step();
-            //cout << i << endl;
+            //cout << i <<std::endl;
         }
 
         auto end_time = std::chrono::high_resolution_clock::now();
@@ -487,7 +488,7 @@ void trainModel(Dataset& train,
         float valLoss = evaluateTest(val,device,*model, *loss_fn);
 
         if (plateauTracker.earlyStopping(valLoss)){
-            cout << "Reducing Learning Rate!" << endl;
+            cout << "Reducing Learning Rate!" <<std::endl;
             scheduler.step(); // if no imporvement for n1 epcosh, update LR
         }
 
@@ -517,7 +518,7 @@ void trainModel(Dataset& train,
     torch::NoGradGuard no_grad;
 
 
-    std::string valLossSavePath = "/scratch/palle.a/PalmPilot/data/analytics/" + model_name + "_analytics";
+    std::string valLossSavePath = std::string(DATA_PATH) + "/analytics/" + model_name + "_analytics";
 
 
     writeVectorToFile(trainLosses, valLossSavePath+"/train_loss.list");
@@ -538,7 +539,7 @@ void trainModel(Dataset& train,
     drawPredictions(sampleTestImages,*model, valLossSavePath+"/predictions_presave/",device);
 
 
-    cout << "Loading model after saving from " << model_path << endl ;
+    cout << "Loading model after saving from " << model_path <<std::endl ;
     Model* postModel = new ResidualUNet(c, initNeurons,7);//JitModel(model_path,device);
     loadModel(model_path,postModel);
     postModel->eval();

@@ -14,3 +14,7 @@ source setup_env.sh
 cd build
 cmake ..
 bash build_and_run.sh $1 $2 $3 $4 $5 $6 $7
+
+# Sample Usage:
+ 
+# bash run_train.sh iou default_model.pt --reload

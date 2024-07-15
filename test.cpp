@@ -6,8 +6,15 @@
 #include <xtensor/xio.hpp>
 #include <xtensor/xrandom.hpp>  // Include xrandom header for randn function
 #include <assert.h>
+#include "constants.h"
 #include "train.h"
 using namespace std;
+
+
+
+void testConstants(){
+    cout << "DATA_PATH is : " << std::string(DATA_PATH) <<std::endl;
+}
 
 // Assuming your model takes an input of shape (n, 21, 128, 128)
 torch::Tensor generateRandomInput(int n, int channels, int height, int width) {
@@ -110,9 +117,9 @@ void testLosses(torch::Tensor& input, torch::Tensor& target){
     float mse_loss  = mse.forward(input,target).item<float>();
     float fmse = torch::mse_loss(input, target).item<float>();
 
-    cout << "IOU of identity : " << iou_loss << endl;
-    cout << "MSE of identity : " << mse_loss << endl;
-    cout << "func MSE of identity : " << fmse << endl;
+    cout << "IOU of identity : " << iou_loss <<std::endl;
+    cout << "MSE of identity : " << mse_loss <<std::endl;
+    cout << "func MSE of identity : " << fmse <<std::endl;
     verifyDifferentiability(input,target);
     assert(iou_loss < 1);
 }
@@ -168,7 +175,7 @@ void testSpecificLoss(LossType loss){
     torch::Tensor target = torch::randn({5, 21, 128, 128});
     torch::Tensor lossVal  = loss.forward(input,target);
   
-    cout << "Loss of random : " << lossVal.item<float>() << endl;
+    cout << "Loss of random : " << lossVal.item<float>() <<std::endl;
 
     
 
@@ -181,15 +188,16 @@ void testSubString(){
    assert(isSubstringPresent("rgb_merged/loi.cj", "rgb_merged"));
    assert(!isSubstringPresent("rgb/loi.cj", "rgb_merged"));
    assert(isSubstringPresent("time/rgb_merged/loi.cj", "rgb_merged"));
-    cout << "testSubstring tests passed!" << endl;
+    cout << "testSubstring tests passed!" <<std::endl;
 }
 
 
 int main() {
     // Run the function to test MSE with different input sizes
     //testMSEWithDifferentInputSizes();
+    testConstants();
     testIOULoss();
-    cout << "Testing specific loss "<< endl;
+    cout << "Testing specific loss "<<std::endl;
     IouLoss loss_func;
     testSpecificLoss(IouLoss());
     testSpecificLoss(MSELoss());

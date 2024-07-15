@@ -29,12 +29,12 @@ def keypoint_data_to_csv(data_path= "/Users/adithyapalle/work/CS5100/Project/dat
     Creates a csv mapping image file names to the corresponding json files containingkeypoint data 
     """
     print("Creating csv file for keypoint data")
-    data_path = os.path.abspath(data_path)
+    data_path= os.path.abspath(data_path)
     train_out_loc = os.path.join(data_path, "train_keypoint_data.csv")
     test_out_loc = os.path.join(data_path, "test_keypoint_data.csv")
 
     rgb_path = os.path.join(data_path, "rgb")
-    rbg_merged_path = os.path.join(data_path, "rgb_merged")
+    rgb_merged_path = os.path.join(data_path, "rgb_merged")
     meta_path = os.path.join(data_path, "meta.json")
     meta = json.load(open(meta_path, "r"))
 
@@ -108,4 +108,4 @@ def keypoint_data_to_csv(data_path= "/Users/adithyapalle/work/CS5100/Project/dat
 
 if __name__ == "__main__":
 
-    keypoint_data_to_csv(data_path = sys.argv[1])
+    keypoint_data_to_csv(data_path= sys.argv[1])

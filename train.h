@@ -52,29 +52,29 @@ torch::Tensor forward(const torch::Tensor& input, const torch::Tensor& target) {
     // IOU = (Intersection of Union) / (Union of Union)
     // Loss = 1 - IOU
 
-   // cout << " L52, inp: " << torch::max(input) << " target:" << torch::max(target) << endl;
+   // cout << " L52, inp: " << torch::max(input) << " target:" << torch::max(target) <<std::endl;
 
     auto I = opSum(input * target);
 
-    //cout << " L56 " << torch::max(I) << endl;
+    //cout << " L56 " << torch::max(I) <<std::endl;
 
     auto U = opSum(torch::pow(input,2)) + opSum(torch::pow(target,2)) - I;
-   // cout << " L57 " << torch::max(U) << endl;
+   // cout << " L57 " << torch::max(U) <<std::endl;
     // Add a small epsilon to avoid division by zero
 
     
     auto iou = (I +  eps) / (U + eps);
 
 
-  //  cout << " L58 " << torch::max(iou) << endl;
+  //  cout << " L58 " << torch::max(iou) <<std::endl;
 
     iou = torch::mean(iou);
 
-   // cout << " L59 " << torch::max(iou) << endl;
+   // cout << " L59 " << torch::max(iou) <<std::endl;
 
 
     auto loss = 1.0 - iou;
-  //   cout << " L70 " << torch::max(loss) << endl;
+  //   cout << " L70 " << torch::max(loss) <<std::endl;
 
 
     return loss;

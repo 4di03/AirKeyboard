@@ -21,7 +21,7 @@ void printTensorDevice(const torch::Tensor& tensor) {
     // Get the device of the tensor
     torch::Device device = tensor.device();
 
-    cout << device << endl;
+    cout << device <<std::endl;
     // Print the device type (CPU or CUDA)
     if (device.is_cpu()) {
         std::cout << "Tensor is on CPU." << std::endl;
@@ -63,7 +63,7 @@ torch::Tensor standardizeImages(const torch::Tensor x, const torch::Tensor& mean
     }
 
     
-  //  cout <<  "L25  " << images.sizes() << endl;
+  //  cout <<  "L25  " << images.sizes() <<std::endl;
     // Permute the dimensions to bring channels to the front
     images = images.permute({0, 2, 3, 1}).contiguous();
 
@@ -84,7 +84,7 @@ torch::Tensor standardizeImages(const torch::Tensor x, const torch::Tensor& mean
 
 
     // auto np = getNormParams(images);
-    // cout << images.sizes() << " MEAN: " << std::get<0>(np) << " STD:"  << std::get<1>(np)<< endl;
+    // cout << images.sizes() << " MEAN: " << std::get<0>(np) << " STD:"  << std::get<1>(np)<<std::endl;
 
     return images;//Dataset{images,dset.y};
 }
@@ -105,10 +105,10 @@ public:
         // printTensorDevice(dset);
         
         if (!means_.defined() || !stds_.defined()) {
-          //  cout << "NOT STANDARDIZING!" << endl;
+          //  cout << "NOT STANDARDIZING!" <<std::endl;
             return dset;
         } else{
-           //cout << "STANDARDIZING!" << endl;
+           //cout << "STANDARDIZING!" <<std::endl;
             return standardizeImages(dset, means_, stds_);
         }
         
@@ -130,9 +130,9 @@ public:
         {
             // Apply the normalization to input image without tracking gradients
             torch::NoGradGuard no_grad;
-            //cout <<"transforming" << endl;
+            //cout <<"transforming" <<std::endl;
             xClone = transformer_.transform(x);
-            //cout <<"post-transforming" << endl;
+            //cout <<"post-transforming" <<std::endl;
         }
        return postNormForward(xClone);
        // return model->forward(x);
@@ -181,7 +181,7 @@ public:
         model = torch::jit::load(modelPath,device);
 
 
-       cout << "L160: " << endl;
+       cout << "L160: " <<std::endl;
         printComputationGraphAndParams(model);
         
     }
@@ -193,7 +193,7 @@ public:
 
         // printTensorDevice(x);
         auto ret =  model.forward({x}).toTensor();
-        //cout <<"L136" << endl;
+        //cout <<"L136" <<std::endl;
         return ret ;
     }
 
@@ -201,13 +201,13 @@ public:
     void to(torch::Device d) {
         model.to(d);
 
-        //cout << "L142: " << model.parameters().device() << endl;
+        //cout << "L142: " << model.parameters().device() <<std::endl;
     }
 
 
 
     void save(const std::string& model_path){
-        cout << "performing jit save" << endl;
+        cout << "performing jit save" <<std::endl;
         model.save(model_path);
     }
 };
@@ -258,7 +258,7 @@ public:
     }
 
     torch::Tensor forward(torch::Tensor x) {
-        //cout << "in CONV BLOCK forward" << debug <<  endl;
+        //cout << "in CONV BLOCK forward" << debug << std::endl;
         if (debug) {
             std::cout << "Input: " << x.sizes() << std::endl;
 
@@ -323,7 +323,7 @@ public:
         maxpool = register_module("maxpool", torch::nn::MaxPool2d(torch::nn::MaxPool2dOptions(2)));
         upsample = torch::nn::Upsample(torch::nn::UpsampleOptions().scale_factor(std::vector<double>({2,2})).mode(torch::kBilinear).align_corners(false));
 
-        cout <<"INIT RES-UNET" << endl;
+        cout <<"INIT RES-UNET" <<std::endl;
 
     }
 
@@ -331,49 +331,49 @@ public:
     torch::Tensor  postNormForward(const torch::Tensor& x) {
         if (debug) {
 
-            cout << "x INPUT: " << x.sizes() << endl;
+            cout << "x INPUT: " << x.sizes() <<std::endl;
 
             torch::Tensor conv1Out = conv1->forward(x);
-            cout << "conv1Out: " << conv1Out.sizes() << endl;
+            cout << "conv1Out: " << conv1Out.sizes() <<std::endl;
 
 
             torch::Tensor conv2Out = conv2->forward(conv1Out);
-            cout << "conv2Out: " << conv2Out.sizes() << endl;
+            cout << "conv2Out: " << conv2Out.sizes() <<std::endl;
 
 
             torch::Tensor conv3Out = conv3->forward(conv2Out);
-            cout << "conv3Out: " << conv3Out.sizes() << endl;
+            cout << "conv3Out: " << conv3Out.sizes() <<std::endl;
 
             torch::Tensor conv4Out = conv4->forward(conv3Out);
-            cout << "conv4Out: " << conv4Out.sizes() << endl;
+            cout << "conv4Out: " << conv4Out.sizes() <<std::endl;
 
 
             torch::Tensor skipConnected1 = torch::cat({conv3Out,conv4Out},1);  // Concat along columns axis (3rd dimensions) conv4Out + upsampled3;
-            cout << "skipConnected1: " << skipConnected1.sizes() << endl;
+            cout << "skipConnected1: " << skipConnected1.sizes() <<std::endl;
 
             torch::Tensor conv5Out = conv5->forward(skipConnected1);
 
 
-            cout << "conv5Out: " << conv5Out.sizes() << endl;
+            cout << "conv5Out: " << conv5Out.sizes() <<std::endl;
 
             torch::Tensor skipConnected2 = torch::cat({conv2Out,conv5Out }, 1);
-            cout << "skipConnected2: " << skipConnected2.sizes() << endl;
+            cout << "skipConnected2: " << skipConnected2.sizes() <<std::endl;
 
 
             torch::Tensor conv6Out = conv6->forward(skipConnected2);
-            cout << "conv6Out: " << conv6Out.sizes() << endl;
+            cout << "conv6Out: " << conv6Out.sizes() <<std::endl;
 
             torch::Tensor skipConnected3 = torch::cat({conv1Out, conv6Out },1);
-            cout << "skipConnected3: " << skipConnected3.sizes() << endl;
+            cout << "skipConnected3: " << skipConnected3.sizes() <<std::endl;
 
 
             torch::Tensor conv7Out = conv7->forward(skipConnected3);
-            cout << "conv7Out: " << conv7Out.sizes() << endl;
+            cout << "conv7Out: " << conv7Out.sizes() <<std::endl;
 
 
 
             torch::Tensor finalOut = finalConv->forward(conv7Out);
-            cout << "finalOut: " << finalOut.sizes() << endl;
+            cout << "finalOut: " << finalOut.sizes() <<std::endl;
 
             auto sigm =sigmoid->forward(finalOut); 
             return sigm;
