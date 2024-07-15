@@ -1,5 +1,4 @@
 #include <iostream>
-#include <iostream>
 #include <cstdlib>
 #include <cstring>
 #include <ApplicationServices/ApplicationServices.h>
@@ -20,23 +19,15 @@ class MouseController{
     public:
         MouseController()
         {
-            mousePoint = getMouseLocation();
 
         }
 
-        int getMouseX(){
-            return mousePoint.x;
+        CGPoint getMouseLocation(){
+            return  getMouseLocation();
         }
-        int getMouseY(){
-            return mousePoint.y;
-        }
-        
-        void moveMouse(int deltaX,int deltaY){
-            // Set the new mouse location
-            mousePoint.x += deltaX;
-            mousePoint.y += deltaY;
 
-            // Move the mouse
+        void setMouseLocation(CGPoint mousePoint){
+                        // Move the mouse
             CGEventRef moveEvent = CGEventCreateMouseEvent(
                 NULL, kCGEventMouseMoved,
                 mousePoint, kCGHIDEventTap
@@ -45,6 +36,36 @@ class MouseController{
             CFRelease(moveEvent);
             return;
         }
+        
+        void moveMouse(int deltaX,int deltaY){
+            // Set the new mouse location
+            CGPoint mousePoint = this->getMouseLocation();
+            mousePoint.x += deltaX;
+            mousePoint.y += deltaY;
+            this->setMouseLocation(mousePoint);
+
+        }
+
+        void setMouse(int deltaX,int deltaY){
+            // Set the new mouse location
+            CGPoint mousePoint; 
+            mousePoint.x = deltaX;
+            mousePoint.y = deltaY;
+
+            // Move the mouse
+            this->setMouseLocation(mousePoint);
+
+        }
+
+        void setMouseToCurrentLocation(){
+            // Set the new mouse location
+            CGPoint mousePoint = this->getMouseLocation();
+
+            // Move the mouse
+            this->setMouseLocation(mousePoint);
+
+        }
+        
 
         void leftClick(){
 
@@ -73,11 +94,12 @@ int main() {
     // Get the current mouse location
     int ct;
     while (true){
+    MouseController mc = MouseController();
 
     if (ct %1000000000 == 0){
-    MouseController mc = MouseController();
     // Set the new mouse location
-    mc.moveMouse(100,-100);
+    mc.setMouseToCurrentLocation();
+    cout << "Clicking" << endl;
     mc.leftClick();
     ct = 0;
     }
