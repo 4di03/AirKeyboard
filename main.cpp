@@ -125,7 +125,9 @@ int main(int argc, char* argv[]) {
     float propDataUsed = 1;
     bool useCuda = true;
 
-
+    /**
+    TODO: convert input parameter reading to json reader.
+    */
     Loss* loss;
     if (std::string(argv[1]) == "iou"){
         cout << "USING IOU LOSS" <<std::endl;
@@ -142,7 +144,7 @@ int main(int argc, char* argv[]) {
          reload = (arg3 != "--no-reload");
     }
  
-    std::string dataPath= std::string(DATA_PATH) + "/data_tensors/pure_data";
+    std::string dataPath= std::string(DATA_PATH) + "/data_tensors/small_test";
     if (argc > 4){
         dataPath = std::string(argv[4]);
         cout << "setting data path as " << std::string(dataPath) <<std::endl;
