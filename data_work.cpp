@@ -1,13 +1,13 @@
 #include <iostream>
 #include <fstream>
 #include <torch/torch.h>
+#include "utils.h"
 #include "data_work.h"
 #include <vector>
 #include <xtensor/xarray.hpp>
 #include <xtensor/xio.hpp>
 #include <xtensor/xview.hpp>
 #include <xtensor/xcsv.hpp>
-#include "utils.h"
 #include <opencv2/opencv.hpp>
 #include <json.hpp>
 #include <cmath>
@@ -18,30 +18,10 @@
 using namespace std;
 
 
-std::string getTensorString(torch::Tensor tensor){
-    std::ostringstream stream;
-    stream << tensor;
-    std::string tensor_string = stream.str();
-
-    return tensor_string;
-}
-
-void printTensor(const torch::Tensor tensor){
-
-    std::string tensor_string = getTensorString(tensor);
-    std::cout << tensor_string << std::endl;
-
-}
-
-template <typename T>
-void printType(const T& object) {
-    std::cout << typeid(object).name() << std::endl;
-}
 
 int charToInt(char c){
     return c - '0';
 }
-
 void csvToVector(std::string csvPath){
 
     std::ifstream file(csvPath);
@@ -403,6 +383,7 @@ Dataset prepData(std::string path, float prop = 1.0,bool excludeMerged = false )
     auto data = xt::load_csv<std::string>(file);
 
     int nRows = round(data.shape()[0] * prop);
+    cout << "taking " << nRows<< " samples out of " << data.shape()[0] << "total " << endl;
 
     data = xt::view(data, xt::range(0, nRows), xt::all()); // take first nRows
 
@@ -511,7 +492,7 @@ Dataset prepData(std::string path, float prop = 1.0,bool excludeMerged = false )
     torch::Tensor xTensor = torch::stack(xData);
     torch::Tensor yTensor = torch::stack(yData);
 
-    cout << "L568: post data-prep: " << torch::max(xTensor).item<float>() <<std::endl;
+    // cout << "L568: post data-prep: " << torch::max(xTensor).item<float>() <<std::endl;
 
     // std::string tmpFilePath = std::string(DATA_PATH) + "/tmp/pp_rand_hm.jpg";
     // not an issue with jointToHeatMaps , sum remains the same

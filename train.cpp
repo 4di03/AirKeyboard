@@ -15,12 +15,6 @@
 
 using namespace std;
 
-
-
-
-
-
-
 torch::Tensor removeExtraDim(torch::Tensor x){
     std::vector<int64_t> sizes;
     
@@ -51,7 +45,7 @@ torch::Device initDevice(bool cuda){
         cout << "Using CPU" <<std::endl;
         device = torch::Device(torch::kCPU);
     }else{
-        cout << "Usinf CUDA" <<std::endl;
+        cout << "using CUDA" <<std::endl;
     }
 
     return device;
@@ -61,6 +55,8 @@ torch::Device initDevice(bool cuda){
 // Load Model
 void loadModel(const std::string& model_path, torch::nn::Module* model) {
     //torch::jit::script::Module model;
+
+    cout << "Loading model from: " <<model_path << std::endl; 
 
     try {
         //model = torch::load(model,model_path)
@@ -172,7 +168,9 @@ void drawPredictions(Dataset d,Model& model, const std::string& valLossSavePath 
         auto start_time = std::chrono::high_resolution_clock::now();
 
         auto it = imageData[i].unsqueeze(0);
-       // cout << "L186: " << torch::max(it) <<std::endl; # is normalized
+        //cout << "L186: " << torch::max(it) <<std::endl; // is normalized
+        //cout << "L187: " << it.sizes() <<std::endl; // is normalized
+
         auto predMap = model.forward(it);
         auto predKP = getKPFromHeatmap(predMap,device);
         auto end_time = std::chrono::high_resolution_clock::now();
@@ -227,10 +225,11 @@ bool cuda, std::string model_name,bool draw, Loss& loss_fn
     auto model_name = t.model_name;
     auto loss = t.loss_fn;
     auto device = initDevice(cuda);
+    ModelBuilder* modelBuilder = t.modelBuilder;
 
-    // cout << "running evaluation for " << model_name <<std::endl;
+    cout << "running evaluation for " << model_name <<std::endl;
 
-    Model* model;
+    Model* model = modelBuilder->build();
 
     loadModel(std::string(DATA_PATH) + "/models/" + model_name, model);
 
@@ -308,7 +307,6 @@ public:
 
 void trainModel(Dataset& train, 
                 Dataset& test, 
-
                 TrainParams tp) {
     /**
      * @brief This function trains the model
@@ -374,14 +372,12 @@ void trainModel(Dataset& train,
 
     int c = sizes[1];
     int nTrainSamples = sizes[0];
-    int initNeurons = tp.initNeurons;
     float batchSize = tp.batchSize;
     int nEpochs = tp.nEpochs;
-    int levels = tp.levels;
 
+    ModelBuilder* modelBuilder = tp.modelBuilder;
 
-
-    Model* model= new CuNet(c, initNeurons, 7, true);//CuNet(c,21, initNeurons);//
+    Model* model= modelBuilder->build();
 
 
     if (tp.pretrainedModelReady()){
@@ -451,20 +447,20 @@ void trainModel(Dataset& train,
             x = x.to(device);
             
             
-            cout << "x shape: " << x.sizes() <<std::endl;
+            // cout << "x shape: " << x.sizes() <<std::endl;
 
 
             torch::Tensor y_pred = model->forward(x);
 
-            cout << "y_pred shape: " << y_pred.sizes() <<std::endl;
-            cout << "y shape: " << y.sizes() <<std::endl;
+            // cout << "y_pred shape: " << y_pred.sizes() <<std::endl;
+            // cout << "y shape: " << y.sizes() <<std::endl;
 
             y = y.to(device);
             y = removeExtraDim(y); // to remove extra axis for 1 channel image
 
             // Compute Loss
 
-            cout << i <<std::endl;
+            //cout << i <<std::endl;
 
         
 
@@ -489,7 +485,7 @@ void trainModel(Dataset& train,
         auto end_time = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
 
-        cout << "VALIDATION LOSS: ";
+        cout << "VALIDATION LOSS at epoch " << epoch << " :";
         float valLoss = evaluateTest(val,device,*model, *loss_fn);
 
         if (plateauTracker.earlyStopping(valLoss)){
@@ -541,11 +537,10 @@ void trainModel(Dataset& train,
     // SAVE MODEL
 
 
-    drawPredictions(sampleTestImages,*model, valLossSavePath+"/predictions_presave/",device);
-
+    //drawPredictions(sampleTestImages,*model, valLossSavePath+"/predictions_presave/",device);
 
     cout << "Loading model after saving from " << model_path <<std::endl ;
-    Model* postModel = new CuNet(c, initNeurons,7);//JitModel(model_path,device);
+    Model* postModel =  modelBuilder->build();//new CuNet(c, 21, initNeurons); //new JitModel(model_path,device); //
     loadModel(model_path,postModel);
     postModel->eval();
     drawPredictions(sampleTestImages, *postModel, valLossSavePath+"/predictions_postsave/",device);

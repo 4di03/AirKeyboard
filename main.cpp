@@ -7,7 +7,7 @@
 #include "train.h"
 #include <filesystem>
 #include "constants.h"
-//#include "model.h"
+#include "model.h"
 
 using namespace std;
 
@@ -20,7 +20,7 @@ void saveSample(float propTrain = 0.1, float propTest = 0.1 , std::string save_f
     std::filesystem::create_directories(save_folder);
     std::string trainData = std::string(DATA_PATH) + "/hanco_all/HanCo/train_keypoint_data.csv";
 
-    cout << "loading train data from : " << trainData <<std::endl;
+    cout << "loading train data from : " << trainData  << " with " << propTrain << " percent of data" <<std::endl;
     Dataset train = prepData(trainData, propTrain, excludeMerged);
 
     cout << "train x shape: " << train.x.sizes() <<std::endl;
@@ -35,7 +35,7 @@ void saveSample(float propTrain = 0.1, float propTest = 0.1 , std::string save_f
     torch::save(xTrain, save_folder + "/xTrain.pt");
     torch::save(yTrain, save_folder + "/yTrain.pt");
 
-    std::string testData = std::string() + "/hanco_all/HanCo/test_keypoint_data.csv";
+    std::string testData = std::string(DATA_PATH) + "/hanco_all/HanCo/test_keypoint_data.csv";
     Dataset test = prepData(testData, propTest,excludeMerged);
 
     torch::Tensor xTest = test.x;
@@ -144,19 +144,19 @@ int main(int argc, char* argv[]) {
          reload = (arg3 != "--no-reload");
     }
  
-    std::string dataPath= std::string(DATA_PATH) + "/data_tensors/small_test";
+    std::string dataPath= std::string(DATA_PATH) + "/data_tensors/_data";
     if (argc > 4){
         dataPath = std::string(argv[4]);
         cout << "setting data path as " << std::string(dataPath) <<std::endl;
 
     }
 
-    float propTrain = 0.02;
+    float propTrain = 0.00002;
     if (argc > 5){
         propTrain= std::stof(std::string(argv[5]));
     }
 
-    float propTest= 0.08;
+    float propTest= 0.0001;
     if (argc > 6){
         propTest = std::stof(std::string(argv[6]));
     }
@@ -179,6 +179,7 @@ int main(int argc, char* argv[]) {
     if (excludeMerged){
     cout << "Excluding background swapped images" <<std::endl;
     }
+    cout << "RELOADING DATA" << std::endl;
     saveSample(propTrain,propTest, dataPath , excludeMerged);
     }
 
@@ -192,21 +193,25 @@ int main(int argc, char* argv[]) {
     Dataset test = data[1];
 
     cout << "running Training!" <<std::endl;
+    auto sizes =train.x.sizes();
 
+    int channels = sizes[1];
+    CuNetBuilder* modelBuilder = new CuNetBuilder();
+    modelBuilder->inChannels = channels;
+    modelBuilder->outChannels = 21;
+    modelBuilder->initNeurons = 16;
 
+    float propTestData = 0.1;
 
-    TrainParams tp = TrainParams()
+    TrainParams tp = TrainParams(loss, modelBuilder)
         .setBatchSize(64)
         .setEpochs(500)
-        .setNeurons(16)
-        .setLevels(6)
         .setCuda(useCuda)
         .setPropDataUsed(propDataUsed)
         .setModelName(modelName)
-        .setPropVal(0.1)
+        .setPropVal(propTestData)
         .setStandardize(true)//false);
-        .setModelPath(preloadedModelPath)
-        .setLoss(loss);
+        .setModelPath(preloadedModelPath);
 
     trainModel(train, test, tp);
 

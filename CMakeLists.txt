@@ -2,6 +2,12 @@ cmake_minimum_required(VERSION 3.18) # FOR LINUX
 project( Open_CV_Project )
 
 
+# Set the build type to Debug
+set(CMAKE_BUILD_TYPE Debug)
+
+# Enable debug symbols
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
+
 # Set thle path to your CUDA installation
 set(CUDA_TOOLKIT_ROOT_DIR /shared/centos7/cuda/11.8)
 
@@ -47,7 +53,10 @@ include_directories(/home/palle.a/CPP_packages/json/single_include/nlohmann)
 
 add_executable( Open_CV_Project 
         main.cpp  
+        utils.cpp
         data_work.cpp
+        model.h
+        model_utils.cpp
         train.cpp
         train.h
         constants.h)

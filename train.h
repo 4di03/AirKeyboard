@@ -1,6 +1,6 @@
 #include <torch/torch.h>
 #include "data_work.h"
-//#include "model.h"
+#include "model.h"
 #pragma once // or use include guards
 using namespace std;
 // class Loss : torch::nn::Module {
@@ -52,30 +52,25 @@ torch::Tensor forward(const torch::Tensor& input, const torch::Tensor& target) {
     // IOU = (Intersection of Union) / (Union of Union)
     // Loss = 1 - IOU
 
-   // cout << " L52, inp: " << torch::max(input) << " target:" << torch::max(target) <<std::endl;
+    // Ensure input and target are of the same shape
+    if (input.sizes() != target.sizes()) {
+        std::ostringstream error_message;
+        error_message << "Input and target must have the same shape. "
+                        << "Input shape: " << input.sizes() 
+                        << ", Target shape: " << target.sizes();
+        throw std::invalid_argument(error_message.str());
+    }
 
     auto I = opSum(input * target);
 
-    //cout << " L56 " << torch::max(I) <<std::endl;
-
     auto U = opSum(torch::pow(input,2)) + opSum(torch::pow(target,2)) - I;
-   // cout << " L57 " << torch::max(U) <<std::endl;
     // Add a small epsilon to avoid division by zero
 
-    
     auto iou = (I +  eps) / (U + eps);
-
-
-  //  cout << " L58 " << torch::max(iou) <<std::endl;
 
     iou = torch::mean(iou);
 
-   // cout << " L59 " << torch::max(iou) <<std::endl;
-
-
     auto loss = 1.0 - iou;
-  //   cout << " L70 " << torch::max(loss) <<std::endl;
-
 
     return loss;
 }
@@ -85,10 +80,11 @@ std::string getName(){ return "IOU";}
 class TrainParams {
 public:
     Loss* loss_fn;
-    int initNeurons = 16;
+    ModelBuilder* modelBuilder;
+    //int initNeurons = 16;
     float batchSize = 64;
     int nEpochs = 100;
-    int levels = 4;
+    //int levels = 4;
     bool cuda = true;
     float propDataUsed = 1;
     std::string model_name = "default_model.pt";
@@ -96,7 +92,9 @@ public:
     bool standardize = true;
     std::string modelPath = "";
    // builder for trian parameter
-    TrainParams(){
+    TrainParams(Loss* lossFn, ModelBuilder* mb){
+        this->loss_fn = lossFn;
+        this->modelBuilder = mb;
 
     }
 
@@ -121,10 +119,10 @@ public:
         return *this;
     }
 
-    TrainParams setNeurons(int n) {
-        this->initNeurons = n;
-        return *this;
-    }
+    // TrainParams setNeurons(int n) {
+    //     this->initNeurons = n;
+    //     return *this;
+    // }
 
     TrainParams  setBatchSize(float batchSize) {
         this->batchSize = batchSize;
@@ -136,10 +134,10 @@ public:
         return *this;
     }
 
-    TrainParams setLevels(int levels) {
-        this->levels = levels;
-        return *this;
-    }
+    // TrainParams setLevels(int levels) {
+    //     this->levels = levels;
+    //     return *this;
+    // }
 
     TrainParams  setCuda(bool cuda) {
         this->cuda = cuda;

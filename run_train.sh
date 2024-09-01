@@ -2,7 +2,7 @@
 #SBATCH -J Train_model              # Job name
 #SBATCH -N 1              # Number of nodes
 #SBATCH -n 1                 # Number of tasks
-#SBATCH --cpus-per-task=4
+#SBATCH --cpus-per-task=8
 #SBATCH -p gpu 
 #SBATCH --time=07:59:00
 #SBATCH --mem=150G
@@ -12,9 +12,9 @@
 
 source setup_env.sh
 cd build
-cmake ..
+# cmake ..
 bash build_and_run.sh $1 $2 $3 $4 $5 $6 $7
 
 # Sample Usage:
  
-# bash run_train.sh iou default_model.pt --reload
+# bash run_train.sh iou default_model.pt --no-reload
