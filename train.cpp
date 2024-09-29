@@ -12,6 +12,7 @@
 #include "cunet/cunet.h"
 #include "model.h"
 #include "constants.h"
+#include <string>
 
 using namespace std;
 
@@ -431,14 +432,6 @@ void trainModel(Dataset& train,
             auto x = batch.first;
             auto y = batch.second;
 
-
-
-            // std::string tmpFilePath = std::string(DATA_PATH) + "/tmp/train_hm_" + std::to_string(i) + ".jpg";
-            //cout << "L592" << y.sizes() <<std::endl;
-            auto tgt = y.index({0,0}).view({1,128,128});
-            //cout << "L593" << tgt.sizes() <<std::endl;
-            saveImageToFile(tensorToMat(tgt)*255,"L437_hm_train.jpg");
-
             // Zero gradients
             optimizer.zero_grad();
 
@@ -451,6 +444,8 @@ void trainModel(Dataset& train,
 
 
             torch::Tensor y_pred = model->forward(x);
+
+
 
             // cout << "y_pred shape: " << y_pred.sizes() <<std::endl;
             // cout << "y shape: " << y.sizes() <<std::endl;
@@ -466,6 +461,9 @@ void trainModel(Dataset& train,
 
             torch::Tensor loss = loss_fn->forward(y_pred, y);
             //batchLosses.push_back(loss.item<float>());
+
+            saveImageToFile(tensorToMat(y.index({0,0}).view({1,128,128}))*255,"debug_output/"+ std::to_string(loss.item<float>()) + "/L437_hm_y.jpg");
+            saveImageToFile(tensorToMat(y_pred.index({0,0}).view({1,128,128}))*255,"debug_output/"+std::to_string(loss.item<float>()) + "/L437_hm_ypred.jpg");
 
             if (i == 0){
                 auto bl = loss.item<float>();
@@ -531,19 +529,19 @@ void trainModel(Dataset& train,
     evaluateTest(test, device, *model, *loss_fn);
 
 
-    Dataset sampleTestImages = test.shuffle().slice(10)[0];
+    Dataset sampleImages = train.shuffle().slice(10)[0];
 
 
     // SAVE MODEL
 
 
-    //drawPredictions(sampleTestImages,*model, valLossSavePath+"/predictions_presave/",device);
+    drawPredictions(sampleImages,*model, valLossSavePath+"/predictions_presave/",device);
 
     cout << "Loading model after saving from " << model_path <<std::endl ;
     Model* postModel =  modelBuilder->build();//new CuNet(c, 21, initNeurons); //new JitModel(model_path,device); //
     loadModel(model_path,postModel);
     postModel->eval();
-    drawPredictions(sampleTestImages, *postModel, valLossSavePath+"/predictions_postsave/",device);
+    drawPredictions(sampleImages, *postModel, valLossSavePath+"/predictions_postsave/",device);
 
 
 }

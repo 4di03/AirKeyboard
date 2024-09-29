@@ -14,7 +14,10 @@
 #include <opencv2/imgcodecs.hpp>
 #include <omp.h>
 #include "constants.h"
-
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <cstring>
+#include <errno.h>
 using namespace std;
 
 
@@ -208,6 +211,38 @@ torch::Tensor vectorToTensor(std::vector<std::vector<float>> vec){
     return tensor; // remove dependency on flattened vector
 }
 
+void create_directory_for_file(const std::string& file_path) {
+    std::string directory = file_path.substr(0, file_path.find_last_of("/"));
+
+    // Function to create directories recursively
+    auto create_directories = [](const std::string& dir) {
+        std::string path;
+        size_t pos = 0;
+        
+        // Iterate through each segment of the path
+        while ((pos = dir.find_first_of('/', pos + 1)) != std::string::npos) {
+            path = dir.substr(0, pos);
+            if (mkdir(path.c_str(), 0755) != 0 && errno != EEXIST) {
+                std::cerr << "Failed to create directory: " << path << " (" << strerror(errno) << ")" << std::endl;
+                return false;
+            }
+        }
+        
+        // Create the final directory
+        if (mkdir(dir.c_str(), 0755) != 0 && errno != EEXIST) {
+            std::cerr << "Failed to create directory: " << dir << " (" << strerror(errno) << ")" << std::endl;
+            return false;
+        }
+        
+        return true;
+    };
+
+    if (create_directories(directory)) {
+        std::cout << "Directory created or already exists: " << directory << std::endl;
+    } else {
+        std::cerr << "Error creating directory: " << directory << std::endl;
+    }
+}
 
 void saveImageToFile(const cv::Mat& image, const std::string& filePath) {
     // image is a noramlzied image
@@ -217,7 +252,7 @@ void saveImageToFile(const cv::Mat& image, const std::string& filePath) {
         std::cerr << "Error: Input image is empty." << std::endl;
         return;
     }
-
+    create_directory_for_file(filePath);
     // Save the image to the specified file
     //cout << "Saving image to " << filePath <<std::endl;
 

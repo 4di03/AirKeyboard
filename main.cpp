@@ -151,7 +151,7 @@ int main(int argc, char* argv[]) {
 
     }
 
-    float propTrain = 0.00002;
+    float propTrain = 0.000003;
     if (argc > 5){
         propTrain= std::stof(std::string(argv[5]));
     }
@@ -199,7 +199,7 @@ int main(int argc, char* argv[]) {
     CuNetBuilder* modelBuilder = new CuNetBuilder();
     modelBuilder->inChannels = channels;
     modelBuilder->outChannels = 21;
-    modelBuilder->initNeurons = 16;
+    modelBuilder->initNeurons = 64;
 
     float propTestData = 0.1;
 
