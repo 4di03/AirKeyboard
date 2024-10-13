@@ -16,5 +16,22 @@ cd build
 bash build_and_run.sh $1 $2 $3 $4 $5 $6 $7
 
 # Sample Usage:
- 
-# bash run_train.sh iou default_model.pt --no-reload
+
+# SMALL_DATA RUN:
+# bash run_train.sh iou default_model.pt --no-reload 
+
+
+# SUCCESSFUL RUN (0.60 loss):
+
+"""
+model builder initalization:
+
+CuNetBuilder* modelBuilder = new CuNetBuilder();
+modelBuilder->inChannels = channels;
+modelBuilder->outChannels = 21;
+modelBuilder->initNeurons = 64;
+
+# 4 levels by default
+"""
+
+# bash run_train.sh iou default_model.pt --no-reload /scratch/palle.a/PalmPilot_Data/data_tensors/mid_data

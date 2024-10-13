@@ -12,6 +12,7 @@
 #include "cunet/cunet.h"
 #include "model.h"
 #include "constants.h"
+#include "utils.h"
 #include <string>
 
 using namespace std;
@@ -232,18 +233,13 @@ bool cuda, std::string model_name,bool draw, Loss& loss_fn
 
     Model* model = modelBuilder->build();
 
-    loadModel(std::string(DATA_PATH) + "/models/" + model_name, model);
-
-
-    // cout << "L248: " ;
-    // Model* model = new JitModel("/scratch/palle.a/PalmPilot/python_sample/weights/model_final.pt", device);
+    loadModel(getModelPath(model_name), model);
 
     evaluateTest(test,device,*model,*loss);
-    
 
     if (draw){
-    auto valLossSavePath = std::string(DATA_PATH) + "/analytics/" + model_name+ "_analytics/";
-    drawPredictions(test.slice(10)[0], *model, valLossSavePath , device); // draws first  10 images in test set
+        auto valLossSavePath = std::string(DATA_PATH) + "/analytics/" + model_name+ "_analytics/";
+        drawPredictions(test.slice(10)[0], *model, valLossSavePath , device); // draws first  10 images in test set
     }
 
 }
@@ -511,15 +507,12 @@ void trainModel(Dataset& train,
 
 
     }
-    model->save(model_path);
+    model->save(model_name);
 
     model->eval();
     torch::NoGradGuard no_grad;
 
-
     std::string valLossSavePath = std::string(DATA_PATH) + "/analytics/" + model_name + "_analytics";
-
-
     writeVectorToFile(trainLosses, valLossSavePath+"/train_loss.list");
     writeVectorToFile(valLosses, valLossSavePath+"/val_loss.list");
 

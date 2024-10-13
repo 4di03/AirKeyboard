@@ -20,3 +20,5 @@ void printType(const T& object) {
 
 std::string getTensorString(torch::Tensor tensor);
 void printTensor(const torch::Tensor tensor);
+
+std::string getModelPath(std::string model_name);

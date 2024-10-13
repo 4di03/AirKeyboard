@@ -52,21 +52,23 @@ include_directories( ${OpenCV_INCLUDE_DIRS} )
 include_directories(/home/palle.a/CPP_packages/json/single_include/nlohmann)
 
 add_executable( Open_CV_Project 
-        main.cpp  
-        utils.cpp
-        data_work.cpp
-        model.h
-        model_utils.cpp
-        train.cpp
-        train.h
-        constants.h)
+        src/main.cpp  
+        src/utils.cpp
+        src/data_work.cpp
+        src/model.h
+        src/model_utils.cpp
+        src/train.cpp
+        src/train.h
+        src/constants.h)
 
-add_executable( Test test.cpp data_work.cpp constants.h)
+
+add_executable( Test src/test.cpp src/utils.cpp src/data_work.cpp src/constants.h src/model.h )
 
 target_link_libraries(Test ${CUDA_LIBRARIES} ${CUDA_CUBLAS_LIBRARIES})
 target_link_libraries(Test "${TORCH_LIBRARIES}")
 target_link_libraries(Test xtensor)
 target_link_libraries(Test ${OpenCV_LIBS})
+target_link_libraries(Test opencv_imgcodecs)
 
 
 target_link_libraries(Open_CV_Project ${CUDA_LIBRARIES} ${CUDA_CUBLAS_LIBRARIES})

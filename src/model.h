@@ -1,11 +1,15 @@
 #include <torch/torch.h>
 #include <torch/script.h>
 #include "cunet/cunet.h"
+#include "utils.h"
 #include "model_utils.h"
 #pragma once // or use include guards
 
 using namespace std;
 
+/**
+* Defines a standardization preprocessing step in the model for the images 
+*/
 class StandardizeTransform {
 public:
     StandardizeTransform() {
@@ -35,12 +39,15 @@ private:
     torch::Tensor stds_;
 };
 
+
 class Model : public torch::nn::Module {
 public:
     StandardizeTransform transformer_;
     virtual torch::Tensor postNormForward(const torch::Tensor& x)=0;
 
-
+    /**
+    Forward pass with standardizatio preprocessing step.
+    */
     torch::Tensor forward(const torch::Tensor& x) {
         torch::Tensor xClone;
         {
@@ -64,8 +71,8 @@ public:
     }
 
 
-    void save(const std::string& model_path){
-        saveModel(model_path, *this);
+    void save(const std::string& model_name){
+        saveModel(model_name, *this);
 }
     
 };
@@ -89,7 +96,7 @@ public:
     torch::Tensor postNormForward(const torch::Tensor& x) override {
         // Forward pass using the loaded PyTorch JIT model
         // You may need to adjust the input tensor size and format based on your model
-        // cout << "L135 ";
+        // cout << "L135 "; 
 
         // printTensorDevice(x);
         auto ret =  model.forward({x}).toTensor();
@@ -106,7 +113,8 @@ public:
 
 
 
-    void save(const std::string& model_path){
+    void save(const std::string& model_name){
+        std::string model_path = NULL;//getModelPath(model_name);
         cout << "performing jit save" <<std::endl;
         model.save(model_path);
     }

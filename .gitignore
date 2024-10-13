@@ -8,3 +8,4 @@ cmake_build_debug/
 **/.ipynb_checkpoints/
 logs/*
 python_sample/weights
+tmp_data
