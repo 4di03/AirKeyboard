@@ -1,0 +1,14 @@
+# Defines parameters that must be passed to json input files for evaluate.sh
+
+dataPath
+  - type: string
+  - descripton: the path to the tensors to use for evaluation
+modelPath
+  - type: string
+  - description: path to the .pt file for the model weights to perform evaluation with.
+saveName
+  - type: string
+  - description: name of directory in which to store analytics
+lossName
+  - type: string
+  - description: name of the loss function to use. One of [iou, mse]

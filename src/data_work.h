@@ -1,6 +1,7 @@
 #include <cmath>
 #include <opencv2/opencv.hpp>
 #include <torch/torch.h>
+#include <json.hpp>
 #pragma once // or use include guards
 
 struct Dataset {
@@ -103,3 +104,7 @@ cv::Mat drawKeypoints(cv::Mat image, const torch::Tensor kp2d, cv::Scalar color)
 bool isSubstringPresent(const std::string mainString, const std::string searchString);
 
 std::tuple<torch::Tensor, torch::Tensor> getNormParams(const torch::Tensor& imageBatch);
+
+nlohmann::json loadJson(std::string jsonPath);
+
+std::vector<Dataset> loadSamples(std::string save_folder);

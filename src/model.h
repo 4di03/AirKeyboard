@@ -71,8 +71,8 @@ public:
     }
 
 
-    void save(const std::string& model_name){
-        saveModel(model_name, *this);
+    void save(const std::string& modelPath){
+        saveModel(modelPath, *this);
 }
     
 };
@@ -107,16 +107,14 @@ public:
        // Override the to method to move the model to the specified device
     void to(torch::Device d) {
         model.to(d);
-
-        //cout << "L142: " << model.parameters().device() <<std::endl;
     }
 
 
 
-    void save(const std::string& model_name){
-        std::string model_path = NULL;//getModelPath(model_name);
+    void save(const std::string& modelPath){
+        createDirectory(getDirectoryName(modelPath));
         cout << "performing jit save" <<std::endl;
-        model.save(model_path);
+        model.save(modelPath);
     }
 };
 

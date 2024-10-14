@@ -3,13 +3,17 @@
 #include "utils.h"
 #include "model_utils.h"
 
-void saveModel(const std::string& model_name, torch::nn::Module& model){
+void saveModel(const std::string& modelPath, torch::nn::Module& model){
      try {
         //model = torch::load(model,model_path)
-        std::string model_path = getModelPath(model_name);
+        cout << "SAVING MODEL AT " << modelPath << std::endl;
+        // creates the directory for the file if it doesn't exist 
+        createDirectory(getDirectoryName(modelPath));
+
+
         torch::serialize::OutputArchive output_archive;
         model.save(output_archive);
-        output_archive.save_to(model_path);
+        output_archive.save_to(modelPath);
         //model = torch::jit::load(model_path);
     } catch (const c10::Error& e) {
         std::cerr << "Error saving the model: " << e.what() << std::endl;

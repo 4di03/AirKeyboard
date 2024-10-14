@@ -1,1 +1,1 @@
-source scripts/setup_env.sh && cd build && cmake .. && make -j 4 && ./Test
+source scripts/setup_env.sh && cd build && make -j 4 && ./Test

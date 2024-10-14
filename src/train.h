@@ -1,24 +1,9 @@
 #include <torch/torch.h>
 #include "data_work.h"
+#include "utils.h"
 #include "model.h"
 #pragma once // or use include guards
 using namespace std;
-// class Loss : torch::nn::Module {
-// public:
-//     virtual torch::Tensor forward(const torch::Tensor input, const torch::Tensor target) = 0;
-// };
-
-// template <typename LossType>
-// class LossComp {
-// public:
-//     LossType l;
-//     LossComp(LossType l){
-//         l = l;
-//     }
-//     LossType getLoss(){
-//         return l;
-//     }
-// };
 
 
 class Loss : public torch::nn::Module {
@@ -92,7 +77,7 @@ public:
     bool standardize = true;
     std::string modelPath = "";
    // builder for trian parameter
-    TrainParams(Loss* lossFn, ModelBuilder* mb){
+    TrainParams(Loss* lossFn =nullptr, ModelBuilder* mb = nullptr){
         this->loss_fn = lossFn;
         this->modelBuilder = mb;
 
@@ -151,6 +136,7 @@ public:
 
     TrainParams setModelName(const std::string& modelName) {
         this->model_name = modelName;
+        this->setModelPath(getModelPath(modelName, "final_model.pt"));
         return *this;
     }
 
@@ -164,7 +150,7 @@ void trainModel(Dataset& train,
                 Dataset& test, 
                 TrainParams tp);
 
-void evaluate(Dataset& test, TrainParams tp, bool draw);
+void evaluate(Dataset& test, TrainParams tp, std::string saveName, bool draw);
 
-
+Loss* getLoss(std::string lossName);
 //float evaluateTest( Dataset test, torch::Device device, Model& model, Loss& loss_fn);

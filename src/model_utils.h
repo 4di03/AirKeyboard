@@ -4,7 +4,7 @@
 
 using namespace std;
 
-void saveModel(const std::string& model_path, torch::nn::Module& model);
+void saveModel(const std::string& modelPath, torch::nn::Module& model);
 void printTensorDevice(const torch::Tensor& tensor) ;
 void printModuleDevice(const torch::nn::Module& module);
 torch::Tensor standardizeImages(const torch::Tensor x, const torch::Tensor& means, const torch::Tensor& stds);

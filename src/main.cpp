@@ -8,6 +8,7 @@
 #include <filesystem>
 #include "constants.h"
 #include "model.h"
+#include <json.hpp>
 
 using namespace std;
 
@@ -71,32 +72,7 @@ void torchCudaTest(){
 
 
 
-std::vector<Dataset> loadSamples(std::string save_folder = std::string(DATA_PATH) + "/data_tensors"){
-    /**
-     * @brief This function loads samples from the tensor files in data/data_tensors
-     * @return std::tuple<Dataset>
-     */
-    torch::Tensor xTrain;
-    torch::load(xTrain,save_folder+"/xTrain.pt");
-    torch::Tensor yTrain;
-    torch::load(yTrain,save_folder+"/yTrain.pt");
 
-
-    //xTrain = xTrain.permute({0, 3, 1, 2});// initalliy in (N,W,H,C) format, but we need (N,C,W,H)
-    //yTrain = yTrain.permute({0, 4, 1, 2,3});// initalliy in (N,K,W,H,C) format, but we need (N,C,K,W,H)
-    Dataset train = {xTrain, yTrain};
-
-    torch::Tensor xTest;
-    torch::load(xTest,save_folder+"/xTest.pt");
-    torch::Tensor yTest;
-    torch::load(yTest,save_folder+"/yTest.pt");
-   // xTest = xTest.permute({0, 3, 1, 2});// initalliy in (N,W,H,C) format, but we need (N,C,W,H)
-  //  yTest = yTest.permute({0, 4, 1, 2,3});// initalliy in (N,K,W,H,C) format, but we need (N,C,K,W,H)
-    Dataset test = {xTest, yTest};
-
-    return {train, test};
-
-}
 // TODO: double check x,y stuff with predictions!!!( especially when averaging heatmap)
 int main(int argc, char* argv[]) {
     bool SEED = false;
@@ -108,70 +84,28 @@ int main(int argc, char* argv[]) {
 
     //saveSample(0.002, 0.03,  std::string(DATA_PATH) + "/data_tensors/samples");
     //saveSample(0.0005, 0.005,  std::string(DATA_PATH) + "/data_tensors/samples");
-    if (argc == 1){
-        cout << "Provide cmd arguments : arg 1 is loss name , arg 2 is model name, arg 3 is reload option"  <<std::endl;
-    }
+    std::string inputFilePath = std::string(argv[1]);
+    cout << "loading json from: " << inputFilePath << std::endl;
+    nlohmann::json inputParams = loadJson(inputFilePath);
 
-
-
-    std::string modelName = "default_model.pt";
-    if (argc > 2){
-        modelName = std::string(argv[2]);
-
-        cout << "Model Name: " << modelName << std::endl;
-
-    }
-
+ 
     float propDataUsed = 1;
     bool useCuda = true;
+    std::string modelName = getOrDefault(inputParams,"modelName",std::string("default_model.pt"));
+    Loss* loss = getLoss(getOrDefault(inputParams,"lossName",std::string("iou")));
+    bool reload = getOrDefault(inputParams,"reload",false);
+    std::string defaultDataPath= std::string(DATA_PATH) + "/data_tensors/_data";
+    std::string dataPath = getOrDefault(inputParams, "dataPath", defaultDataPath);
+    float propTrain = getOrDefault(inputParams, "propTrain", 0.000003);
+    float propTest = getOrDefault(inputParams, "propTest", 0.0001);
 
-    /**
-    TODO: convert input parameter reading to json reader.
-    */
-    Loss* loss;
-    if (std::string(argv[1]) == "iou"){
-        cout << "USING IOU LOSS" <<std::endl;
-        loss = new IouLoss();
-    }else{
-        cout << "USING MSE LOSS" <<std::endl;
-        loss =new MSELoss();
-    }
 
-    bool reload = false;
-    if (argc > 3){
-        auto arg3 = std::string(argv[3]);
-        cout << "read argv " << arg3 <<std::endl;
-         reload = (arg3 != "--no-reload");
-    }
- 
-    std::string dataPath= std::string(DATA_PATH) + "/data_tensors/_data";
-    if (argc > 4){
-        dataPath = std::string(argv[4]);
-        cout << "setting data path as " << std::string(dataPath) <<std::endl;
 
-    }
-
-    float propTrain = 0.000003;
-    if (argc > 5){
-        propTrain= std::stof(std::string(argv[5]));
-    }
-
-    float propTest= 0.0001;
-    if (argc > 6){
-        propTest = std::stof(std::string(argv[6]));
-    }
-
-    std::string preloadedModelPath = "";
-
-    if (argc > 7){
-        preloadedModelPath = std::string(argv[7]);
-    }
-
+    cout << "Model Name: " << modelName << std::endl;
     if (reload){
         cout << "Reloading data to " << dataPath <<std::endl;
     }else{
-    cout << "Not reloading data, pulling from " << dataPath <<std::endl;
-
+        cout << "Not reloading data, pulling from " << dataPath <<std::endl;
     }   
 
     if (reload){
@@ -210,12 +144,11 @@ int main(int argc, char* argv[]) {
         .setPropDataUsed(propDataUsed)
         .setModelName(modelName)
         .setPropVal(propTestData)
-        .setStandardize(true)//false);
-        .setModelPath(preloadedModelPath);
+        .setStandardize(true);
 
     trainModel(train, test, tp);
 
-    evaluate(test, tp, true);
+    evaluate(test, tp, modelName, true);
 
     // auto device = torch::Device(torch::kCUDA,0);
     // JitModel model("/scratch/palle.a/PalmPilot/python_sample/weights/model_final", device );

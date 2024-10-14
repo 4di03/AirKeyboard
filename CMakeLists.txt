@@ -61,6 +61,12 @@ add_executable( Open_CV_Project
         src/train.h
         src/constants.h)
 
+target_link_libraries(Open_CV_Project ${CUDA_LIBRARIES} ${CUDA_CUBLAS_LIBRARIES})
+target_link_libraries(Open_CV_Project "${TORCH_LIBRARIES}")
+target_link_libraries( Open_CV_Project  ${OpenCV_LIBS})
+target_link_libraries(Open_CV_Project xtensor)
+target_link_libraries(Open_CV_Project opencv_imgcodecs)
+
 
 add_executable( Test src/test.cpp src/utils.cpp src/data_work.cpp src/constants.h src/model.h )
 
@@ -71,11 +77,21 @@ target_link_libraries(Test ${OpenCV_LIBS})
 target_link_libraries(Test opencv_imgcodecs)
 
 
-target_link_libraries(Open_CV_Project ${CUDA_LIBRARIES} ${CUDA_CUBLAS_LIBRARIES})
-target_link_libraries(Open_CV_Project "${TORCH_LIBRARIES}")
-target_link_libraries( Open_CV_Project  ${OpenCV_LIBS})
-target_link_libraries(Open_CV_Project xtensor)
-target_link_libraries(Open_CV_Project opencv_imgcodecs)
+add_executable( Evaluate src/evaluate.cpp 
+                        src/utils.cpp
+                        src/data_work.cpp
+                        src/model.h
+                        src/model_utils.cpp
+                        src/train.cpp
+                        src/train.h
+                        src/constants.h)
+
+
+target_link_libraries(Evaluate ${CUDA_LIBRARIES} ${CUDA_CUBLAS_LIBRARIES})
+target_link_libraries(Evaluate "${TORCH_LIBRARIES}")
+target_link_libraries(Evaluate xtensor)
+target_link_libraries(Evaluate ${OpenCV_LIBS})
+target_link_libraries(Evaluate opencv_imgcodecs)
 
 
 set_property(TARGET Open_CV_Project PROPERTY CXX_STANDARD 17)

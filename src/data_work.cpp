@@ -212,36 +212,7 @@ torch::Tensor vectorToTensor(std::vector<std::vector<float>> vec){
 }
 
 void create_directory_for_file(const std::string& file_path) {
-    std::string directory = file_path.substr(0, file_path.find_last_of("/"));
-
-    // Function to create directories recursively
-    auto create_directories = [](const std::string& dir) {
-        std::string path;
-        size_t pos = 0;
-        
-        // Iterate through each segment of the path
-        while ((pos = dir.find_first_of('/', pos + 1)) != std::string::npos) {
-            path = dir.substr(0, pos);
-            if (mkdir(path.c_str(), 0755) != 0 && errno != EEXIST) {
-                std::cerr << "Failed to create directory: " << path << " (" << strerror(errno) << ")" << std::endl;
-                return false;
-            }
-        }
-        
-        // Create the final directory
-        if (mkdir(dir.c_str(), 0755) != 0 && errno != EEXIST) {
-            std::cerr << "Failed to create directory: " << dir << " (" << strerror(errno) << ")" << std::endl;
-            return false;
-        }
-        
-        return true;
-    };
-
-    if (create_directories(directory)) {
-        std::cout << "Directory created or already exists: " << directory << std::endl;
-    } else {
-        std::cerr << "Error creating directory: " << directory << std::endl;
-    }
+    return createDirectory(getDirectoryName(file_path));
 }
 
 void saveImageToFile(const cv::Mat& image, const std::string& filePath) {
@@ -581,4 +552,31 @@ torch::Tensor getKPFromHeatmap(const torch::Tensor& heatmaps, torch::Device devi
 }
 
 
+
+std::vector<Dataset> loadSamples(std::string save_folder = std::string(DATA_PATH) + "/data_tensors"){
+    /**
+     * @brief This function loads samples from the tensor files in data/data_tensors
+     * @return std::tuple<Dataset>
+     */
+    torch::Tensor xTrain;
+    torch::load(xTrain,save_folder+"/xTrain.pt");
+    torch::Tensor yTrain;
+    torch::load(yTrain,save_folder+"/yTrain.pt");
+
+
+    //xTrain = xTrain.permute({0, 3, 1, 2});// initalliy in (N,W,H,C) format, but we need (N,C,W,H)
+    //yTrain = yTrain.permute({0, 4, 1, 2,3});// initalliy in (N,K,W,H,C) format, but we need (N,C,K,W,H)
+    Dataset train = {xTrain, yTrain};
+
+    torch::Tensor xTest;
+    torch::load(xTest,save_folder+"/xTest.pt");
+    torch::Tensor yTest;
+    torch::load(yTest,save_folder+"/yTest.pt");
+   // xTest = xTest.permute({0, 3, 1, 2});// initalliy in (N,W,H,C) format, but we need (N,C,W,H)
+  //  yTest = yTest.permute({0, 4, 1, 2,3});// initalliy in (N,K,W,H,C) format, but we need (N,C,K,W,H)
+    Dataset test = {xTest, yTest};
+
+    return {train, test};
+
+}
 

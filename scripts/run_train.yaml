@@ -1,0 +1,24 @@
+modelName
+  -type: string
+  -desc: name of model (does not need to include file extension). Will decide which folder to name the stored model weights in.
+  -default: default_model
+lossName
+  -type: string
+  -desc: name of loss, one of [iou, mse]
+reload
+  -type: boolean
+  -desc: whether or not to reload data from the dataset or to use saved tensors.
+dataPath
+  -type: string
+  -desc: absolute path to directory to find data tensors. If reload is false, this must be set.
+  -default: <DATA_PATH in constants.h>/data_tensors/_data
+propTrain
+  -type: float
+  -desc: proprition of data (decimal) to use in training. This is the proportion of the enitre HANCO dataset.
+        If relaod is true, this must be set.  
+  -default: in main.cpp
+propTest
+  -type: float
+  -desc: proportion of data (decimal) to use in test. This is the proportion of the enitre HANCO dataset.
+        If relaod is true, this must be set.  
+  -default: in main.cpp

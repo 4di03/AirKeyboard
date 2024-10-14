@@ -5,8 +5,10 @@
 #include <iomanip>
 #include <ctime>
 #include <sstream>
+#include <filesystem>
 #include "utils.h"
 #include "constants.h"
+#include "json.hpp"
 using namespace std;
 
 
@@ -49,8 +51,44 @@ std::string timestampAsString(){
 
 }
 
-std::string getModelPath(std::string model_name){
+/**
+* Makes the directory at the filepath.
+*/
+void createDirectory(const std::string dirPath) {
+    try {
+        // Check if the directory already exists
+        if (!std::filesystem::exists(dirPath)) {
+            // Create the directory
+            if (!std::filesystem::create_directories(dirPath)) {
+                std::cerr << "Failed to create directory: " << dirPath << std::endl;
+            }
+        } 
+    } catch (const std::filesystem::filesystem_error& e) {
+        std::cerr << "Filesystem error: " << e.what() << std::endl;
+    }
+}
 
-    return std::string(DATA_PATH) + "/models/" + model_name +"/final_model.pt";
+std::string getDirectoryName(const std::string& fileName) {
+    try {
+        // Create a path object from the filename
+        std::filesystem::path filePath(fileName);
+        
+        // Get the parent directory path
+        std::filesystem::path directory = filePath.parent_path();
+        
+        return directory.string();
+    } catch (const std::filesystem::filesystem_error& e) {
+        std::cerr << "Filesystem error: " << e.what() << std::endl;
+        return "";
+    }
+}
+
+/**
+Gets file path to save model. The directory is named after modelName, and the file is named as fileName.
+you can pass a file wihtin a nested diretory to filename to save it within that.
+*/
+std::string getModelPath(std::string modelName, std::string fileName){
+    return std::string(DATA_PATH) + "/models/" + modelName +"/" + fileName;
 
 }
+

@@ -10,28 +10,26 @@
 #SBATCH -o /scratch/palle.a/PalmPilot/logs/train_out_%j.txt       # Standard output file
 #SBATCH -e /scratch/palle.a/PalmPilot/logs/train_error_%j.txt        # Standard error file
 
-source setup_env.sh
-cd build
+source scripts/setup_env.sh
+# see sample input file structure from run_train.yaml
+INPUT_FILE=$(realpath $1)
+
+# must be set to --debug for gdb mode to run
+DEBUG=$2
+
 # cmake ..
-bash build_and_run.sh $1 $2 $3 $4 $5 $6 $7
+bash scripts/build_and_run.sh $INPUT_FILE $DEBUG
 
 # Sample Usage:
 
 # SMALL_DATA RUN:
-# bash run_train.sh iou default_model.pt --no-reload 
+# bash scripts/run_train.sh scripts/inputs/train_default.json --debug
 
 
 # SUCCESSFUL RUN (0.60 loss):
 
-"""
-model builder initalization:
 
-CuNetBuilder* modelBuilder = new CuNetBuilder();
-modelBuilder->inChannels = channels;
-modelBuilder->outChannels = 21;
-modelBuilder->initNeurons = 64;
+# bash scripts/run_train.sh iou default_model --no-reload /scratch/palle.a/PalmPilot_Data/data_tensors/mid_data
 
-# 4 levels by default
-"""
-
-# bash run_train.sh iou default_model.pt --no-reload /scratch/palle.a/PalmPilot_Data/data_tensors/mid_data
+# 44734450 is full run with these params:
+# sbatch scripts/run_train.sh iou ft_model --no-reload /scratch/palle.a/PalmPilot_Data/data_tensors/full_data

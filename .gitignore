@@ -1,5 +1,6 @@
 .DS_Store
 data/
+test/
 .vscode/
 build/*
 !build/build_and_run.sh
@@ -9,3 +10,9 @@ cmake_build_debug/
 logs/*
 python_sample/weights
 tmp_data
+CMakeCache.txt
+CMakeFiles
+Makefile
+*.cmake
+*.cu
+*.cc

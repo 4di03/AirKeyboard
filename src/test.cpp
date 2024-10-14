@@ -191,10 +191,23 @@ void testSubString(){
     cout << "testSubstring tests passed!" <<std::endl;
 }
 
+void testGetModelPath(){
+    assert(getModelPath("name", "final_model.pt") == std::string(DATA_PATH)+"/models/name/final_model.pt");
+
+
+    std::string checkPointModelPath = getModelPath("name", "checkpoints/epoch_100.pt");
+    cout << checkPointModelPath << std::endl;
+    assert(checkPointModelPath != std::string(DATA_PATH)+"/models/name/epoch_100.pt");
+
+    cout << "testGetModelPath passed!" << std::endl;
+}   
+
+
 
 int main() {
     // Run the function to test MSE with different input sizes
     //testMSEWithDifferentInputSizes();
+    testGetModelPath();
     testConstants();
     testIOULoss();
     cout << "Testing specific loss "<<std::endl;

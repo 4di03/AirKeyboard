@@ -69,7 +69,7 @@ public:
                 if(!mask_in.defined())
                     mask_ratio = slide_winsize/update_mask;
                 else {
-                    mask_ratio = slide_winsize/(update_mask + (mask.type().scalarType()==torch::kFloat?1e-8:1e-6));
+                    mask_ratio = slide_winsize/(update_mask + (mask.scalar_type()==torch::kFloat?1e-8:1e-6));
                     update_mask = torch::clamp(update_mask, 0, 1);
                     mask_ratio = torch::mul(mask_ratio, update_mask);
                 }
@@ -156,7 +156,7 @@ public:
                 if(!mask_in.defined())
                     mask_ratio = slide_winsize/update_mask;
                 else {
-                    mask_ratio = slide_winsize/(update_mask + (mask.type().scalarType()==torch::kFloat?1e-8:1e-6));
+                    mask_ratio = slide_winsize/(update_mask + (mask.scalar_type()==torch::kFloat?1e-8:1e-6));
                     update_mask = torch::clamp(update_mask, 0, 1);
                     mask_ratio = torch::mul(mask_ratio, update_mask);
                 }

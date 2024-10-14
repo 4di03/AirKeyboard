@@ -132,7 +132,6 @@ float evaluateTest( Dataset test, torch::Device device, Model& model, Loss& loss
     //cout << "L411 nTrainSamples: " << nTrainSamples << ",maxBatchSize: " << maxBatchSize << ",nBatches: " << nBatches << ", total_loss: " << totalLoss <<std::endl;
     float mse = totalLoss/nTrainSamples;
 
-    cout <<"Loss: " <<  mse<<std::endl;
 
     return mse;
 
@@ -159,7 +158,7 @@ void drawPredictions(Dataset d,Model& model, const std::string& valLossSavePath 
 
     cout << "Ground truth keypoints are in Red, predicted are in Green" <<std::endl;
 
-    std::filesystem::create_directories(valLossSavePath);
+    createDirectory(valLossSavePath);
     auto mse = MSELoss();
     auto iou = IouLoss();
 
@@ -219,26 +218,28 @@ void drawPredictions(Dataset d,Model& model, const std::string& valLossSavePath 
 
 }
 
-void evaluate(Dataset& test,  TrainParams t ,bool draw = true){ // need to pass abstract classes by reference
+void evaluate(Dataset& test,  TrainParams t , std::string saveName , bool draw = true){ // need to pass abstract classes by reference
 /**
 bool cuda, std::string model_name,bool draw, Loss& loss_fn
 */
     auto cuda = t.cuda;
-    auto model_name = t.model_name;
+    auto modelPath = t.modelPath;
     auto loss = t.loss_fn;
     auto device = initDevice(cuda);
     ModelBuilder* modelBuilder = t.modelBuilder;
 
-    cout << "running evaluation for " << model_name <<std::endl;
+    cout << "running evaluation for model with path "<< modelPath <<std::endl;
 
     Model* model = modelBuilder->build();
 
-    loadModel(getModelPath(model_name), model);
+    loadModel(modelPath, model);
+    cout << "loaded Model" << std::endl;
 
     evaluateTest(test,device,*model,*loss);
 
+
     if (draw){
-        auto valLossSavePath = std::string(DATA_PATH) + "/analytics/" + model_name+ "_analytics/";
+        auto valLossSavePath = std::string(DATA_PATH) + "/analytics/" + saveName+ "_analytics/";
         drawPredictions(test.slice(10)[0], *model, valLossSavePath , device); // draws first  10 images in test set
     }
 
@@ -407,7 +408,6 @@ void trainModel(Dataset& train,
     //     10,
     //     0.00001
     // );
-    std::string model_path = std::string(DATA_PATH) + "/models/" + model_name;
 
     std::vector<float> trainLosses;
     std::vector<float> valLosses;
@@ -458,8 +458,8 @@ void trainModel(Dataset& train,
             torch::Tensor loss = loss_fn->forward(y_pred, y);
             //batchLosses.push_back(loss.item<float>());
 
-            saveImageToFile(tensorToMat(y.index({0,0}).view({1,128,128}))*255,"debug_output/"+ std::to_string(loss.item<float>()) + "/L437_hm_y.jpg");
-            saveImageToFile(tensorToMat(y_pred.index({0,0}).view({1,128,128}))*255,"debug_output/"+std::to_string(loss.item<float>()) + "/L437_hm_ypred.jpg");
+            saveImageToFile(tensorToMat(y.index({0,0}).view({1,128,128}))*255,"debug_output/" + model_name+ "/" + std::to_string(loss.item<float>()) + "/L437_hm_y.jpg");
+            saveImageToFile(tensorToMat(y_pred.index({0,0}).view({1,128,128}))*255,"debug_output/" + model_name+ "/"+std::to_string(loss.item<float>()) + "/L437_hm_ypred.jpg");
 
             if (i == 0){
                 auto bl = loss.item<float>();
@@ -479,11 +479,10 @@ void trainModel(Dataset& train,
         auto end_time = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time);
 
-        cout << "VALIDATION LOSS at epoch " << epoch << " :";
         float valLoss = evaluateTest(val,device,*model, *loss_fn);
 
         if (plateauTracker.earlyStopping(valLoss)){
-            cout << "Reducing Learning Rate!" <<std::endl;
+            //cout << "Reducing Learning Rate!" <<std::endl;
             scheduler.step(); // if no imporvement for n1 epcosh, update LR
         }
 
@@ -497,7 +496,11 @@ void trainModel(Dataset& train,
         valLosses.push_back(valLoss);
 
         if(epoch % 10 ==0){
-            model->save(model_path);
+            // checkpoint model every 10 epochs
+            cout << "VALIDATION LOSS at epoch " << epoch << " : " << valLoss << std::endl;
+            std::string checkPointModelPath = getModelPath(model_name, "checkpoints/epoch_"+std::to_string(epoch)+".pt");
+            cout << "checkpointing model at " << checkPointModelPath << std::endl;
+            model->save(checkPointModelPath);
         }
         // Print the time taken for the forward pass
         //std::cout << "Epoch took " << duration.count() << " microseconds." << std::endl;
@@ -507,7 +510,9 @@ void trainModel(Dataset& train,
 
 
     }
-    model->save(model_name);
+    std::string finalModelPath = getModelPath(model_name, "final_model.pt");
+
+    model->save(finalModelPath);
 
     model->eval();
     torch::NoGradGuard no_grad;
@@ -529,13 +534,22 @@ void trainModel(Dataset& train,
 
 
     drawPredictions(sampleImages,*model, valLossSavePath+"/predictions_presave/",device);
-
-    cout << "Loading model after saving from " << model_path <<std::endl ;
+    
+    cout << "Loading model after saving from " << finalModelPath <<std::endl ;
     Model* postModel =  modelBuilder->build();//new CuNet(c, 21, initNeurons); //new JitModel(model_path,device); //
-    loadModel(model_path,postModel);
+    loadModel(finalModelPath,postModel);
     postModel->eval();
     drawPredictions(sampleImages, *postModel, valLossSavePath+"/predictions_postsave/",device);
 
 
 }
 
+Loss* getLoss(std::string lossName){
+    if (lossName == "iou"){
+        cout << "USING IOU LOSS" <<std::endl;
+        return new IouLoss();
+    }else{
+        cout << "USING MSE LOSS" <<std::endl;
+        return new MSELoss();
+    }
+}
