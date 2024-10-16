@@ -1,8 +1,1 @@
-Work in Progress . . .
-
-
-To run code:
-cd build
-cmake .. # first time thing?
-make # if file changes were made.
-./MyProject
+This repo is supplementary to the hand-pose tracking research done in this [paper](https://github.com/4di03/PalmPilot/blob/master/Real-Time%20Hand%20Joint%20Tracking.pdf).
