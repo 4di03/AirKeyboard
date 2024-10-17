@@ -3,6 +3,9 @@
 #include "cunet/cunet.h"
 #include "utils.h"
 #include "model_utils.h"
+#include "data_work.h"
+#include <functional>  // For std::function
+
 #pragma once // or use include guards
 
 using namespace std;
@@ -356,7 +359,14 @@ public:
 
 class ModelBuilder{
 public:
+ModelBuilder(nlohmann::json modelParams, Dataset data){
+    this->initFromParams(modelParams);
+    this->initFromData(data);
+}
 virtual Model* build() =0; // used to initalize models consistently
+virtual void initFromParams(nlohmann::json modelParams) = 0; // use to inialize model builder from parameters object
+virtual void initFromData(Dataset data) = 0; // use to inialize model builder from parameters object
+
 };
 
 class CuNetBuilder: public ModelBuilder{
@@ -366,8 +376,44 @@ public:
     int outChannels = 21;
     int initNeurons = 64;
     int levels = 4;
-
     Model* build(){
+
+        cout << "Building CuNet with inChannels: " << this->inChannels<< ", outChannels: " << this->outChannels << ", initNuerons: " << this->initNeurons << ", levels: " << this->levels << std::endl;
+
         return new CuNet(this->inChannels, this->outChannels, this->initNeurons, this->levels);
     }
+    void initFromParams(nlohmann::json modelParams){
+        this->initNeurons = modelParams.at("initNeurons");
+        this->levels = modelParams.at("levels");
+    }
+    void initFromData(Dataset data){
+        this->inChannels = data.x.sizes()[1];
+        this->outChannels = data.y.sizes()[1];
+    }
 };
+
+
+
+class ModelFactory{
+public:
+
+virtual ModelBuilder* create() =0; // used to initalize model builders in the map style
+
+};
+class CuNetFactory: public ModelFactory{
+    public:
+
+    CuNetBuilder* create(nlohmann::json modelParams, Dataset data){
+        return new CuNetBuilder(modelParams, data);
+    }
+}
+
+std::map<std::string, ModelFactory> myMap = {
+    {"cunet", new CuNetFactory()},
+};
+
+// factory method for modelBuilder
+ModelBuilder createModelBuilder(nlohmann::json modelParams, Dataset data){
+    return myMap.at(modelParams["modelType"]).create(modelParams,data);
+    
+}

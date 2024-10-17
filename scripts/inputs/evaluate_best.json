@@ -1,0 +1,6 @@
+{
+    "dataPath": "/scratch/palle.a/PalmPilot_Data/data_tensors/mid_data",
+    "modelPath": "/scratch/palle.a/PalmPilot_Data/models/best_run_10132024-1758.pt",
+    "saveName":"best_model",
+    "lossName": "iou"
+}

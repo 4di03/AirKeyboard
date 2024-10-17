@@ -1,0 +1,6 @@
+{
+    "dataPath": "/scratch/palle.a/PalmPilot_Data/data_tensors/mid_data",
+    "modelPath": "/scratch/palle.a/PalmPilot_Data/models/Oct14_mid/checkpoints/epoch_10.pt",
+    "saveName":"oct14_mid_epoch10",
+    "lossName": "iou"
+}

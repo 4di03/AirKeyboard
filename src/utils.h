@@ -40,3 +40,5 @@ G getOrDefault(const nlohmann::json& jsonObj, const std::string& key, const G& d
     // Return default if key doesn't exist
     return defaultValue;
 }
+int countNaNs(const torch::Tensor& tensor);
+void saveJsonToFile(nlohmann::json jsonObj, std::string jsonSavePath);

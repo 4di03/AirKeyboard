@@ -2,6 +2,24 @@ modelName
   -type: string
   -desc: name of model (does not need to include file extension). Will decide which folder to name the stored model weights in.
   -default: default_model
+modelParams
+  -type: object
+  -desc: parameters to initalize model (using a builder in src/model.h). Currently only CuNet supports initialization via yaml file.
+  -default: CuNetBuilder(inChannels=3, outChannels=21, initNeurons = 64, levels =4).build()
+  -fields:
+    modelType
+      -type: string
+      -desc: enum name for which model type to initalize (currently only cunet is supported)
+    initNeurons:
+      -type: int
+      -desc: number of kernels in the first convolutional block of the network. The kernels in the other layers scale geometrically by a factor of 2 for each level. Has a big influence on the overall number of paraemeters in the network
+      -default: 64
+    levels:
+      -type: int
+      -desc: number of levels from the first to the bottom of the "U"
+      -default: 4
+      
+
 lossName
   -type: string
   -desc: name of loss, one of [iou, mse]
@@ -10,7 +28,7 @@ reload
   -desc: whether or not to reload data from the dataset or to use saved tensors.
 dataPath
   -type: string
-  -desc: absolute path to directory to find data tensors. If reload is false, this must be set.
+  -desc: absolute path to directory to load and save data tensors. if reload is true, data tensors are saved here, else data tensors are loaded from this path (directory must have xTrain.pt, xTest.pt, yTrain.pt, and yTest.pt in this case).
   -default: <DATA_PATH in constants.h>/data_tensors/_data
 propTrain
   -type: float
@@ -22,3 +40,9 @@ propTest
   -desc: proportion of data (decimal) to use in test. This is the proportion of the enitre HANCO dataset.
         If relaod is true, this must be set.  
   -default: in main.cpp
+epochs
+  -type: int
+  -desc: number of epochs in training
+batchSize
+  -type: int
+  -desc: number of images per batch for mini-batch training

@@ -9,4 +9,3 @@ void printTensorDevice(const torch::Tensor& tensor) ;
 void printModuleDevice(const torch::nn::Module& module);
 torch::Tensor standardizeImages(const torch::Tensor x, const torch::Tensor& means, const torch::Tensor& stds);
 void printComputationGraphAndParams(const torch::jit::script::Module& model);
-

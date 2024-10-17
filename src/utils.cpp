@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <ctime>
 #include <sstream>
+#include <fstream>            // For std::ofstream
 #include <filesystem>
 #include "utils.h"
 #include "constants.h"
@@ -13,7 +14,16 @@ using namespace std;
 
 
 
-
+// Function to count the number of NaN values in a torch::Tensor
+int countNaNs(const torch::Tensor& tensor) {
+    // Use torch::isnan to create a mask where NaN elements are true (1) and others are false (0)
+    torch::Tensor nan_mask = torch::isnan(tensor);
+    
+    // Sum the mask to get the total number of NaN values
+    int nan_count = nan_mask.sum().item<int>();
+    
+    return nan_count;
+}
 std::string getTensorString(torch::Tensor tensor){
     std::ostringstream stream;
     stream << tensor;
@@ -92,3 +102,25 @@ std::string getModelPath(std::string modelName, std::string fileName){
 
 }
 
+
+void saveJsonToFile(nlohmann::json jsonObj, std::string jsonSavePath) {
+    try {
+        // Open a file stream to the specified path
+        std::ofstream file(jsonSavePath);
+
+        // Check if the file stream is open
+        if (!file.is_open()) {
+            throw std::ios_base::failure("Failed to open file: " + jsonSavePath);
+        }
+
+        // Write the JSON object to the file with proper formatting
+        file << jsonObj.dump(4);  // '4' adds indentation for readability
+
+        // Close the file stream
+        file.close();
+
+        std::cout << "JSON saved to " << jsonSavePath << " successfully." << std::endl;
+    } catch (const std::exception& e) {
+        std::cerr << "Error saving JSON to file: " << e.what() << std::endl;
+    }
+}

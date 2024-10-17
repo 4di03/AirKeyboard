@@ -1,5 +1,6 @@
 
 #include "data_work.h"
+#include "model_utils.h"
 #include "train.h"
 #include <json.hpp>
 
@@ -34,19 +35,17 @@ int main(int argc, char* argv[]) {
     Dataset train = data[0];
     Dataset test = data[1];
 
+    nlohmann::json modelParams = inputParams["modelParams"];
+    ModelBuilder* modelBuilder = createModelBuilder(modelParams, train)
 
-
-    // TODO: make this configurable via input file
-    CuNetBuilder* modelBuilder = new CuNetBuilder();
-    modelBuilder->inChannels = train.x.sizes()[1];
-    modelBuilder->outChannels = 21;
-    modelBuilder->initNeurons = 64;
+    
 
     Loss* loss = getLoss(lossName);
 
 
     TrainParams tp =  TrainParams(loss, modelBuilder);
     tp.setModelPath(modelPath);
+    tp.setModelParams(modelParams);
 
     evaluate(test, tp, testSaveName, true);
 

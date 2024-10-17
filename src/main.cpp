@@ -98,7 +98,8 @@ int main(int argc, char* argv[]) {
     std::string dataPath = getOrDefault(inputParams, "dataPath", defaultDataPath);
     float propTrain = getOrDefault(inputParams, "propTrain", 0.000003);
     float propTest = getOrDefault(inputParams, "propTest", 0.0001);
-
+    int epochs = getOrDefault(inputParams, "epochs", 50);
+    int batchSize = getOrDefault(inputParams, "batchSize", 64)
 
 
     cout << "Model Name: " << modelName << std::endl;
@@ -127,19 +128,15 @@ int main(int argc, char* argv[]) {
     Dataset test = data[1];
 
     cout << "running Training!" <<std::endl;
-    auto sizes =train.x.sizes();
+    
+    ModelBuilder* modelBuilder = createModelBuilder(inputParams["modelParams"], train);
 
-    int channels = sizes[1];
-    CuNetBuilder* modelBuilder = new CuNetBuilder();
-    modelBuilder->inChannels = channels;
-    modelBuilder->outChannels = 21;
-    modelBuilder->initNeurons = 64;
 
     float propTestData = 0.1;
 
     TrainParams tp = TrainParams(loss, modelBuilder)
-        .setBatchSize(64)
-        .setEpochs(500)
+        .setBatchSize(batchSize)
+        .setEpochs(epochs)
         .setCuda(useCuda)
         .setPropDataUsed(propDataUsed)
         .setModelName(modelName)
@@ -150,12 +147,7 @@ int main(int argc, char* argv[]) {
 
     evaluate(test, tp, modelName, true);
 
-    // auto device = torch::Device(torch::kCUDA,0);
-    // JitModel model("/scratch/palle.a/PalmPilot/python_sample/weights/model_final", device );
-    // auto loss = IouLoss();
-    // float loss = evaluateTest(test,  device, model, loss);
 
-    // cout << "TEST LOSS FOR MODEL_FINAL " << loss <<std::endl;
 
 
 }

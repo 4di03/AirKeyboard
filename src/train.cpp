@@ -86,7 +86,9 @@ void printModel(torch::nn::Module model) {
     std::cout << "------------------------" << std::endl;
     
 }
-
+/**
+Runs inference on evlauation dataset in batches to prevent running out of GPU memory.
+*/
 float evaluateTest( Dataset test, torch::Device device, Model& model, Loss& loss_fn){
     //auto loss_fn = MSELoss();
 
@@ -103,7 +105,7 @@ float evaluateTest( Dataset test, torch::Device device, Model& model, Loss& loss
 
     //cout << "Breaking data into " << nBatches << " Batches" <<std::endl;
 
-    float totalLoss = 0;
+    float totalLoss = 0.0;
 
     for (int i=0 ; i < nBatches ; i++){
         // Get the batch
@@ -123,13 +125,19 @@ float evaluateTest( Dataset test, torch::Device device, Model& model, Loss& loss
         //cout << pred.sizes() <<std::endl;
         torch::Tensor loss = loss_fn.forward(pred, y) * y.sizes()[0];
 
-        //cout << loss.item<float>() <<std::endl;
-        totalLoss += loss.item<float>();
 
+        float batchLoss =  loss.item<float>();
+
+        //cout << "BATCH LOSS: "<< batchLoss << "TOTAL LOSS: " << totalLoss <<  std::endl;
+        if (!std::isnan(batchLoss)){
+
+            totalLoss += loss.item<float>();
+        }else{
+            std::cerr <<"Found nan loss" <<"x nan-count:" << countNaNs(x) << "pred nan-count: " << countNaNs(pred) << "y nan-count: " << countNaNs(y) << std::endl;
+            throw std::runtime_error("NAN LOSS not allowed");
+        }
     }
 
-
-    //cout << "L411 nTrainSamples: " << nTrainSamples << ",maxBatchSize: " << maxBatchSize << ",nBatches: " << nBatches << ", total_loss: " << totalLoss <<std::endl;
     float mse = totalLoss/nTrainSamples;
 
 
@@ -229,13 +237,17 @@ bool cuda, std::string model_name,bool draw, Loss& loss_fn
     ModelBuilder* modelBuilder = t.modelBuilder;
 
     cout << "running evaluation for model with path "<< modelPath <<std::endl;
+    cout << "x shape: " << test.x.sizes() <<std::endl;
+    cout << "y shape: " << test.y.sizes() <<std::endl;
 
     Model* model = modelBuilder->build();
 
     loadModel(modelPath, model);
     cout << "loaded Model" << std::endl;
 
-    evaluateTest(test,device,*model,*loss);
+    float finalLoss = evaluateTest(test,device,*model,*loss);
+
+    cout << "Loss: " << finalLoss << std::endl;
 
 
     if (draw){
@@ -328,6 +340,7 @@ void trainModel(Dataset& train,
     cout << "test y shape: " << test.y.sizes() <<std::endl;
 
     int plateauPatience = 20;
+    int CHECKPOINT_FREQUENCY = 10; // training will save model weights at this number of epochs.
 
 
     train = train.sample(propDataUsed);
@@ -377,11 +390,6 @@ void trainModel(Dataset& train,
 
     Model* model= modelBuilder->build();
 
-
-    if (tp.pretrainedModelReady()){
-        cout << "Loading pretrained model for retraining" <<std::endl;
-        loadModel(tp.modelPath, model);
-    }
     
     //Model* model= new JitModel("/scratch/palle.a/PalmPilot/python_sample/weights/untrained_test_model.pt", device);
 
@@ -495,7 +503,7 @@ void trainModel(Dataset& train,
 
         valLosses.push_back(valLoss);
 
-        if(epoch % 10 ==0){
+        if(epoch % CHECKPOINT_FREQUENCY ==0){
             // checkpoint model every 10 epochs
             cout << "VALIDATION LOSS at epoch " << epoch << " : " << valLoss << std::endl;
             std::string checkPointModelPath = getModelPath(model_name, "checkpoints/epoch_"+std::to_string(epoch)+".pt");
@@ -511,7 +519,10 @@ void trainModel(Dataset& train,
 
     }
     std::string finalModelPath = getModelPath(model_name, "final_model.pt");
-
+    std::string modelSaveDir = getDirectoryName(finalModelPath);
+    std::string modelParamsJsonSavePath = modelSaveDir +"/params.json";
+    // TODO: update trainParams and implement saveJsonToFile(nlohmann::json, std::string)
+    saveJsonToFile(tp.modelParams, modelParamsJsonSavePath);
     model->save(finalModelPath);
 
     model->eval();
@@ -522,9 +533,10 @@ void trainModel(Dataset& train,
     writeVectorToFile(valLosses, valLossSavePath+"/val_loss.list");
 
 
-    cout << "Post-training loss:";
+    cout << "Post-training loss: ";
 
-    evaluateTest(test, device, *model, *loss_fn);
+    float loss = evaluateTest(test, device, *model, *loss_fn);
+    cout << loss << std::endl;
 
 
     Dataset sampleImages = train.shuffle().slice(10)[0];
