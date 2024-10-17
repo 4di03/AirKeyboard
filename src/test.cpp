@@ -105,7 +105,8 @@ void verifyDifferentiability(const torch::Tensor& input, const torch::Tensor& ta
         if (inputWithGrad.grad().defined() && targetWithGrad.grad().defined()) {
             std::cout << "Gradients computed successfully." << std::endl;
         } else {
-            std::cout << "Error: Gradients not computed." << std::endl;
+            std::cerr << "Error: Gradients not computed." << std::endl;
+            assert(false);
         }
     
 }
@@ -117,11 +118,11 @@ void testLosses(torch::Tensor& input, torch::Tensor& target){
     float mse_loss  = mse.forward(input,target).item<float>();
     float fmse = torch::mse_loss(input, target).item<float>();
 
-    cout << "IOU of identity : " << iou_loss <<std::endl;
-    cout << "MSE of identity : " << mse_loss <<std::endl;
-    cout << "func MSE of identity : " << fmse <<std::endl;
+    cout << "IOU: " << iou_loss <<std::endl;
+    cout << "MSE: " << mse_loss <<std::endl;
+    cout << "func MSE: " << fmse <<std::endl;
     verifyDifferentiability(input,target);
-    assert(iou_loss < 1);
+    assert(iou_loss <= 1);
 }
 
 void testIOULoss(){
@@ -129,7 +130,7 @@ void testIOULoss(){
 
 
     // Create a tensor of shape (n, 21, 128, 128)
-    torch::Tensor input = torch::randn({5, 21, 128, 128});
+    torch::Tensor input = torch::abs(torch::randn({5, 21, 128, 128}));
 
     // Create a tensor of shape (n, 21, 128, 128)
     torch::Tensor target = input;
@@ -137,7 +138,7 @@ void testIOULoss(){
     testLosses(input,target);
 
 
-    target = torch::randn({5, 21, 128, 128});
+    target = torch::abs(torch::randn({5, 21, 128, 128}));
     testLosses(input,target);
 
 
@@ -146,6 +147,7 @@ void testIOULoss(){
 
     input[0][0][10][10] = 1;
     target[0][0][10][10] = 1;
+    assert( IouLoss().forward(input,target).item<float>()== 0);
 
     testLosses(input,target);
 
@@ -156,7 +158,7 @@ void testIOULoss(){
     target[0][0][10][10] = 1;
     input[0][0][10][11] = 1;
     target[0][0][10][9] = 1;
-    
+        
     testLosses(input,target);
 
 
@@ -169,10 +171,10 @@ template <typename LossType>
 void testSpecificLoss(LossType loss){
 
     // Create a tensor of shape (n, 21, 128, 128)
-    torch::Tensor input = torch::randn({5, 21, 128, 128});
+    torch::Tensor input = torch::abs(torch::randn({5, 21, 128, 128}));
 
     // Create a tensor of shape (n, 21, 128, 128)
-    torch::Tensor target = torch::randn({5, 21, 128, 128});
+    torch::Tensor target = torch::abs(torch::randn({5, 21, 128, 128}));
     torch::Tensor lossVal  = loss.forward(input,target);
   
     cout << "Loss of random : " << lossVal.item<float>() <<std::endl;

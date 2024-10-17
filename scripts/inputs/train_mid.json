@@ -1,7 +1,8 @@
 {
-    "modelName": "default_model",
+    "modelName": "Oct14_mid",
     "lossName": "iou",
     "reload": false,
+    "dataPath": "/scratch/palle.a/PalmPilot_Data/data_tensors/mid_data",
     "modelParams":{
         "modelType": "cunet",
         "initNeurons":"128",

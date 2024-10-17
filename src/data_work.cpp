@@ -560,8 +560,10 @@ std::vector<Dataset> loadSamples(std::string save_folder = std::string(DATA_PATH
      */
     torch::Tensor xTrain;
     torch::load(xTrain,save_folder+"/xTrain.pt");
+    xTrain = torch::nan_to_num(xTrain, 0.0);
     torch::Tensor yTrain;
     torch::load(yTrain,save_folder+"/yTrain.pt");
+    yTrain = torch::nan_to_num(yTrain, 0.0);
 
 
     //xTrain = xTrain.permute({0, 3, 1, 2});// initalliy in (N,W,H,C) format, but we need (N,C,W,H)
@@ -570,8 +572,10 @@ std::vector<Dataset> loadSamples(std::string save_folder = std::string(DATA_PATH
 
     torch::Tensor xTest;
     torch::load(xTest,save_folder+"/xTest.pt");
+    xTest = torch::nan_to_num(xTest, 0.0);
     torch::Tensor yTest;
     torch::load(yTest,save_folder+"/yTest.pt");
+    yTest = torch::nan_to_num(yTest, 0.0);
    // xTest = xTest.permute({0, 3, 1, 2});// initalliy in (N,W,H,C) format, but we need (N,C,W,H)
   //  yTest = yTest.permute({0, 4, 1, 2,3});// initalliy in (N,K,W,H,C) format, but we need (N,C,K,W,H)
     Dataset test = {xTest, yTest};

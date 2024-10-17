@@ -1,0 +1,8 @@
+{
+    "modelName": "120k",
+    "lossName": "iou",
+    "reload": true,
+    "dataPath": "/scratch/palle.a/PalmPilot_Data/data_tensors/120kimages",
+    "propTrain": 0.1,
+    "propTest": 0.5
+}

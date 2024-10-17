@@ -1,7 +1,9 @@
 #include <torch/torch.h>
+#include <cstdlib>
 #include "data_work.h"
 #include "utils.h"
 #include "model.h"
+#include <stdexcept>
 #pragma once // or use include guards
 using namespace std;
 
@@ -21,6 +23,9 @@ torch::Tensor forward(const torch::Tensor& input, const torch::Tensor& target) {
 std::string getName(){ return "MSE";}
 
 };
+
+
+
 
 class IouLoss : public Loss{
 private:
@@ -52,7 +57,7 @@ torch::Tensor forward(const torch::Tensor& input, const torch::Tensor& target) {
     // Add a small epsilon to avoid division by zero
 
     auto iou = (I +  eps) / (U + eps);
-
+    // shape of iou is (n_samples, n_channels)
     iou = torch::mean(iou);
 
     auto loss = 1.0 - iou;
@@ -76,6 +81,7 @@ public:
     float propVal = 0.1;
     bool standardize = true;
     std::string modelPath = "";
+    nlohmann::json modelParams;
    // builder for trian parameter
     TrainParams(Loss* lossFn =nullptr, ModelBuilder* mb = nullptr){
         this->loss_fn = lossFn;
@@ -114,6 +120,10 @@ public:
         return *this;
     }
 
+    TrainParams setModelParams(nlohmann::json modelParams){
+        this->modelParams = modelParams;
+        return *this;
+    }
     TrainParams  setEpochs(int n) {
         this->nEpochs = n;
         return *this;
@@ -140,9 +150,6 @@ public:
         return *this;
     }
 
-    bool pretrainedModelReady(){
-        return this->modelPath != "";
-    }
 };
 
 
@@ -153,4 +160,3 @@ void trainModel(Dataset& train,
 void evaluate(Dataset& test, TrainParams tp, std::string saveName, bool draw);
 
 Loss* getLoss(std::string lossName);
-//float evaluateTest( Dataset test, torch::Device device, Model& model, Loss& loss_fn);

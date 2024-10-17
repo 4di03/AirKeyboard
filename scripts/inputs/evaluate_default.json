@@ -1,6 +1,6 @@
 {
     "dataPath": "/scratch/palle.a/PalmPilot_Data/data_tensors/mid_data",
-    "modelPath": "/scratch/palle.a/PalmPilot_Data/models/default_model.pt",
+    "modelPath": "/scratch/palle.a/PalmPilot_Data/models/default_model/final_model.pt",
     "saveName":"default_model",
     "lossName": "iou"
 }

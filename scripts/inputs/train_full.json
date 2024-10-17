@@ -1,0 +1,6 @@
+{
+    "modelName": "Oct14_full",
+    "lossName": "iou",
+    "reload": false,
+    "dataPath": "/scratch/palle.a/PalmPilot_Data/data_tensors/full_data"
+}
